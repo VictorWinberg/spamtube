@@ -5,6 +5,9 @@
 - [Slack](https://theboardgamesgroup.slack.com/archives/C03PF2S0PFG)
 - [Keybase](https://keybase.io/team/spamtube)
 
+## Prerequisites
+- [Docker](https://docs.docker.com/get-docker)
+
 ## Setup
 
 ### Docker
