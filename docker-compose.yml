@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+
+  spam-db:
+    image: postgres:10.3
+    restart: always
+    ports:
+      - 5337:5432
+    networks:
+      - spamtube-net
+    environment:
+      POSTGRES_DB: spamtube_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: database
+    networks:
+      - spamtube-net
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@spam-db/spamtube_db?sslmode=disable
+    depends_on:
+      spam-db:
+        condition: service_healthy
+
+networks:
+  spamtube-net:
+    driver: bridge
