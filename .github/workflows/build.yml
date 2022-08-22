@@ -18,4 +18,4 @@ jobs:
             --set "*.cache-from=type=gha" \
             --set "*.cache-to=type=gha,mode=max" \
             --load \
-            -f docker-compose.yaml
+            -f docker-compose.yml
