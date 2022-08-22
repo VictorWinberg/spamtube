@@ -8,7 +8,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Config",
+  name: "ConfigComponent",
   props: {
     msg: String,
   },
