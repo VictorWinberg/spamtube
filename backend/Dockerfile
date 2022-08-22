@@ -6,8 +6,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
-COPY migrations/*.sql ./migrations/
 
-RUN go build -o /migrate
+RUN go build .
 
-CMD [ "/migrate" ]
+EXPOSE 3000
+
+CMD [ "/app/backend" ]

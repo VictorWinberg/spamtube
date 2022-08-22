@@ -1,6 +1,47 @@
-version: '3.1'
+version: "3.1"
 
 services:
+
+  frontend:
+    build: frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - spamtube-net
+
+  backend:
+    image: cosmtrek/air
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ui-volume:/frontend
+      - ./backend:/app
+    networks:
+      - spamtube-net
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  build-ui:
+    build: frontend
+    command: ["npm", "run", "build"]
+    networks:
+      - spamtube-net
+    volumes:
+      - ui-volume:/app
+
+  migrate:
+    build: database
+    networks:
+      - spamtube-net
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@spam-db/spamtube_db?sslmode=disable
+    depends_on:
+      spam-db:
+        condition: service_healthy
 
   spam-db:
     image: postgres:10.3
@@ -19,15 +60,8 @@ services:
       timeout: 5s
       retries: 5
 
-  migrate:
-    build: database
-    networks:
-      - spamtube-net
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@spam-db/spamtube_db?sslmode=disable
-    depends_on:
-      spam-db:
-        condition: service_healthy
+volumes:
+  ui-volume:
 
 networks:
   spamtube-net:
