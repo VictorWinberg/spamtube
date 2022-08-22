@@ -2,7 +2,7 @@ up:
 	docker compose up --build
 
 down:
-	docker-compose down
+	docker compose down
 
 rm:
 	docker compose down --remove-orphans --volumes
