@@ -52,7 +52,7 @@ air
 
 > Note: To run backend manually you need to install golang https://go.dev/doc/install
 
-> Note: To run go in `air` (hot-reload mode) you need install air by `go install github.com/cosmtrek/air@latest`
+> Note: To run go in `air` (hot-reload mode) you need install air by `go install github.com/cosmtrek/air@latest` or just run `go run .`
 
 ### Frontend
 
