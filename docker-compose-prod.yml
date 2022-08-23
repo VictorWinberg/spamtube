@@ -2,25 +2,14 @@ version: "3.1"
 
 services:
 
-  frontend:
-    build: frontend
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./frontend/src:/app/src
-    networks:
-      - spamtube-devnet
-
   backend:
-    image: cosmtrek/air
-    working_dir: /app
+    build: backend
     ports:
       - "3000:3000"
     volumes:
       - ui-volume:/frontend
-      - ./backend:/app
     networks:
-      - spamtube-devnet
+      - spamtube-prodnet
     environment:
       PORT: 3000
     depends_on:
@@ -31,16 +20,16 @@ services:
     build: frontend
     command: ["npm", "run", "build"]
     networks:
-      - spamtube-devnet
+      - spamtube-prodnet
     volumes:
       - ui-volume:/app
 
   migrate:
     build: database
     networks:
-      - spamtube-devnet
+      - spamtube-prodnet
     environment:
-      DATABASE_URL: postgres://postgres:postgres@pg-spamtube/spamtube_db?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@pg-spamtube/spamtube_db_prod?sslmode=disable
     depends_on:
       pg-spamtube:
         condition: service_healthy
@@ -48,12 +37,10 @@ services:
   pg-spamtube:
     image: postgres:10.3
     restart: always
-    ports:
-      - 5337:5432
     networks:
-      - spamtube-devnet
+      - spamtube-prodnet
     environment:
-      POSTGRES_DB: spamtube_db
+      POSTGRES_DB: spamtube_db_prod
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     healthcheck:
@@ -66,5 +53,5 @@ volumes:
   ui-volume:
 
 networks:
-  spamtube-devnet:
+  spamtube-prodnet:
     driver: bridge
