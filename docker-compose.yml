@@ -21,6 +21,8 @@ services:
       - ./backend:/app
     networks:
       - spamtube-devnet
+    environment:
+      PORT: 3000
     depends_on:
       migrate:
         condition: service_completed_successfully

@@ -1,15 +1,20 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	port := flag.String("port", getEnv("PORT", "3000"), "Server port")
+	flag.Parse()
+
 	// Set the router as the default one shipped with Gin
-	port := ":3000"
 	router := gin.Default()
 
 	// Serve frontend static files
@@ -26,5 +31,13 @@ func main() {
 	}
 
 	// Start and run the server
-	router.Run(port)
+	router.Run(fmt.Sprintf(":%s", *port))
+}
+
+func getEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
 }

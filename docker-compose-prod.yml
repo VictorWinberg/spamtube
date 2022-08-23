@@ -10,6 +10,8 @@ services:
       - ui-volume:/frontend
     networks:
       - spamtube-prodnet
+    environment:
+      PORT: 3000
     depends_on:
       migrate:
         condition: service_completed_successfully
