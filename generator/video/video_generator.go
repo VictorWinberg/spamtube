@@ -23,7 +23,7 @@ func CreateVideo() {
 		ffmpeg.Input(path+f.Name()).Output(fmt.Sprintf("%s%s%s", path, PREFIX, f.Name()), ffmpeg.KwArgs{"vf": "scale=320:240"}).OverWriteOutput().Run()
 	}
 	imageInput := ffmpeg.Input(path+PREFIX+"%03d.jpg", ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
-	audioInput := ffmpeg.Input("./data/test_data/audio.ogg")
+	audioInput := ffmpeg.Input("./data/test_data/audio.mp3")
 	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(path+OUTPUT_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	for _, f := range images {
 		os.Remove(path + PREFIX + f.Name())
