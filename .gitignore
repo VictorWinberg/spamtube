@@ -1,2 +1,4 @@
 .DS_Store
 out.mp4
+*.env.local
+out.mp4

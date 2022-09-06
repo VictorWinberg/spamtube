@@ -1,7 +1,6 @@
 version: "3.1"
 
 services:
-
   frontend:
     build: frontend
     ports:
@@ -13,21 +12,24 @@ services:
     depends_on:
       - backend
 
-  backend:
-    image: cosmtrek/air
-    working_dir: /app
-    ports:
-      - "3000:3000"
-    volumes:
-      - ui-volume:/frontend
-      - ./backend:/app
-    networks:
-      - spamtube-devnet
-    environment:
-      PORT: 3000
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
+  # backend:
+  #   image: cosmtrek/air
+  #   working_dir: /app
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ui-volume:/frontend
+  #     - ./backend:/app
+  #   networks:
+  #     - spamtube-devnet
+  #   environment:
+  #     PORT: 3000
+  #   env_file:
+  #     - ./env/backend.env
+  #     - ./env/backend.env.local
+  #   depends_on:
+  #     migrate:
+  #       condition: service_completed_successfully
 
   build-ui:
     build: frontend
@@ -37,15 +39,15 @@ services:
     volumes:
       - ui-volume:/app
 
-  migrate:
-    build: database
-    networks:
-      - spamtube-devnet
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@pg-spamtube/spamtube_db?sslmode=disable
-    depends_on:
-      pg-spamtube:
-        condition: service_healthy
+  # migrate:
+  #   build: database
+  #   networks:
+  #     - spamtube-devnet
+  #   environment:
+  #     DATABASE_URL: postgres://postgres:postgres@pg-spamtube/spamtube_db?sslmode=disable
+  #   depends_on:
+  #     pg-spamtube:
+  #       condition: service_healthy
 
   pg-spamtube:
     image: postgres:10.3
@@ -63,7 +65,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    
+
   generator:
     build: generator
     volumes:
