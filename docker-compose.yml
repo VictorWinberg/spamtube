@@ -10,6 +10,8 @@ services:
       - ./frontend/src:/app/src
     networks:
       - spamtube-devnet
+    depends_on:
+      - backend
 
   backend:
     image: cosmtrek/air
@@ -61,6 +63,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    
+  generator:
+    build: generator
+    volumes:
+      - ./generator/data:/app/data
+    networks:
+      - spamtube-devnet
 
 volumes:
   ui-volume:

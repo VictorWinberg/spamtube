@@ -14,10 +14,10 @@
 
 ### Docker
 
-Run project in a docker container:
+Run a service in a docker container:
 
 ```bash
-docker compose up --build
+docker compose up --build [service]
 ```
 
 ## Development
