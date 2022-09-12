@@ -6,7 +6,8 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
-
 COPY migrations/*.sql ./migrations/
 
-CMD [ "go run ." ]
+RUN go build -o /migrate
+
+CMD [ "/migrate" ]

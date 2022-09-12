@@ -53,6 +53,9 @@ jobs:
         with:
           name: dist-frontend
 
+      - name: Move frontend dist to backend
+        run: mv frontend/dist backend/dist
+
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
