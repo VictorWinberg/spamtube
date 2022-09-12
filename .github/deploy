@@ -1,12 +1,6 @@
 #!/bin/bash
 set -eu # exit script on errors
 
-echo "go version"
-go version
-
-echo "nvm version"
-nvm --version
-
 echo "copy spamtube env"
 rsync /home/git/www/spamtube/.env .
 
@@ -14,8 +8,8 @@ rsync /home/git/www/spamtube/.env .
 # echo "> npm run build..."
 # cd frontend && npm run build && cd ..
 
-# build backend
-echo "> go build..."
-cd backend && go build -o ./server && chmod +x ./server && cd ..
+# build backend is done with github actions
+# echo "> go build..."
+# cd backend && go build -o ./server && chmod +x ./server && cd ..
 
-export MAIN="backend/server"
+export MAIN="backend/dist/server"
