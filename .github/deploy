@@ -10,6 +10,6 @@ rsync /home/git/www/spamtube/.env .
 
 # build backend is done with github actions
 # echo "> go build..."
-# cd backend && go build -o ./server && chmod +x ./server && cd ..
+# cd backend && go build -o ./dist/server && cd ..
 
 export MAIN="backend/dist/server"

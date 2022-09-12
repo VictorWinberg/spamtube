@@ -47,10 +47,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup go
+      - name: Use go ${{ matrix.go-version }}
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          architecture: arm
 
       - name: Build backend
         run: go build -o ./dist/server

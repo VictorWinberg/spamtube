@@ -25,10 +25,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - name: Setup go
+    - name: Use go ${{ matrix.go-version }}
       uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go-version }}
+        architecture: arm
 
     - name: Install and cache frontend dependencies
       uses: bahmutov/npm-install@v1
