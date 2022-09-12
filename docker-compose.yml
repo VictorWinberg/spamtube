@@ -28,14 +28,6 @@ services:
       migrate:
         condition: service_completed_successfully
 
-  build-ui:
-    build: frontend
-    command: ["npm", "run", "build"]
-    networks:
-      - spamtube-devnet
-    volumes:
-      - ui-volume:/app
-
   migrate:
     build: database
     networks:
@@ -67,8 +59,7 @@ services:
     build: generator
     volumes:
       - ./generator/data:/app/data
-    networks:
-      - spamtube-devnet
+      - ./generator/dist:/app/dist
 
 volumes:
   ui-volume:

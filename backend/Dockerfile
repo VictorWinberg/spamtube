@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM arm32v7/golang:1.18-alpine
 
 WORKDIR /app
 
@@ -7,8 +7,6 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build .
-
 EXPOSE 3000
 
-CMD [ "/app/backend" ]
+CMD [ "go run ." ]
