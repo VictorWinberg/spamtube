@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/patrickmn/go-cache"
+	cache "github.com/patrickmn/go-cache"
 )
 
 type AccessToken struct {
@@ -26,26 +26,26 @@ type AccessToken struct {
 type RedditResponseTop struct {
 	Kind string `json:"kind"`
 	Data struct {
-		After     string `json:"after"`
-		Children  []struct {
+		After    string `json:"after"`
+		Children []struct {
 			Data struct {
-				Subreddit                  string        `json:"subreddit"`
-				Selftext                   string        `json:"selftext"`
-				AuthorFullname             string        `json:"author_fullname"`
-				Title                      string        `json:"title"`
-				UpvoteRatio                float64       `json:"upvote_ratio"`
-				Ups                        int           `json:"ups"`
-				IsOriginalContent     bool          `json:"is_original_content"`
-				Score               int           `json:"score"`
-				Thumbnail           string        `json:"thumbnail"`
-				Created             float64     `json:"created"`
-				Over18              bool        `json:"over_18"`
-				SubredditID              string        `json:"subreddit_id"`
-				ID                       string        `json:"id"`
-				Author                   string        `json:"author"`
-				Permalink                string        `json:"permalink"`
-				URL                      string        `json:"url"`
-				CreatedUtc               float64       `json:"created_utc"`
+				Subreddit         string  `json:"subreddit"`
+				Selftext          string  `json:"selftext"`
+				AuthorFullname    string  `json:"author_fullname"`
+				Title             string  `json:"title"`
+				UpvoteRatio       float64 `json:"upvote_ratio"`
+				Ups               int     `json:"ups"`
+				IsOriginalContent bool    `json:"is_original_content"`
+				Score             int     `json:"score"`
+				Thumbnail         string  `json:"thumbnail"`
+				Created           float64 `json:"created"`
+				Over18            bool    `json:"over_18"`
+				SubredditID       string  `json:"subreddit_id"`
+				ID                string  `json:"id"`
+				Author            string  `json:"author"`
+				Permalink         string  `json:"permalink"`
+				URL               string  `json:"url"`
+				CreatedUtc        float64 `json:"created_utc"`
 			} `json:"data"`
 		} `json:"children"`
 		Before interface{} `json:"before"`
@@ -100,7 +100,7 @@ func main() {
 			subredditName := con.Param("subreddit_name")
 			url := fmt.Sprintf("https://oauth.reddit.com/r/%s/top/?t=day.json", subredditName)
 			req, err := http.NewRequest("GET", url, nil)
-			
+
 			if err != nil {
 				fmt.Print(err.Error())
 			}
@@ -118,10 +118,10 @@ func main() {
 			// Send req using http Client
 			client := &http.Client{}
 			resp, err := client.Do(req)
-			
+
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
-					"message" : fmt.Sprintf("Error: %s", err),
+					"message": fmt.Sprintf("Error: %s", err),
 				})
 			}
 
@@ -132,14 +132,14 @@ func main() {
 
 			if resp.StatusCode != 200 {
 				con.JSON(http.StatusInternalServerError, gin.H{
-					"message" : "Could not retrieve top posts",
+					"message": "Could not retrieve top posts",
 				})
 				return
 			}
 
 			con.JSON(http.StatusOK, res)
 			return
-			})
+		})
 	}
 
 	// Start and run the server
