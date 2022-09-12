@@ -12,14 +12,22 @@ services:
     depends_on:
       - backend
 
+  build-ui:
+    build: frontend
+    command: ["npm", "run", "build"]
+    networks:
+      - spamtube-devnet
+    volumes:
+      - ui-volume:/app/dist
+
   backend:
     image: cosmtrek/air
     working_dir: /app
     ports:
       - "3000:3000"
     volumes:
-      - ui-volume:/frontend
       - ./backend:/app
+      - ui-volume:/app/dist
     networks:
       - spamtube-devnet
     environment:
@@ -31,14 +39,6 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-
-  build-ui:
-    build: frontend
-    command: ["npm", "run", "build"]
-    networks:
-      - spamtube-devnet
-    volumes:
-      - ui-volume:/app
 
   migrate:
     build: database
@@ -71,8 +71,7 @@ services:
     build: generator
     volumes:
       - ./generator/data:/app/data
-    networks:
-      - spamtube-devnet
+      - ./generator/dist:/app/dist
 
 volumes:
   ui-volume:

@@ -1,0 +1,35 @@
+name: Test Environment - Remove
+on:
+  pull_request:
+    types: [ closed ]
+    branches:
+      - master
+
+jobs:
+  remove-test-env:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+        ref: 'master'
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+         key: ${{ secrets.SSH_PRIVATE_KEY }}
+         name: id_rsa # optional
+         known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - name: Git Push to Server
+      run: |
+        git remote add server git@zolly.ml:repos/qa.git
+        git config --global user.email "actions@github.com"
+        git config --global user.name "Github Actions"
+        git push --delete server ${GITHUB_REPOSITORY}--${GITHUB_HEAD_REF}
+
+    - uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: test-env
+        append: true
+        message: _Environment has been shut down._

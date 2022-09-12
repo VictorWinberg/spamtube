@@ -1,0 +1,68 @@
+name: Test Environment - Deploy
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - master
+
+jobs:
+  deploy-test-env:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+        ref: ${{ github.head_ref }}
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Install and cache frontend dependencies
+      uses: bahmutov/npm-install@v1
+      with:
+        working-directory: frontend
+
+    - name: Build frontend
+      run: npm run build
+      working-directory: frontend
+    
+    - name: Move frontend dist to backend
+      run: |
+        rm -rf ./dist
+        mv ./frontend/dist ./dist
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+         key: ${{ secrets.SSH_PRIVATE_KEY }}
+         name: id_rsa # optional
+         known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - id: git_push
+      name: Push to Server
+      run: |
+        git remote add server git@zolly.ml:repos/qa.git
+        git config --global user.email "actions@github.com"
+        git config --global user.name "Github Actions"
+        git add dist -f
+        git commit -m "Build files"
+        exec 5>&1
+        OUTPUT=$(git push --force --set-upstream server HEAD:${GITHUB_REPOSITORY}--${GITHUB_HEAD_REF} 2>&1 | tee /dev/fd/5)
+        echo "GIT_OUTPUT<<EOF" >> $GITHUB_ENV
+        echo "$OUTPUT" | grep "^remote: github:" | sed s/^remote:\ github:\ /""/g >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ env.GIT_OUTPUT }}
+      with:
+        header: test-env
+        append: true
+        message: |
+          ${{ env.GIT_OUTPUT }}

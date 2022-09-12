@@ -61,7 +61,7 @@ func main() {
 	router := gin.Default()
 
 	// Serve frontend static files
-	router.Use(static.Serve("/", static.LocalFile("../frontend/dist", true)))
+	router.Use(static.Serve("/", static.LocalFile("./dist", true)))
 
 	// Setup route group for the API
 	api := router.Group("/api")
@@ -139,6 +139,10 @@ func main() {
 			con.JSON(http.StatusOK, res)
 		})
 	}
+
+	router.NoRoute(func(c *gin.Context) {
+		c.File("./dist/index.html")
+	})
 
 	// Start and run the server
 	router.Run(fmt.Sprintf(":%s", *port))
