@@ -1,17 +1,27 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 	"time"
-	"encoding/json"
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 )
+
+type AccessToken struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
+	Scope       string `json:"scope"`
+}
 
 type RedditResponseTop struct {
 	Kind string `json:"kind"`
@@ -60,6 +70,30 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "pong",
 			})
+		})
+
+		api.GET("/reddit", func(c *gin.Context) {
+			client := &http.Client{}
+			URL := "https://www.reddit.com/api/v1/access_token"
+			v := url.Values{
+				"grant_type": {"client_credentials"},
+				"username":   {os.Getenv("REDDIT_USERNAME")},
+				"password":   {os.Getenv("REDDIT_PASSWORD")},
+			}
+			req, err := http.NewRequest("POST", URL, strings.NewReader(v.Encode()))
+			if err != nil {
+				log.Fatal(err)
+			}
+			req.SetBasicAuth(os.Getenv("REDDIT_APP_USERNAME"), os.Getenv("REDDIT_APP_PRIVATE_KEY"))
+			res, err := client.Do(req)
+			if err != nil {
+				log.Fatal(err)
+			}
+			token := &AccessToken{}
+			defer res.Body.Close()
+			json.NewDecoder(res.Body).Decode(&token)
+
+			c.JSON(http.StatusOK, token)
 		})
 
 		api.GET("/top/:subreddit_name", func(con *gin.Context) {

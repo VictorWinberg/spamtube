@@ -17,7 +17,7 @@
 Run a service in a docker container:
 
 ```bash
-docker compose up --build [service]
+docker compose --env-file .env.local up --build [service]
 ```
 
 ## Development

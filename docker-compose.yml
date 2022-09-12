@@ -1,7 +1,6 @@
 version: "3.1"
 
 services:
-
   frontend:
     build: frontend
     ports:
@@ -63,7 +62,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    
+
   generator:
     build: generator
     volumes:
