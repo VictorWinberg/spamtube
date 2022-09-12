@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,6 +13,7 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	cache "github.com/patrickmn/go-cache"
+	"github.com/pkg/errors"
 )
 
 type AccessToken struct {
@@ -72,28 +72,17 @@ func main() {
 			})
 		})
 
-		api.GET("/reddit", func(c *gin.Context) {
-			client := &http.Client{}
-			URL := "https://www.reddit.com/api/v1/access_token"
-			v := url.Values{
-				"grant_type": {"client_credentials"},
-				"username":   {os.Getenv("REDDIT_USERNAME")},
-				"password":   {os.Getenv("REDDIT_PASSWORD")},
-			}
-			req, err := http.NewRequest("POST", URL, strings.NewReader(v.Encode()))
-			if err != nil {
-				log.Fatal(err)
-			}
-			req.SetBasicAuth(os.Getenv("REDDIT_APP_USERNAME"), os.Getenv("REDDIT_APP_PRIVATE_KEY"))
-			res, err := client.Do(req)
-			if err != nil {
-				log.Fatal(err)
-			}
-			token := &AccessToken{}
-			defer res.Body.Close()
-			json.NewDecoder(res.Body).Decode(&token)
+		api.GET("/reddit", func(con *gin.Context) {
+			token, err := getAccessToken(c)
 
-			c.JSON(http.StatusOK, token)
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+
+			con.JSON(http.StatusOK, token)
 		})
 
 		api.GET("/top/:subreddit_name", func(con *gin.Context) {
@@ -102,18 +91,28 @@ func main() {
 			req, err := http.NewRequest("GET", url, nil)
 
 			if err != nil {
-				fmt.Print(err.Error())
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
 			}
 
-			token, found := c.Get("token")
-
-			if !found {
-				// do request to reddit and get token
-				// Winbergs awesome metod
+			var token string
+			if val, found := c.Get("token"); found {
+				token = val.(string)
+			} else {
+				t, err := getAccessToken(c)
+				if err != nil {
+					con.JSON(http.StatusInternalServerError, gin.H{
+						"message": fmt.Sprintf("Error: %s", err),
+					})
+					return
+				}
+				token = t.AccessToken
 			}
 
 			// add authorization header to the req
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.(string)))
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
 			// Send req using http Client
 			client := &http.Client{}
@@ -138,7 +137,6 @@ func main() {
 			}
 
 			con.JSON(http.StatusOK, res)
-			return
 		})
 	}
 
@@ -152,4 +150,39 @@ func getEnv(key, fallback string) string {
 		value = fallback
 	}
 	return value
+}
+
+func getAccessToken(c *cache.Cache) (*AccessToken, error) {
+	client := &http.Client{}
+	URL := "https://www.reddit.com/api/v1/access_token"
+	v := url.Values{
+		"grant_type": {"client_credentials"},
+		"username":   {os.Getenv("REDDIT_USERNAME")},
+		"password":   {os.Getenv("REDDIT_PASSWORD")},
+	}
+	req, err := http.NewRequest("POST", URL, strings.NewReader(v.Encode()))
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(os.Getenv("REDDIT_APP_USERNAME"), os.Getenv("REDDIT_APP_PRIVATE_KEY"))
+	res, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, errors.Wrap(err, "Could not retrieve access token from reddit")
+	}
+
+	token := &AccessToken{}
+	defer res.Body.Close()
+	json.NewDecoder(res.Body).Decode(&token)
+
+	c.Set("token", token, cache.DefaultExpiration)
+	fmt.Println(token)
+
+	return token, nil
 }
