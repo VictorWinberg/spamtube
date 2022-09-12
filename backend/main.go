@@ -142,6 +142,10 @@ func main() {
 		})
 	}
 
+	router.NoRoute(func(c *gin.Context) {
+		c.File("./dist/index.html")
+	})
+
 	// Start and run the server
 	router.Run(fmt.Sprintf(":%s", *port))
 }

@@ -26,8 +26,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ui-volume:/dist
       - ./backend:/app
+      - ui-volume:/app/dist
     networks:
       - spamtube-devnet
     environment:
