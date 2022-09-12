@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu # exit script on errors
+
+echo "copy spamtube env"
+rsync /home/git/www/spamtube/.env .
+
+# build frontend is done with github actions
+# echo "> npm run build..."
+# cd frontend && npm run build && cd ..
+
+# build backend
+echo "> go build..."
+cd backend && go build -o ./server && chmod +x ./server && cd ..
+
+export MAIN="backend/server"
