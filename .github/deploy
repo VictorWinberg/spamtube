@@ -1,6 +1,12 @@
 #!/bin/bash
 set -eu # exit script on errors
 
+echo "go version"
+go version
+
+echo "nvm version"
+nvm --version
+
 echo "copy spamtube env"
 rsync /home/git/www/spamtube/.env .
 
