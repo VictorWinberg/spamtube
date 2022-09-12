@@ -18,7 +18,7 @@ services:
     networks:
       - spamtube-devnet
     volumes:
-      - ui-volume:/app
+      - ui-volume:/app/dist
 
   backend:
     image: cosmtrek/air

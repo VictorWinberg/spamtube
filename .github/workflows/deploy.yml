@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   build-frontend:
@@ -54,7 +51,9 @@ jobs:
           name: dist-frontend
 
       - name: Move frontend dist to backend
-        run: mv frontend/dist dist
+        run: |
+          rm -rf ./dist
+          mv ./frontend/dist ./dist
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
