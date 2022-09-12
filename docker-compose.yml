@@ -24,9 +24,6 @@ services:
       - spamtube-devnet
     environment:
       PORT: 3000
-    env_file:
-      - ./env/backend.env
-      - ./env/backend.env.local
     depends_on:
       migrate:
         condition: service_completed_successfully
