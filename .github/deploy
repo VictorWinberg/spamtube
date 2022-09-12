@@ -8,8 +8,8 @@ rsync /home/git/www/spamtube/.env .
 # echo "> npm run build..."
 # cd frontend && npm run build && cd ..
 
-# build backend is done with github actions
-# echo "> go build..."
-# cd backend && go build -o ./dist/server && cd ..
+# build backend
+echo "> go build..."
+cd backend && go build -o ./dist/server && cd ..
 
 export MAIN="backend/dist/server"
