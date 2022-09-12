@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
+        go-version: ['1.18']
 
     steps:
     - uses: actions/checkout@v2
@@ -23,6 +24,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    
+    - name: Setup go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
 
     - name: Install and cache frontend dependencies
       uses: bahmutov/npm-install@v1
@@ -32,6 +38,10 @@ jobs:
     - name: Build frontend
       run: npm run build
       working-directory: frontend
+
+    - name: Build backend
+      run: go build -o ./dist/server
+      working-directory: backend
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
