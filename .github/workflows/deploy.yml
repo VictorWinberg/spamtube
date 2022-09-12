@@ -54,7 +54,7 @@ jobs:
           name: dist-frontend
 
       - name: Move frontend dist to backend
-        run: mv frontend/dist backend/dist
+        run: mv frontend/dist dist
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -68,6 +68,6 @@ jobs:
           git remote add server git@zolly.ml:repos/spamtube.git
           git config --global user.email "actions@github.com"
           git config --global user.name "Github Actions"
-          git add */dist -f
+          git add dist -f
           git commit -m "Build files"
           git push -u server master -f
