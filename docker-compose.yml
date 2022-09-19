@@ -32,10 +32,6 @@ services:
       - spamtube-devnet
     environment:
       PORT: 3000
-      REDDIT_APP_USERNAME: ${REDDIT_APP_USERNAME}
-      REDDIT_APP_PRIVATE_KEY: ${REDDIT_APP_PRIVATE_KEY}
-      REDDIT_USERNAME: ${REDDIT_USERNAME}
-      REDDIT_PASSWORD: ${REDDIT_PASSWORD}
     depends_on:
       migrate:
         condition: service_completed_successfully
