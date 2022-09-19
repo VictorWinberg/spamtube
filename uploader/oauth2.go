@@ -59,7 +59,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 func getClient(scope ...string) *http.Client {
 	ctx := context.Background()
 
-	b, err := ioutil.ReadFile("client_secret.json")
+	b, err := ioutil.ReadFile("client_secrets.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
