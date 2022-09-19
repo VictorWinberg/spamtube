@@ -1,15 +1,15 @@
 /* eslint-disable */
 declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<{}, {}, any>
-  export default component
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
 }
 
 declare module 'vue-router' {
-    interface RouteMeta {
-        order?: number;
-        transitionName?: string;
-    }
+  interface RouteMeta {
+    order?: number;
+    transitionName?: string;
+  }
 }
 
 export {}

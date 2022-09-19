@@ -2,5 +2,6 @@ tmp/
 dist/
 
 *.env.local
+.vscode/
 
 .DS_Store
