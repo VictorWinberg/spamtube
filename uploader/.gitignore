@@ -1,2 +1,3 @@
 data/*
+.credentials/
 client_secret.json

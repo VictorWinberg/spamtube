@@ -26,7 +26,7 @@ func main() {
 		panic("You must provide a filename of a video file to upload")
 	}
 
-	client := getClient(youtube.YoutubeUploadScope)
+	client := getClient(youtube.YoutubeReadonlyScope, youtube.YoutubeUploadScope)
 
 	service, err := youtube.New(client)
 	if err != nil {
@@ -38,6 +38,7 @@ func main() {
 			Title:       *title,
 			Description: *description,
 			CategoryId:  *category,
+			Tags:        []string{"spamtube"},
 		},
 		Status: &youtube.VideoStatus{PrivacyStatus: *privacy},
 	}
@@ -47,23 +48,28 @@ func main() {
 		upload.Snippet.Tags = strings.Split(*keywords, ",")
 	}
 
-	//Fix this part, feels odd
-	var part = make([]string, 2)
+	channelResponse, err := service.Channels.List([]string{"snippet", "contentDetails", "statistics"}).Mine(true).Do()
+	if err != nil {
+		panic(fmt.Sprintf("Error calling YouTube client: %v", err))
+	}
+	fmt.Printf("Channel id: %v\n", channelResponse.Items[0].Id)
+	fmt.Printf("Channel name: %v\n", channelResponse.Items[0].Snippet.Title)
 
-	part[0] = "snippet"
-	part[1] = "status"
-	call := service.Videos.Insert(part, upload)
+	// TODO: Remove this when you want to upload
+	if true {
+		os.Exit(0)
+	}
 
 	file, err := os.Open(*filename)
-	defer file.Close()
 	if err != nil {
 		log.Fatalf("Error opening %v: %v", *filename, err)
 	}
+	defer file.Close()
 
-	response, err := call.Media(file).Do()
+	videoResponse, err := service.Videos.Insert([]string{"snippet", "status"}, upload).Media(file).Do()
 	if err != nil {
 		panic(fmt.Sprintf("Error calling YouTube client: %v", err))
 	}
 
-	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
+	fmt.Printf("Upload successful! Video ID: %v\n", videoResponse.Id)
 }
