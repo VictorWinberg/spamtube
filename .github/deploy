@@ -1,8 +1,8 @@
 #!/bin/bash
 set -eu # exit script on errors
 
-echo "copy spamtube env"
-rsync /home/git/www/spamtube/.env .
+echo "copy spamtube .env.local"
+rsync /home/git/www/spamtube/backend/.env.local ./backend/
 
 # build frontend is done with github actions
 # echo "> npm run build..."
