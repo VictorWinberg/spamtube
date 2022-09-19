@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	cache "github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
 )
@@ -53,6 +54,12 @@ type RedditResponseTop struct {
 }
 
 func main() {
+	err := godotenv.Load(".env.local")
+	if err != nil {
+		fmt.Printf("[WARN]: %s", err)
+	}
+	godotenv.Load()
+
 	port := flag.String("port", getEnv("PORT", "3000"), "Server port")
 	flag.Parse()
 	c := cache.New(23*time.Hour, 10*time.Minute)
