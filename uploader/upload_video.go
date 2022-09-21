@@ -12,11 +12,11 @@ import (
 
 var (
 	filename    = flag.String("filename", "", "Name of video file to upload")
-	title       = flag.String("title", "Test Title", "Video title")
-	description = flag.String("description", "Test Description", "Video description")
+	title       = flag.String("title", "SpamTube Default Title", "Video title")
+	description = flag.String("description", "SpamTube Default Description", "Video description")
 	category    = flag.String("category", "22", "Video category")
-	keywords    = flag.String("keywords", "", "Comma separated list of video keywords")
-	privacy     = flag.String("privacy", "unlisted", "Video privacy status")
+	keywords    = flag.String("keywords", "spamtube,news,ai", "Comma separated list of video keywords")
+	privacy     = flag.String("privacy", "listed", "Video privacy status")
 )
 
 func main() {
