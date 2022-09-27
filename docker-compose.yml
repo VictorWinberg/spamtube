@@ -68,6 +68,10 @@ services:
     volumes:
       - ./generator/data:/app/data
       - ./generator/dist:/app/dist
+  dalleflow:
+    build: dalleflow
+    volumes: 
+    - ./dalleflow/out:/app/out
 
 volumes:
   ui-volume:
