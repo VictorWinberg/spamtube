@@ -35,7 +35,7 @@ func ScaleImages(images []os.DirEntry, path string) {
 func GenerateVideo(path string, imageExt string) error {
 	imageInput := ffmpeg.Input(path+PREFIX+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
 
-	audioInput := ffmpeg.Input("./data/test_data/audio.mp3")
+	audioInput := ffmpeg.Input("./data/audio/audio.mp3")
 
 	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	return err
@@ -48,7 +48,7 @@ func DeleteScaledImages(images []os.DirEntry, path string) {
 }
 
 func GetImages() ([]os.DirEntry, string, string) {
-	path := "./data/"
+	path := "./data/images/"
 	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)

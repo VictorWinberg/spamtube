@@ -63,16 +63,6 @@ services:
       timeout: 5s
       retries: 5
 
-  generator:
-    build: generator
-    volumes:
-      - ./generator/data:/app/data
-      - ./generator/dist:/app/dist
-  dalleflow:
-    build: dalleflow
-    volumes: 
-    - ./dalleflow/out:/app/out
-
 volumes:
   ui-volume:
 

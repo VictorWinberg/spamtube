@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	filename    = flag.String("filename", "", "Name of video file to upload")
-	title       = flag.String("title", "SpamTube Default Title", "Video title")
-	description = flag.String("description", "SpamTube Default Description", "Video description")
-	category    = flag.String("category", "22", "Video category")
-	keywords    = flag.String("keywords", "spamtube,news,ai", "Comma separated list of video keywords")
-	privacy     = flag.String("privacy", "listed", "Video privacy status")
+	filename    = flag.String("filename", getEnv("FILENAME", ""), "Name of video file to upload")
+	title       = flag.String("title", getEnv("TITLE", "SpamTube Default Title"), "Video title")
+	description = flag.String("description", getEnv("DESCRIPTION", "SpamTube Default Description"), "Video description")
+	category    = flag.String("category", getEnv("CATEGORY", "22"), "Video category")
+	keywords    = flag.String("keywords", getEnv("KEYWORDS", "spamtube,news,ai"), "Comma separated list of video keywords")
+	privacy     = flag.String("privacy", getEnv("PRIVACY", "public"), "Video privacy status")
 )
 
 func main() {
@@ -55,11 +55,6 @@ func main() {
 	fmt.Printf("Channel id: %v\n", channelResponse.Items[0].Id)
 	fmt.Printf("Channel name: %v\n", channelResponse.Items[0].Snippet.Title)
 
-	// TODO: Remove this when you want to upload
-	if true {
-		os.Exit(0)
-	}
-
 	file, err := os.Open(*filename)
 	if err != nil {
 		log.Fatalf("Error opening %v: %v", *filename, err)
@@ -72,4 +67,12 @@ func main() {
 	}
 
 	fmt.Printf("Upload successful! Video ID: %v\n", videoResponse.Id)
+}
+
+func getEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
 }

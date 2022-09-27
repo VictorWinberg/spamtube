@@ -1,0 +1,39 @@
+version: "3.1"
+
+services:
+  dalleflow:
+    build: dalleflow
+    volumes: 
+      - image-volume:/app/out
+
+  music-maker:
+    build: music-maker
+    volumes:
+      - audio-volume:/app/out
+
+  generator:
+    build: generator
+    volumes:
+      - image-volume:/app/data/images
+      - audio-volume:/app/data/audio
+      - video-volume:/app/out
+    depends_on:
+      dalleflow:
+        condition: service_completed_successfully
+      music-maker:
+        condition: service_completed_successfully
+
+  uploader:
+    build: uploader
+    volumes:
+      - video-volume:/app/data
+    environment:
+      FILENAME: ./data/video.mp4
+    depends_on:
+      generator:
+        condition: service_completed_successfully
+
+volumes:
+  image-volume:
+  audio-volume:
+  video-volume:
