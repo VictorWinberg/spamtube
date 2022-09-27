@@ -1,6 +1,9 @@
 tmp/
 dist/
-
+*/out/*
+!.gitkeep
+*/data/*
+!*/data/test_data
 *.env.local
 .vscode/
 
