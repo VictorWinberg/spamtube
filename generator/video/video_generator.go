@@ -10,6 +10,7 @@ import (
 
 const IMAGE_EXT = "png"
 const TEST_IMAGE_EXT = "jpg"
+const AUDIO_EXT = "mp3"
 const OUTPUT_FILE = "./out/video.mp4"
 const PREFIX = "scaled_"
 const VIDEO_LENGTH = 30 // In seconds
@@ -18,10 +19,11 @@ const VIDEO_CODEC = "libx264"
 const OUTPUT_FPS = 30
 
 func CreateVideo() {
-	images, path, imageExt := GetImages()
-	ScaleImages(images, path)
-	err := GenerateVideo(path, imageExt)
-	DeleteScaledImages(images, path)
+	images, imagePath, imageExt := GetImages()
+	_, audioPath := GetAudio()
+	ScaleImages(images, imagePath)
+	err := GenerateVideo(imagePath, imageExt, audioPath)
+	DeleteScaledImages(images, imagePath)
 	fmt.Println(err)
 }
 
@@ -32,10 +34,10 @@ func ScaleImages(images []os.DirEntry, path string) {
 	}
 }
 
-func GenerateVideo(path string, imageExt string) error {
-	imageInput := ffmpeg.Input(path+PREFIX+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
+func GenerateVideo(imagePath string, imageExt string, audioPath string) error {
+	imageInput := ffmpeg.Input(imagePath+PREFIX+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
 
-	audioInput := ffmpeg.Input("./data/audio/audio.mp3")
+	audioInput := ffmpeg.Input(audioPath + "audio." + AUDIO_EXT)
 
 	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	return err
@@ -66,21 +68,48 @@ func GetImages() ([]os.DirEntry, string, string) {
 	return imageFiles, path, IMAGE_EXT
 }
 
-func ExtractImagesWithExt(files []os.DirEntry, searchFileExt string) []os.DirEntry {
-	imageFiles := []os.DirEntry{}
+func GetAudio() ([]os.DirEntry, string) {
+	path := "./data/audio/"
+	files, err := os.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	audioFiles := ExtractAudio(files)
+	if len(audioFiles) == 0 {
+		fmt.Println("No audio files found, fetching test audio")
+		testPath := "./data/test_data/"
+		testFiles, err := os.ReadDir(testPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return ExtractTestAudio(testFiles), testPath
+	}
+	return audioFiles, path
+}
+
+func ExtractFilesWithExt(files []os.DirEntry, searchFileExt string) []os.DirEntry {
+	foundFiles := []os.DirEntry{}
 	for _, f := range files {
 		fileExt := f.Name()[len(f.Name())-len(searchFileExt) : len(f.Name())]
 		if fileExt == searchFileExt {
-			imageFiles = append(imageFiles, f)
+			foundFiles = append(foundFiles, f)
 		}
 	}
-	return imageFiles
+	return foundFiles
 }
 
 func ExtractImages(files []os.DirEntry) []os.DirEntry {
-	return ExtractImagesWithExt(files, IMAGE_EXT)
+	return ExtractFilesWithExt(files, IMAGE_EXT)
 }
 
 func ExtractTestImages(files []os.DirEntry) []os.DirEntry {
-	return ExtractImagesWithExt(files, TEST_IMAGE_EXT)
+	return ExtractFilesWithExt(files, TEST_IMAGE_EXT)
+}
+
+func ExtractAudio(files []os.DirEntry) []os.DirEntry {
+	return ExtractFilesWithExt(files, AUDIO_EXT)
+}
+
+func ExtractTestAudio(files []os.DirEntry) []os.DirEntry {
+	return ExtractFilesWithExt(files, AUDIO_EXT)
 }
