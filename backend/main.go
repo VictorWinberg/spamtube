@@ -250,7 +250,6 @@ func handleTokenLogic(c *cache.Cache, con *gin.Context) (string, error) {
 	} else {
 		t, err := getAccessToken(c)
 		if err != nil {
-			fmt.Printf("ERROR")
 			return "", err
 		}
 		token = t.AccessToken
