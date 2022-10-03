@@ -1,4 +1,4 @@
-const BASE_URL = "api";
+const BASE_URL = "/api";
 
 export interface HTTPResponseInterface<T> extends Response {
   parsedBody?: T;
@@ -29,7 +29,7 @@ async function client<T>(
   config.headers = new Headers({
     "Content-Type": "application/json",
   });
-  const request = new Request(`${BASE_URL}/${path}`, config);
+  const request = new Request(`${baseUrl}/${path}`, config);
   const response: HTTPResponseInterface<T> = await fetch(request);
 
   let body;
@@ -41,7 +41,7 @@ async function client<T>(
   }
 
   if (response.ok) {
-    response.parsedBody = body;
+    response.parsedBody = body ?? response.parsedBody;
     return response;
   }
 

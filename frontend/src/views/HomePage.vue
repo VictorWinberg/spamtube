@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h1>This is a home page</h1>
-    <img :src="logo" />
+    <img :src="logo" alt="logo" />
   </div>
 </template>
 
