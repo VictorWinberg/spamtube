@@ -41,6 +41,9 @@ services:
       - video-volume:/app/data
     environment:
       FILENAME: ./data/video.mp4
+      TITLE: ${TITLE}
+      DESCRIPTION: ${DESCRIPTION}
+
     depends_on:
       generator:
         condition: service_completed_successfully

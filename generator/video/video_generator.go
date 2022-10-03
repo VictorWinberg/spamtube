@@ -55,7 +55,7 @@ func GenerateAudio() *ffmpeg.Stream {
 			audioInputs = append(audioInputs, ffmpeg.Input(path+audioFile.Name()))
 		}
 	}
-	err := ffmpeg.Filter(audioInputs, "amix", ffmpeg.Args{fmt.Sprintf("inputs=%d", nFoundFiles), "duration=shortest"}).Output(OUTPUT_AUDIO_FILE, ffmpeg.KwArgs{"c:a": "libmp3lame", "t": 60}).OverWriteOutput().ErrorToStdOut().Run()
+	err := ffmpeg.Filter(audioInputs, "amix", ffmpeg.Args{fmt.Sprintf("inputs=%d", nFoundFiles), "duration=longest"}).Output(OUTPUT_AUDIO_FILE, ffmpeg.KwArgs{"c:a": "libmp3lame", "t": 60}).OverWriteOutput().ErrorToStdOut().Run()
 	fmt.Println(err)
 	return ffmpeg.Input(OUTPUT_AUDIO_FILE)
 }
