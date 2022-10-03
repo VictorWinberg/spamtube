@@ -5,20 +5,32 @@ services:
     build: dalleflow
     volumes: 
       - image-volume:/app/out
+    environment:
+      DALLE_INPUT: ${DALLE_INPUT}
+
+  voice-maker:
+    build: voice-maker
+    volumes:
+      - voice-volume:/app/out
+    environment:
+      VOICE_INPUT: ${VOICE_INPUT}
 
   music-maker:
     build: music-maker
     volumes:
-      - audio-volume:/app/out
+      - music-volume:/app/out
 
   generator:
     build: generator
     volumes:
       - image-volume:/app/data/images
-      - audio-volume:/app/data/audio
+      - voice-volume:/app/data/audio/voice
+      - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
       dalleflow:
+        condition: service_completed_successfully
+      voice-maker:
         condition: service_completed_successfully
       music-maker:
         condition: service_completed_successfully
@@ -35,5 +47,6 @@ services:
 
 volumes:
   image-volume:
-  audio-volume:
+  voice-volume:
+  music-volume:
   video-volume:
