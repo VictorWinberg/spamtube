@@ -44,10 +44,10 @@ function randomIntFromInterval(min, max) {
 }
 
 async function main() {
-  const page = randomIntFromInterval(1, 25);
+  const page = randomIntFromInterval(1, 5);
   
-  console.log(`Getting a popular song from https://www.bensound.com/royalty-free-music/${page}...`);
-  const htmlstr = await fetchAsync(`https://www.bensound.com/royalty-free-music/${page}`);
+  console.log(`Getting a popular song from https://www.bensound.com/free-music-for-videos/${page}...`);
+  const htmlstr = await fetchAsync(`https://www.bensound.com/free-music-for-videos/${page}`);
   const songNames = getSongNames(htmlstr, ".result-container > div:first-child > div > .track-name a span");
 
   console.log("Pool of songs:", { array: songNames });
