@@ -24,10 +24,13 @@ type AccessToken struct {
 	Scope       string `json:"scope"`
 }
 
+type SearchResult struct {
+	Names []string `json:"names"`
+}
+
 type RedditResponseTop struct {
 	Kind string `json:"kind"`
 	Data struct {
-		After    string `json:"after"`
 		Children []struct {
 			Data struct {
 				Subreddit         string  `json:"subreddit"`
@@ -49,7 +52,6 @@ type RedditResponseTop struct {
 				CreatedUtc        float64 `json:"created_utc"`
 			} `json:"data"`
 		} `json:"children"`
-		Before interface{} `json:"before"`
 	} `json:"data"`
 }
 
@@ -104,18 +106,13 @@ func main() {
 				return
 			}
 
-			var token string
-			if val, found := c.Get("token"); found {
-				token = val.(string)
-			} else {
-				t, err := getAccessToken(c)
-				if err != nil {
-					con.JSON(http.StatusInternalServerError, gin.H{
-						"message": fmt.Sprintf("Error: %s", err),
-					})
-					return
-				}
-				token = t.AccessToken
+			token, err := handleTokenLogic(c, con)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
 			}
 
 			// add authorization header to the req
@@ -143,7 +140,56 @@ func main() {
 				return
 			}
 
-			con.JSON(http.StatusOK, res)
+			con.JSON(http.StatusOK, res.Data.Children)
+		})
+
+		api.GET("/search/:search_query", func(con *gin.Context) {
+			searchQuery := con.Param("search_query")
+			url := fmt.Sprintf("https://oauth.reddit.com/api/search_reddit_names?query=%s&include_over_18=true", searchQuery)
+			req, err := http.NewRequest("GET", url, nil)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+
+			token, err := handleTokenLogic(c, con)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+
+			// add authorization header to the req
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+			// Send req using http Client
+			client := &http.Client{}
+			resp, err := client.Do(req)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+			}
+
+			defer resp.Body.Close()
+
+			res := &SearchResult{}
+			json.NewDecoder(resp.Body).Decode(&res)
+
+			if resp.StatusCode != 200 {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Could not search for subreddits",
+				})
+				return
+			}
+
+			con.JSON(http.StatusOK, res.Names)
 		})
 	}
 
@@ -192,8 +238,21 @@ func getAccessToken(c *cache.Cache) (*AccessToken, error) {
 	defer res.Body.Close()
 	json.NewDecoder(res.Body).Decode(&token)
 
-	c.Set("token", token, cache.DefaultExpiration)
-	fmt.Println(token)
+	c.Set("token", token.AccessToken, cache.DefaultExpiration)
 
+	return token, nil
+}
+
+func handleTokenLogic(c *cache.Cache, con *gin.Context) (string, error) {
+	var token string
+	if val, found := c.Get("token"); found {
+		token = val.(string)
+	} else {
+		t, err := getAccessToken(c)
+		if err != nil {
+			return "", err
+		}
+		token = t.AccessToken
+	}
 	return token, nil
 }
