@@ -1,10 +1,15 @@
 tmp/
 dist/
-*/out/*
-!.gitkeep
+
 */data/*
 !*/data/test_data
+
+*/out/*
+
+!.gitkeep
+
 *.env.local
 .vscode/
 
 .DS_Store
+.credentials/

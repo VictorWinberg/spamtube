@@ -14,10 +14,16 @@
 
 ### Docker
 
-Run a service in a docker container:
+Run a web service in a docker container:
 
 ```bash
 docker compose up --build [service]
+```
+
+Run an upload service in a docker container:
+
+```bash
+docker compose up -f docker-compose-upload --build [service]
 ```
 
 ## Development
