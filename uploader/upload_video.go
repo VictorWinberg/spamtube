@@ -70,8 +70,8 @@ func main() {
 }
 
 func getEnv(key, fallback string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
+	value := os.Getenv(key)
+	if value == "" {
 		value = fallback
 	}
 	return value
