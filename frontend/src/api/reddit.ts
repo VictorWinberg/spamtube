@@ -1,4 +1,3 @@
-import { TopPostData } from "@/global";
 import { get } from "./apiClient";
 
 export async function getTopPosts(name: string) {
