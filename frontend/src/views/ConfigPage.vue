@@ -1,5 +1,5 @@
 <template>
-  <div class="configPage">
+  <div class="config">
     <ConfigComponent msg="config" />
   </div>
 </template>
@@ -15,3 +15,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.config {
+  padding: 2em;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="config">
+  <div class="config-omponent">
     <h1>This is a {{ msg }} page</h1>
   </div>
 </template>
