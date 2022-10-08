@@ -2,6 +2,12 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY . ./
+RUN apk add curl
 
-RUN cp ./data/test_data/audio.mp3 ./out/
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+CMD ["npm", "start"]
