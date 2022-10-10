@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -19,7 +20,21 @@ func main() {
 	flag.Parse()
 
 	fmt.Printf("Got TTS-input: %s\n", *text)
-	speech := htgotts.Speech{Folder: OUTPUT_FOLDER, Language: voices.Danish, Handler: &handlers.MPlayer{}}
+	in := []string{
+		voices.Danish,
+		voices.Icelandic,
+		voices.Swedish,
+		voices.Norwegian,
+		voices.French,
+		voices.Finnish,
+		voices.German,
+		voices.Ukrainian,
+		voices.EnglishAU,
+		voices.EnglishUK,
+		voices.Spanish,
+	}
+	language := in[rand.Intn(len(in))]
+	speech := htgotts.Speech{Folder: OUTPUT_FOLDER, Language: language, Handler: &handlers.MPlayer{}}
 	os.Remove(speech.Folder + "/" + OUTPUT_NAME + ".mp3")
 	speech.CreateSpeechFile(*text, OUTPUT_NAME)
 

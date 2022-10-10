@@ -13,7 +13,6 @@ const TEST_IMAGE_EXT = "jpg"
 const AUDIO_EXT = "mp3"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
 const OUTPUT_AUDIO_FILE = "./out/audio.mp3"
-const PREFIX = "scaled_"
 const VIDEO_LENGTH = 30 // In seconds
 const OUTPUT_VIDEO_FORMAT = "yuvj420p"
 const VIDEO_CODEC = "libx264"
@@ -21,23 +20,14 @@ const OUTPUT_FPS = 30
 const MIN_AUDIO_FILES = 2
 
 func CreateVideo() {
-	images, imagePath, imageExt := GetImages()
+	imagePath, imageExt := GetImages()
 	audio := GenerateAudio()
-	ScaleImages(images, imagePath)
 	err := GenerateVideo(imagePath, imageExt, audio)
-	DeleteScaledImages(images, imagePath)
 	fmt.Println(err)
 }
 
-func ScaleImages(images []os.DirEntry, path string) {
-	for _, f := range images {
-		fmt.Printf("Found file to scale: %s%s\n", path, f.Name())
-		ffmpeg.Input(path+f.Name()).Output(fmt.Sprintf("%s%s%s", path, PREFIX, f.Name()), ffmpeg.KwArgs{"vf": "scale=320:240"}).OverWriteOutput().Run()
-	}
-}
-
 func GenerateVideo(imagePath string, imageExt string, audioInput *ffmpeg.Stream) error {
-	imageInput := ffmpeg.Input(imagePath+PREFIX+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
+	imageInput := ffmpeg.Input(imagePath+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
 
 	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	return err
@@ -60,13 +50,7 @@ func GenerateAudio() *ffmpeg.Stream {
 	return ffmpeg.Input(OUTPUT_AUDIO_FILE)
 }
 
-func DeleteScaledImages(images []os.DirEntry, path string) {
-	for _, f := range images {
-		os.Remove(path + PREFIX + f.Name())
-	}
-}
-
-func GetImages() ([]os.DirEntry, string, string) {
+func GetImages() (string, string) {
 	path := "./data/images/"
 	files, err := os.ReadDir(path)
 	if err != nil {
@@ -76,13 +60,13 @@ func GetImages() ([]os.DirEntry, string, string) {
 	if len(imageFiles) == 0 {
 		fmt.Println("No images found, fetching test images")
 		testPath := "./data/test_data/"
-		testFiles, err := os.ReadDir(testPath)
+		_, err := os.ReadDir(testPath)
 		if err != nil {
 			log.Fatal(err)
 		}
-		return ExtractTestImages(testFiles), testPath, TEST_IMAGE_EXT
+		return testPath, TEST_IMAGE_EXT
 	}
-	return imageFiles, path, IMAGE_EXT
+	return path, IMAGE_EXT
 }
 
 func GetAudio() map[string][]os.DirEntry {
