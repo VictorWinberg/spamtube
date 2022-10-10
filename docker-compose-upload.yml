@@ -1,20 +1,20 @@
 version: "3.1"
 
 services:
-  dalleflow:
-    build: dalleflow
+  image-ai-maker:
+    build: image-ai-maker
     volumes: 
       - image-xs-volume:/app/out
     environment:
       DALLE_INPUT: ${DALLE_INPUT}
 
-  swin-ir:
-    build: swin-ir
+  image-upscaler:
+    build: image-upscaler
     volumes:
       - image-xs-volume:/app/data
       - image-xl-volume:/app/out
     depends_on:
-      dalleflow:
+      image-ai-maker:
         condition: service_completed_successfully
 
   voice-maker:
@@ -37,7 +37,7 @@ services:
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
-      swin-ir:
+      image-upscaler:
         condition: service_completed_successfully
       voice-maker:
         condition: service_completed_successfully

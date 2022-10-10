@@ -34,12 +34,12 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # set up model
     if os.path.exists(args.model_path):
-        print(f'loading model from {args.model_path}')
+        print(f'loading model from {args.model_path}', flush=True)
     else:
         os.makedirs(os.path.dirname(args.model_path), exist_ok=True)
         url = 'https://github.com/JingyunLiang/SwinIR/releases/download/v0.0/{}'.format(os.path.basename(args.model_path))
         r = requests.get(url, allow_redirects=True)
-        print(f'downloading model {args.model_path}')
+        print(f'downloading model {args.model_path}', flush=True)
         open(args.model_path, 'wb').write(r.content)
 
     model = define_model(args)
@@ -105,9 +105,9 @@ def main():
                     test_results['psnrb_y'].append(psnrb_y)
             print('Testing {:d} {:20s} - PSNR: {:.2f} dB; SSIM: {:.4f}; PSNRB: {:.2f} dB;'
                   'PSNR_Y: {:.2f} dB; SSIM_Y: {:.4f}; PSNRB_Y: {:.2f} dB.'.
-                  format(idx, imgname, psnr, ssim, psnrb, psnr_y, ssim_y, psnrb_y))
+                  format(idx, imgname, psnr, ssim, psnrb, psnr_y, ssim_y, psnrb_y), flush=True)
         else:
-            print('Testing {:d} {:20s}'.format(idx, imgname))
+            print('Testing {:d} {:20s}'.format(idx, imgname), flush=True)
 
     # summarize psnr/ssim
     if img_gt is not None:

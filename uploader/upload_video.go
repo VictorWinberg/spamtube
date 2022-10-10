@@ -66,7 +66,7 @@ func main() {
 		panic(fmt.Sprintf("Error calling YouTube client: %v", err))
 	}
 
-	fmt.Printf("Upload successful! Video ID: %v\n", videoResponse.Id)
+	fmt.Printf("Upload successful! Video URL: https://www.youtube.com/watch?v=%v\n", videoResponse.Id)
 }
 
 func getEnv(key, fallback string) string {
