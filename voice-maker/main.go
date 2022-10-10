@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	fmt.Printf("Got TTS-input: %s\n", *text)
-	speech := htgotts.Speech{Folder: OUTPUT_FOLDER, Language: voices.EnglishUK, Handler: &handlers.MPlayer{}}
+	speech := htgotts.Speech{Folder: OUTPUT_FOLDER, Language: voices.Swedish, Handler: &handlers.MPlayer{}}
 	os.Remove(speech.Folder + "/" + OUTPUT_NAME + ".mp3")
 	speech.CreateSpeechFile(*text, OUTPUT_NAME)
 

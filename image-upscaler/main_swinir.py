@@ -103,11 +103,11 @@ def main():
                 if args.task in ['color_jpeg_car']:
                     psnrb_y = util.calculate_psnrb(output, img_gt, crop_border=border, test_y_channel=True)
                     test_results['psnrb_y'].append(psnrb_y)
-            print('Testing {:d} {:20s} - PSNR: {:.2f} dB; SSIM: {:.4f}; PSNRB: {:.2f} dB;'
+            print('Upscaled {:d} {:20s} - PSNR: {:.2f} dB; SSIM: {:.4f}; PSNRB: {:.2f} dB;'
                   'PSNR_Y: {:.2f} dB; SSIM_Y: {:.4f}; PSNRB_Y: {:.2f} dB.'.
                   format(idx, imgname, psnr, ssim, psnrb, psnr_y, ssim_y, psnrb_y), flush=True)
         else:
-            print('Testing {:d} {:20s}'.format(idx, imgname), flush=True)
+            print('Upscaled {:d} {:20s}'.format(idx, imgname), flush=True)
 
     # summarize psnr/ssim
     if img_gt is not None:
