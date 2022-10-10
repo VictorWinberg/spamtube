@@ -4,9 +4,18 @@ services:
   dalleflow:
     build: dalleflow
     volumes: 
-      - image-volume:/app/out
+      - image-xs-volume:/app/out
     environment:
       DALLE_INPUT: ${DALLE_INPUT}
+
+  swin-ir:
+    build: swin-ir
+    volumes:
+      - image-xs-volume:/app/data
+      - image-xl-volume:/app/out
+    depends_on:
+      dalleflow:
+        condition: service_completed_successfully
 
   voice-maker:
     build: voice-maker
@@ -23,12 +32,12 @@ services:
   generator:
     build: generator
     volumes:
-      - image-volume:/app/data/images
+      - image-xl-volume:/app/data/images
       - voice-volume:/app/data/audio/voice
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
-      dalleflow:
+      swin-ir:
         condition: service_completed_successfully
       voice-maker:
         condition: service_completed_successfully
@@ -49,7 +58,8 @@ services:
         condition: service_completed_successfully
 
 volumes:
-  image-volume:
+  image-xs-volume:
+  image-xl-volume:
   voice-volume:
   music-volume:
   video-volume:
