@@ -6,7 +6,7 @@ name: CI
 on:
   # Allows you to run this workflow from http
   repository_dispatch:
-    input:
+    inputs:
       title:
         description: 'Title Of Video'
         required: true 
