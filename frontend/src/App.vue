@@ -93,6 +93,9 @@ nav {
 
     p {
       display: block;
+      &:hover {
+        border-bottom: solid #58b3de 3px;
+      }
       @media screen and (max-width: 600px) {
         display: none;
       }
@@ -103,6 +106,9 @@ nav {
       @media screen and (max-width: 600px) {
         color: #58b3de;
         display: block;
+        &:active {
+          transform: scale(1.25);
+        }
       }
     }
   }
