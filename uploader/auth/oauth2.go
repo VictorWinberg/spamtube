@@ -65,7 +65,7 @@ func GetClient(scope ...string) *http.Client {
 	}
 
 	// If modifying the scope, delete your previously saved credentials
-	// at ~/.credentials/youtube-go.json
+	// at ~/.credentials/youtube_token.json
 	config, err := google.ConfigFromJSON(b, scope...)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
@@ -190,7 +190,7 @@ func tokenCacheFile() (string, error) {
 	tokenCacheDir := filepath.Join(".credentials")
 	os.MkdirAll(tokenCacheDir, 0700)
 	return filepath.Join(tokenCacheDir,
-		url.QueryEscape("youtube-go.json")), nil
+		url.QueryEscape("youtube_token.json")), nil
 }
 
 // tokenFromFile retrieves a Token from a given file path.

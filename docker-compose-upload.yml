@@ -6,7 +6,7 @@ services:
     volumes: 
       - image-xs-volume:/app/out
     environment:
-      DALLE_INPUT: ${DALLE_INPUT}
+      IMAGE_INPUT: ${IMAGE_INPUT}
 
   image-upscaler:
     build: image-upscaler

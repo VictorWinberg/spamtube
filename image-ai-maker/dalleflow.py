@@ -3,7 +3,7 @@ import urllib
 from docarray import Document
 
 server_url = 'grpcs://dalle-flow.dev.jina.ai'
-prompt = os.getenv('DALLE_INPUT', 'a cool horse running in a crazy landscape with birds and rainbows')
+prompt = os.getenv('IMAGE_INPUT', 'a cool horse running in a crazy landscape with birds and rainbows')
 doc = Document(text=prompt).post(server_url, parameters={'num_images': 10})
 for i, d in enumerate(doc.matches):
     response = urllib.request.urlopen(d.uri)
