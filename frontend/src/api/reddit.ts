@@ -1,6 +1,6 @@
 import { get } from "./apiClient";
 
-type TopPost = {
+export type TopPost = {
   data: {
     subreddit: string;
     selftext: string;
@@ -20,12 +20,8 @@ type TopPost = {
   };
 };
 
-export type TopPostData = {
-  children: TopPost[];
-};
-
 export async function getTopPosts(name: string) {
-  return get<TopPostData[]>(`top/${name}`);
+  return get<TopPost[]>(`top/${name}`);
 }
 
 export async function searchSubreddits(query: string) {
