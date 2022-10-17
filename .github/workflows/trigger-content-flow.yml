@@ -56,8 +56,13 @@ jobs:
           CLIENT_SECRETS: ${{ secrets.client_secrets }}
           YOUTUBE_TOKEN: ${{ secrets.youtube_token }}
 
-      - name: run docker compose
-        run: docker compose -f docker-compose-upload.yml up
+      - name: Docker is baking a cake
+        run: |
+          docker buildx bake \
+            --set "*.cache-from=type=gha" \
+            --set "*.cache-to=type=gha,mode=max" \
+            --load \
+            -f docker-compose-upload.yml
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}

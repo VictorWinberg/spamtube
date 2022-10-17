@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 
 	htgotts "github.com/hegedustibor/htgo-tts"
 	handlers "github.com/hegedustibor/htgo-tts/handlers"
@@ -19,14 +20,14 @@ func main() {
 	text := flag.String("text", getEnv("VOICE_INPUT", strings.Repeat("Hello SpamTube ", 10)), "Text-to-Speech input")
 	flag.Parse()
 
+	rand.Seed(time.Now().UnixNano())
+
 	fmt.Printf("Got TTS-input: %s\n", *text)
 	in := []string{
 		voices.Danish,
-		voices.Icelandic,
 		voices.Swedish,
 		voices.Norwegian,
 		voices.French,
-		voices.Finnish,
 		voices.German,
 		voices.Ukrainian,
 		voices.EnglishAU,
@@ -34,6 +35,7 @@ func main() {
 		voices.Spanish,
 	}
 	language := in[rand.Intn(len(in))]
+	fmt.Printf("Language: %s\n", language)
 	speech := htgotts.Speech{Folder: OUTPUT_FOLDER, Language: language, Handler: &handlers.MPlayer{}}
 	os.Remove(speech.Folder + "/" + OUTPUT_NAME + ".mp3")
 	speech.CreateSpeechFile(*text, OUTPUT_NAME)
