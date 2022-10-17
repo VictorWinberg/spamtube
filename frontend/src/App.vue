@@ -1,21 +1,25 @@
 <template>
   <v-app>
+    <nav>
+      <router-link to="/" class="item">
+        <img class="item__image" :src="logo" />
+      </router-link>
+      <div class="menu">
+        <router-link to="/" class="item">
+          <v-icon small> mdi-home </v-icon>
+          <p>Home</p>
+        </router-link>
+        <router-link to="/config" class="item">
+          <v-icon small> mdi-hammer-screwdriver </v-icon>
+          <p>Configuration</p>
+        </router-link>
+        <router-link to="/stats" class="item">
+          <v-icon x-large> mdi-chart-areaspline </v-icon>
+          <p>Stats</p>
+        </router-link>
+      </div>
+    </nav>
     <v-main justify="center">
-      <v-toolbar app>
-        <v-toolbar-title>
-          <router-link to="/" style="cursor: pointer">SPAMTUBE</router-link>
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-toolbar-items class="hidden-xs-only">
-          <v-btn flat> <router-link to="/">Home</router-link> </v-btn>
-          <v-btn flat>
-            <router-link to="/config">Configuration</router-link>
-          </v-btn>
-          <v-btn flat>
-            <router-link to="/stats">Stats</router-link>
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
       <router-view v-slot="{ Component }">
         <transition :name="$route.meta.transitionName">
           <component :is="Component" />
@@ -27,11 +31,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import logo from "./assets/images/logo.svg";
 
 export default defineComponent({
   name: "App",
   data() {
-    return {};
+    return {
+      logo,
+    };
   },
 });
 </script>
@@ -43,10 +50,84 @@ body {
 
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  color: #2c3e50;
+  height: 100vh;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: #000000;
+  font-family: "JonzeJonzing";
+  font-size: 2em;
+  height: 6em;
+  transition: all 500ms;
+  border-bottom: solid 3px #58b3de;
+  z-index: 2;
+
+  @media screen and (max-width: 600px) {
+    font-size: 1.5em;
+    height: 3em;
+  }
+
+  > * {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu {
+    background: -webkit-linear-gradient(left, #58b3de, #2b4062);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    gap: 1em;
+    font-size: 1em;
+    margin-right: 1em;
+    @media screen and (max-width: 600px) {
+      -webkit-text-fill-color: unset;
+    }
+
+    p {
+      display: block;
+      &:hover {
+        border-bottom: solid #58b3de 3px;
+      }
+      @media screen and (max-width: 600px) {
+        display: none;
+      }
+    }
+
+    .v-icon {
+      display: none;
+      @media screen and (max-width: 600px) {
+        color: #58b3de;
+        display: block;
+        &:active {
+          transform: scale(1.25);
+        }
+      }
+    }
+  }
+
+  .item {
+    cursor: pointer;
+
+    &__image {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
+
+.v-main {
+  flex: 1;
+  background: linear-gradient(to bottom, black, #3a668b);
+  background-attachment: fixed;
+  color: white;
 }
 
 .slide-left-enter-active,
@@ -66,5 +147,11 @@ body {
 .slide-left-enter-from,
 .slide-right-leave-to {
   transform: translateX(100vw);
+}
+
+@font-face {
+  font-family: "JonzeJonzing";
+  src: local("JonzeJonzing"),
+    url(./assets/fonts/JonzeJonzing.ttf) format("truetype");
 }
 </style>
