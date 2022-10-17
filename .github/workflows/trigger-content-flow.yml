@@ -57,7 +57,7 @@ jobs:
           YOUTUBE_TOKEN: ${{ secrets.youtube_token }}
 
       - name: run docker compose
-        run: docker compose up -f docker-compose-upload
+        run: docker compose -f docker-compose-upload up
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
