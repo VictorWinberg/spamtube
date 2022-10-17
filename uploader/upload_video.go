@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"spamtube/uploader/auth"
 	"strings"
 
 	"google.golang.org/api/youtube/v3"
@@ -26,7 +27,7 @@ func main() {
 		panic("You must provide a filename of a video file to upload")
 	}
 
-	client := getClient(youtube.YoutubeReadonlyScope, youtube.YoutubeUploadScope)
+	client := auth.GetClient(youtube.YoutubeReadonlyScope, youtube.YoutubeUploadScope)
 
 	service, err := youtube.New(client)
 	if err != nil {

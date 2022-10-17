@@ -1,4 +1,4 @@
-package main
+package auth
 
 import (
 	"encoding/json"
@@ -56,7 +56,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
 // getClient uses a Context and Config to retrieve a Token
 // then generate a Client. It returns the generated Client.
-func getClient(scope ...string) *http.Client {
+func GetClient(scope ...string) *http.Client {
 	ctx := context.Background()
 
 	b, err := ioutil.ReadFile(".credentials/client_secrets.json")
