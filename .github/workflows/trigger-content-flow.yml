@@ -63,6 +63,9 @@ jobs:
             --set "*.cache-to=type=gha,mode=max" \
             --load \
             -f docker-compose-upload.yml
+
+      - name: Docker is running upload!
+        run: docker compose -f docker-compose-upload.yml up
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
