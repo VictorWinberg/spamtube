@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	redditapi "spamtube/backend/api"
+	internalApi "spamtube/backend/api"
 	"spamtube/backend/helpers"
 	"time"
 
@@ -33,8 +33,9 @@ func main() {
 	// Setup route group for the API
 	api := router.Group("/api")
 	{
-		api.GET("/top/:subreddit_name", redditapi.GetTopPosts(c))
-		api.GET("/search/:search_query", redditapi.SearchSubreddits(c))
+		api.GET("/top/:subreddit_name", internalApi.GetTopPosts(c))
+		api.GET("/search/:search_query", internalApi.SearchSubreddits(c))
+		api.GET("/generate", internalApi.TriggerGithubAction())
 	}
 
 	router.NoRoute(func(c *gin.Context) {
