@@ -43,9 +43,12 @@ jobs:
       - name: Add youtube credentials
         run: |
           mkdir .credentials
-          echo ${{ secrets.client_secrets }} > .credentials/client_secrets.json
-          echo ${{ secrets.youtube_token }} > .credentials/youtube_token.json
+          echo "${CLIENT_SECRETS}" > .credentials/client_secrets.json
+          echo "${YOUTUBE_TOKEN}" > .credentials/youtube_token.json
         working-directory: uploader
+        env:
+          CLIENT_SECRETS: ${{ secrets.client_secrets }}
+          YOUTUBE_TOKEN: ${{ secrets.youtube_token }}
 
       - name: run docker compose
         run: docker compose up -f docker-compose-upload
