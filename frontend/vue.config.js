@@ -12,5 +12,8 @@ module.exports = defineConfig({
         changeOrigin: true,
       },
     },
+    client: {
+      webSocketURL: process.env.BACKEND_WS_URL,
+    },
   },
 });
