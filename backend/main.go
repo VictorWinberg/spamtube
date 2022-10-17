@@ -20,7 +20,7 @@ func main() {
 	}
 	godotenv.Load()
 
-	port := flag.String("port", helpers.GetEnv("PORT", "3000"), "Server port")
+	port := flag.String("port", helpers.GetEnv("PORT", "3001"), "Server port")
 	flag.Parse()
 	c := cache.New(23*time.Hour, 10*time.Minute)
 
@@ -35,7 +35,8 @@ func main() {
 	{
 		api.GET("/top/:subreddit_name", internalApi.GetTopPosts(c))
 		api.GET("/search/:search_query", internalApi.SearchSubreddits(c))
-		api.POST("/generate", internalApi.TriggerGithubAction())
+		api.GET("/generate", internalApi.TriggerGithubAction())
+		api.GET("/uploades", internalApi.GetUploadedYoutubeVideos())
 	}
 
 	router.NoRoute(func(c *gin.Context) {
