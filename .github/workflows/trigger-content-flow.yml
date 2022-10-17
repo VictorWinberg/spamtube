@@ -36,10 +36,10 @@ jobs:
 
       - name: Input variables
         run: |
-          echo TITLE: ${{ inputs.title }}
-          echo DESCRIPTION: ${{ inputs.description }}
-          echo IMAGE_INPUT: ${{ inputs.image }}
-          echo VOICE_INPUT: ${{ inputs.voice }}
+          echo TITLE: "${TITLE}"
+          echo DESCRIPTION: "${DESCRIPTION}"
+          echo IMAGE_INPUT: "${IMAGE_INPUT}"
+          echo VOICE_INPUT: "${VOICE_INPUT}"
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
