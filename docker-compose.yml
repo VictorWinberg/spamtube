@@ -7,6 +7,8 @@ services:
       - "8080:8080"
     volumes:
       - ./frontend/src:/app/src
+    environment:
+      BACKEND_URL: "http://backend:3000"
     networks:
       - spamtube-devnet
     depends_on:
