@@ -69,7 +69,7 @@ jobs:
           docker compose -f docker-compose-upload.yml up
           echo "VIDEO_URL=${VIDEO_URL}" >> $GITHUB_ENV
           echo "SLACK_POST_TITLE=:alert: New video is out! :alert" >> $GITHUB_ENV
-          echo "SLACK_POST_BODY=TITLE: \"${TITLE}\"\nIMAGE_INPUT: \"${IMAGE_INPUT}\"\nVOICE_INPUT: \"${VOICE_INPUT}\"" >> $GITHUB_ENV
+          echo "SLACK_POST_BODY=TITLE: ${TITLE}\nDESCRIPTION: ${DESCRIPTION}\nIMAGE_INPUT: ${IMAGE_INPUT}\nVOICE_INPUT: ${VOICE_INPUT}" >> $GITHUB_ENV
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
