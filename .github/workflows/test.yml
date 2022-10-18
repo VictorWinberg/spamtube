@@ -17,7 +17,7 @@ jobs:
         run: |
           echo VIDEO_URL: "${VIDEO_URL}"
           echo "VIDEO_URL=${VIDEO_URL}" >> $GITHUB_ENV
-          echo "SLACK_POST=Hello 123" >> $GITHUB_ENV
+          echo "SLACK_POST=Hello 123\nTest123" >> $GITHUB_ENV
         env:
           VIDEO_URL: "https://www.youtube.com/watch?v=NBKOiLQ3g8Y"
 
