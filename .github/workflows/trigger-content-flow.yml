@@ -71,3 +71,10 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+
+      - name: Post to slack
+        run: |
+          curl -X POST \
+            -H 'Content-type: application/json' \
+            --data '{ "text": "${VIDEO_URL}" }' \
+            ${{ secrets.slack_webhook }}
