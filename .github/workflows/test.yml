@@ -16,7 +16,7 @@ jobs:
       - name: SET
         run: |
           echo VIDEO_URL: "${VIDEO_URL}"
-          echo "${VIDEO_URL}" >> $GITHUB_ENV
+          echo "VIDEO_URL=${VIDEO_URL}" >> $GITHUB_ENV
         env:
           VIDEO_URL: "https://www.youtube.com/watch?v=NBKOiLQ3g8Y"
 
