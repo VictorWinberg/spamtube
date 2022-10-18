@@ -13,27 +13,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Expose GitHub Runtime
-        uses: crazy-max/ghaction-github-runtime@v2
-
-      - name: Input variables
+      - name: SET
         run: |
-          echo TITLE: "${TITLE}"
-          echo DESCRIPTION: "${DESCRIPTION}"
-          echo IMAGE_INPUT: "${IMAGE_INPUT}"
-          echo VOICE_INPUT: "${VOICE_INPUT}"
           echo VIDEO_URL: "${VIDEO_URL}"
           echo "${VIDEO_URL}" >> $GITHUB_ENV
         env:
-          TITLE: ${{ inputs.title }}
-          DESCRIPTION: ${{ inputs.description }}
-          IMAGE_INPUT: ${{ inputs.image }}
-          VOICE_INPUT: ${{ inputs.voice }}
           VIDEO_URL: "https://www.youtube.com/watch?v=NBKOiLQ3g8Y"
-      
-      - name: Post to slack
+
+      - name: ENV
         run: |
-          curl -X POST \
-            -H 'Content-type: application/json' \
-            --data '{ "text": "${{ env.VIDEO_URL }}" }' \
-            ${{ secrets.slack_webhook }}
+          echo VIDEO_URL ENV: "${{ env.VIDEO_URL }}"
+      
+      # - name: Post to slack
+      #   run: |
+      #     curl -X POST \
+      #       -H 'Content-type: application/json' \
+      #       --data '{ "text": "${{ env.VIDEO_URL }}" }' \
+      #       ${{ secrets.slack_webhook }}
