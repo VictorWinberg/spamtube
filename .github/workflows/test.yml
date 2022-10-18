@@ -35,5 +35,5 @@ jobs:
         run: |
           curl -X POST \
             -H 'Content-type: application/json' \
-            --data '{ "text": "${VIDEO_URL}" }' \
+            --data "{ \"text\": \"${VIDEO_URL}\" }" \
             ${{ secrets.slack_webhook }}
