@@ -68,6 +68,8 @@ jobs:
         run: |
           docker compose -f docker-compose-upload.yml up
           echo "VIDEO_URL=${VIDEO_URL}" >> $GITHUB_ENV
+          echo "SLACK_POST_TITLE=:alert: New video is out! :alert" >> $GITHUB_ENV
+          echo "SLACK_POST_BODY=TITLE: \"${TITLE}\"\nIMAGE_INPUT: \"${IMAGE_INPUT}\"\nVOICE_INPUT: \"${VOICE_INPUT}\"" >> $GITHUB_ENV
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
@@ -78,5 +80,5 @@ jobs:
         run: |
           curl -X POST \
             -H 'Content-type: application/json' \
-            --data '{ "text": "<${{ env.VIDEO_URL }}|${{ env.SLACK_POST }}>" }' \
+            --data '{ "text": "<${{ env.VIDEO_URL }}|${{ env.SLACK_POST_TITLE }}>\n${{ env.SLACK_POST_BODY }}" }' \
             ${{ secrets.slack_webhook }}
