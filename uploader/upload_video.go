@@ -67,6 +67,7 @@ func main() {
 	}
 
 	fmt.Printf("Upload successful! Video URL: https://www.youtube.com/watch?v=%v\n", videoResponse.Id)
+	os.Setenv("VIDEO_URL", fmt.Sprintf("https://www.youtube.com/watch?v=%v", videoResponse.Id))
 }
 
 func getEnv(key, fallback string) string {
