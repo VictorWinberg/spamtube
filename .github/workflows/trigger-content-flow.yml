@@ -65,7 +65,9 @@ jobs:
             -f docker-compose-upload.yml
 
       - name: Docker is running upload!
-        run: docker compose -f docker-compose-upload.yml up
+        run: |
+          docker compose -f docker-compose-upload.yml up
+          echo "${VIDEO_URL}" >> $GITHUB_ENV
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}

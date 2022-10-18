@@ -22,13 +22,14 @@ jobs:
           echo DESCRIPTION: "${DESCRIPTION}"
           echo IMAGE_INPUT: "${IMAGE_INPUT}"
           echo VOICE_INPUT: "${VOICE_INPUT}"
-          export VIDEO_URL = "https://www.youtube.com/watch?v=NBKOiLQ3g8Y"
           echo VIDEO_URL: "${VIDEO_URL}"
+          echo "${VIDEO_URL}" >> $GITHUB_ENV
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          VIDEO_URL: "https://www.youtube.com/watch?v=NBKOiLQ3g8Y"
       
       - name: Post to slack
         run: |
