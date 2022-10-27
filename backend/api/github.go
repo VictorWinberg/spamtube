@@ -11,13 +11,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type InputBody struct {
+	Ref    string `json:"ref"`
+	Inputs struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Image       string `json:"image"`
+		Voice       string `json:"voice"`
+	} `json:"inputs"`
+}
+
 func TriggerGithubAction() gin.HandlerFunc {
 	fn := func(con *gin.Context) {
-		var jsonBodyIn interface{}
+		jsonBodyIn := &InputBody{}
 		json.NewDecoder(con.Request.Body).Decode(&jsonBodyIn)
 		var buf bytes.Buffer
 		err := json.NewEncoder(&buf).Encode(jsonBodyIn)
-		req, err := http.NewRequest("POST", "https://api.github.com/repos/VictorWinberg/spamtube/actions/workflows/37051835/dispatches", &buf)
+		req, err := http.NewRequest("POST", "https://api.github.com/repos/VictorWinberg/spamtube/actions/workflows/trigger-content-flow.yml/dispatches", &buf)
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, gin.H{
 				"message": err,
@@ -27,6 +37,7 @@ func TriggerGithubAction() gin.HandlerFunc {
 		// add authorization header to the req
 		token := helpers.GetEnv("GITHUB_ACCESS_TOKEN", "")
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+		req.Header.Add("Accept", "application/vnd.github+json")
 
 		// Send req using http Client
 		client := &http.Client{}
