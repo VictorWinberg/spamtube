@@ -9,6 +9,10 @@
           <v-icon small> mdi-home </v-icon>
           <p>Home</p>
         </router-link>
+        <router-link to="/upload" class="item">
+          <v-icon small> mdi-home </v-icon>
+          <p>Upload</p>
+        </router-link>
         <router-link to="/config" class="item">
           <v-icon small> mdi-hammer-screwdriver </v-icon>
           <p>Configuration</p>
