@@ -27,13 +27,11 @@ func TriggerGithubAction() gin.HandlerFunc {
 		json.NewDecoder(con.Request.Body).Decode(&jsonBodyIn)
 		var buf bytes.Buffer
 		err := json.NewEncoder(&buf).Encode(jsonBodyIn)
-		fmt.Println(jsonBodyIn)
 		req, err := http.NewRequest("POST", "https://api.github.com/repos/VictorWinberg/spamtube/actions/workflows/trigger-content-flow.yml/dispatches", &buf)
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, gin.H{
 				"message": err,
 			})
-			fmt.Println("ERROR")
 			return
 		}
 		// add authorization header to the req
