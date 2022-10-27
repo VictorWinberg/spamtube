@@ -48,13 +48,25 @@ services:
     build: uploader
     volumes:
       - video-volume:/app/data
+      - uploader-volume:/app/out
     environment:
       FILENAME: ./data/video.mp4
       TITLE: ${TITLE}
       DESCRIPTION: ${DESCRIPTION}
-
     depends_on:
       generator:
+        condition: service_completed_successfully
+
+  notifier:
+    build: notifier
+    volumes:
+      - uploader-volume:/app/data
+    environment:
+      SLACK_POST_TITLE: ":alert: New video is out! :alert:"
+      SLACK_POST_BODY: "TITLE: ${TITLE}\nDESCRIPTION: ${DESCRIPTION}\nIMAGE_INPUT: ${IMAGE_INPUT}\nVOICE_INPUT: ${VOICE_INPUT}"
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+    depends_on:
+      uploader:
         condition: service_completed_successfully
 
 volumes:
@@ -63,3 +75,4 @@ volumes:
   voice-volume:
   music-volume:
   video-volume:
+  uploader-volume:

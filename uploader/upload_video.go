@@ -67,7 +67,7 @@ func main() {
 	}
 
 	fmt.Printf("Upload successful! Video URL: https://www.youtube.com/watch?v=%v\n", videoResponse.Id)
-	os.Setenv("VIDEO_URL", fmt.Sprintf("https://www.youtube.com/watch?v=%v", videoResponse.Id))
+	os.WriteFile("out/video_url.txt", []byte(fmt.Sprintf("https://www.youtube.com/watch?v=%v", videoResponse.Id)), 0644)
 }
 
 func getEnv(key, fallback string) string {
