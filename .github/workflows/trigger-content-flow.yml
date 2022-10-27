@@ -71,3 +71,4 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
