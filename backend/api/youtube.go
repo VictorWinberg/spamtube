@@ -16,7 +16,7 @@ func GetUploadedYoutubeVideos() gin.HandlerFunc {
 		if err != nil {
 			panic(fmt.Sprintf("Error creating YouTube client: %v", err))
 		}
-		channelResponse, err := service.Videos.List([]string{"contentDetails"}).Do()
+		channelResponse, err := service.Videos.List([]string{"contentDetails",""}).Do()
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, err)
 		}
