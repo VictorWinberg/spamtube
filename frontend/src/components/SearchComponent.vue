@@ -24,12 +24,15 @@
         :key="post.data.id"
         class="mx-auto"
         @click="selectPost(post.data.id)"
-        :class="{ selected: post.data.id === selectedId }"
+        :class="{ selected: isSelected(post.data.id) }"
       >
         <v-expansion-panel-title>
           {{ post.data.title }}
           <template v-slot:actions>
-            <v-btn text v-if="post.data.selftext" class="ml-4">Read more</v-btn>
+            <v-btn text v-if="post.data.selftext" class="read-btn ml-4">
+              <span v-if="isSelected(post.data.id)">Read less</span>
+              <span v-else>Read more</span>
+            </v-btn>
           </template>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="post.data.selftext">
@@ -76,6 +79,9 @@ export default defineComponent({
     isLoading: false,
   }),
   methods: {
+    isSelected(id: string) {
+      return this.selectedId === id;
+    },
     selectPost(id: string) {
       if (this.selectedId === id) {
         this.openedPanel = [];
@@ -85,7 +91,7 @@ export default defineComponent({
       }
     },
     submitStep() {
-      const post = this.posts.find((post) => post.data.id === this.selectedId);
+      const post = this.posts.find((post) => this.isSelected(post.data.id));
       this.$emit("submitStep", post?.data);
     },
     async fetchTopPosts() {
@@ -150,5 +156,9 @@ form {
   opacity: 0.8;
   color: black;
   background-color: #6eb2da;
+
+  &.read-btn {
+    width: 130px;
+  }
 }
 </style>
