@@ -61,12 +61,12 @@ nav {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background: #000000;
+  background: rgb(var(--v-theme-background));
   font-family: "JonzeJonzing";
   font-size: 2em;
   height: 6em;
   transition: all 500ms;
-  border-bottom: solid 3px #58b3de;
+  border-bottom: solid 3px rgb(var(--v-theme-primary));
   z-index: 2;
 
   @media screen and (max-width: 600px) {
@@ -80,7 +80,11 @@ nav {
   }
 
   .menu {
-    background: -webkit-linear-gradient(left, #58b3de, #2b4062);
+    background: -webkit-linear-gradient(
+      left,
+      rgb(var(--v-theme-primary)),
+      rgb(var(--v-theme-tetriary))
+    );
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -94,7 +98,7 @@ nav {
     p {
       display: block;
       &:hover {
-        border-bottom: solid #58b3de 3px;
+        border-bottom: solid rgb(var(--v-theme-primary)) 3px;
       }
       @media screen and (max-width: 600px) {
         display: none;
@@ -104,7 +108,7 @@ nav {
     .v-icon {
       display: none;
       @media screen and (max-width: 600px) {
-        color: #58b3de;
+        color: rgb(var(--v-theme-primary));
         display: block;
         &:active {
           transform: scale(1.25);
@@ -125,9 +129,13 @@ nav {
 
 .v-main {
   flex: 1;
-  background: linear-gradient(to bottom, black, #3a668b);
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--v-theme-background)),
+    rgb(var(--v-theme-backgroundFade))
+  );
   background-attachment: fixed;
-  color: white;
+  color: rgb(var(--v-theme-lightText));
 }
 
 .slide-left-enter-active,

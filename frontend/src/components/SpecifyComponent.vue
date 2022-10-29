@@ -98,7 +98,7 @@ export default defineComponent({
 }
 
 .error {
-  color: #f98383;
+  color: rgb(var(--v-theme-error));
 }
 
 .v-text-field {
@@ -108,7 +108,7 @@ export default defineComponent({
 
 .v-btn {
   opacity: 0.8;
-  color: black;
-  background-color: #6eb2da;
+  color: rgb(var(--v-theme-darkText));
+  background-color: rgb(var(--v-theme-button));
 }
 </style>
