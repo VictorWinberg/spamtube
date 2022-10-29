@@ -1,42 +1,24 @@
 <template>
-  <div class="upload-component">
-    <h3>Enter parameters for new video</h3>
-    <form @submit.prevent="submitForm">
-      <span>Title</span><br />
-      <input
-        v-model="title"
-        type="text"
-        placeholder="Title of YouTube clip"
-      /><br />
-      <span>Description</span><br />
-      <input
-        v-model="description"
-        type="text"
-        placeholder="Description"
-      /><br />
-      <span>Image generating text</span><br />
-      <input
-        v-model="image"
-        type="text"
-        placeholder="Happy cats abstract painting"
-      /><br />
-      <span>Voice</span><br />
-      <input
-        v-model="voice"
-        type="text"
-        placeholder="Hello spamtubers..."
-      /><br />
-      <div>Voice length: {{ voice.length }}</div>
-      <input class="submit" type="submit" value="Submit" />
-      <div class="error" v-if="errorMessage">{{ errorMessage }}</div>
-    </form>
-    <div v-if="status !== undefined">
-      <h3>Posted with status</h3>
-      <p>Status: {{ status }}</p>
-      <p>Title: {{ title }}</p>
-      <p>Description: {{ description }}</p>
-      <p>Image: {{ image }}</p>
-      <p>Voice: {{ voice }}</p>
+  <div class="upload-component mx-auto">
+    <h1>Finalizing your amazing creation</h1>
+    <div class="color-animation my-16">
+      <v-card class="mx-auto" max-width="500">
+        <v-img :src="neonCat"></v-img>
+        <v-card-title>{{ title }}</v-card-title>
+        <v-card-subtitle> {{ description }} </v-card-subtitle>
+        <v-card-text>
+          <div>{{ voice }}</div>
+        </v-card-text>
+        <v-divider class="mx-4"></v-divider>
+        <v-card-title>Image generating words</v-card-title>
+        <v-card-text>
+          <v-chip-group class="justify-center">
+            <v-chip v-for="(word, index) in imageWords" :key="index">
+              {{ word }}
+            </v-chip>
+          </v-chip-group>
+        </v-card-text>
+      </v-card>
     </div>
   </div>
 </template>
@@ -44,61 +26,124 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { startUploadFlow } from "@/api/upload";
+import neonCat from "../assets/images/neon-cat.gif";
 
-interface Data {
+interface DataProps {
   title: string;
   description: string;
   image: string;
   voice: string;
-  errorMessage: string;
   status?: number;
+  neonCat: string;
 }
 
 export default defineComponent({
   name: "UploadComponent",
-  props: {},
-  data(): Data {
+  props: ["data"],
+  data(): DataProps {
     return {
-      title: "",
-      description: "",
-      image: "",
-      voice: "",
-      errorMessage: "",
+      title: this.data.title || "",
+      description: this.data.description || "",
+      image: this.data.image || "",
+      voice: this.data.voice || "",
       status: undefined,
+      neonCat,
     };
   },
-  methods: {
-    submitForm: async function () {
-      if (
-        this.title === "" ||
-        this.description === "" ||
-        this.image === "" ||
-        this.voice === ""
-      ) {
-        this.errorMessage = "Please fill out all fields";
-        return;
-      }
-      this.errorMessage = "";
-      const res = await startUploadFlow(
-        this.title,
-        this.description,
-        this.image,
-        this.voice
-      );
-      this.status = res.status;
+  computed: {
+    imageWords(): string[] {
+      return this.image.replace(/\s+$/, "").split(" ");
     },
+  },
+  watch: {
+    data(newData: DataProps) {
+      this.title = newData.title;
+      this.description = newData.description;
+      this.image = newData.image;
+      this.voice = newData.voice;
+    },
+  },
+  methods: {
+    async uploadFlow() {
+      try {
+        const res = await startUploadFlow(
+          this.title,
+          this.description,
+          this.image,
+          this.voice
+        );
+        this.status = res.status;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
+  created() {
+    this.uploadFlow();
+  },
+  updated() {
+    this.uploadFlow();
   },
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-input {
-  border-color: #42b983;
-  border-style: solid;
-  color: white;
+<style lang="scss">
+.upload-component {
+  max-width: 800px;
 }
-.error {
-  color: red;
+
+.v-card-title {
+  line-height: 1.2;
+  white-space: break-spaces;
+}
+
+.color-animation {
+  position: relative;
+  margin: auto auto 150px;
+  max-width: 500px;
+  z-index: 0;
+}
+
+.color-animation::before,
+.color-animation::after {
+  content: "";
+  position: absolute;
+  left: -0;
+  top: 0;
+  background: linear-gradient(
+    45deg,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000,
+    #fb0094,
+    #0000ff,
+    #00ff00,
+    #ffff00,
+    #ff0000
+  );
+  background-size: 400%;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: 4px;
+  animation: steam 10s linear infinite;
+}
+
+.color-animation:after {
+  filter: blur(50px);
+}
+
+@keyframes steam {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 </style>

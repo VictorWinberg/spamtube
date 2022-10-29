@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"spamtube/backend/helpers"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,7 +34,7 @@ func TriggerGithubAction() gin.HandlerFunc {
 			return
 		}
 		// add authorization header to the req
-		token := helpers.GetEnv("GITHUB_ACCESS_TOKEN", "")
+		token := os.Getenv("GITHUB_ACCESS_TOKEN")
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 		req.Header.Add("Accept", "application/vnd.github+json")
 

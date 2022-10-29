@@ -1,7 +1,7 @@
 <template>
-  <div class="config-component">
+  <div class="search-component mx-auto">
     <h1>Search for Subreddits</h1>
-    <v-form @submit.prevent="fetchTopPosts">
+    <v-form class="mt-4" @submit.prevent="fetchTopPosts">
       <v-combobox
         v-model="autocomplete"
         :items="items"
@@ -18,18 +18,21 @@
         No Response, please try again...
       </p>
     </div>
-    <v-expansion-panels variant="accordion">
+    <v-expansion-panels v-model="openedPanel" variant="accordion">
       <v-expansion-panel
         v-for="post in posts"
         :key="post.data.id"
         class="mx-auto"
         @click="selectPost(post.data.id)"
-        :class="{ selected: post.data.id === selectedId }"
+        :class="{ selected: isSelected(post.data.id) }"
       >
         <v-expansion-panel-title>
           {{ post.data.title }}
           <template v-slot:actions>
-            <v-btn text v-if="post.data.selftext">Read more</v-btn>
+            <v-btn text v-if="post.data.selftext" class="read-btn ml-4">
+              <span v-if="isSelected(post.data.id)">Read less</span>
+              <span v-else>Read more</span>
+            </v-btn>
           </template>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="post.data.selftext">
@@ -37,6 +40,15 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-btn
+      @click="submitStep()"
+      class="mt-4"
+      :disabled="!selectedId"
+      block
+      size="x-large"
+    >
+      Continue
+    </v-btn>
   </div>
 </template>
 
@@ -50,33 +62,42 @@ interface DataProps {
   items: string[];
   posts: TopPost[];
   selectedId: string;
+  openedPanel: number[];
   noResponse: boolean;
   isLoading: boolean;
 }
 
 export default defineComponent({
-  name: "ConfigComponent",
-  props: {
-    msg: String,
-  },
+  name: "SearchComponent",
   data: (): DataProps => ({
     autocomplete: "",
     selectedId: "",
+    openedPanel: [],
     noResponse: false,
     posts: [],
     items: [],
     isLoading: false,
   }),
   methods: {
+    isSelected(id: string) {
+      return this.selectedId === id;
+    },
     selectPost(id: string) {
       if (this.selectedId === id) {
+        this.openedPanel = [];
         this.selectedId = "";
       } else {
         this.selectedId = id;
       }
     },
+    submitStep() {
+      const post = this.posts.find((post) => this.isSelected(post.data.id));
+      this.$emit("submitStep", post?.data);
+    },
     async fetchTopPosts() {
       this.noResponse = false;
+      this.openedPanel = [];
+      this.selectedId = "";
 
       try {
         let response = await getTopPosts(this.autocomplete);
@@ -106,8 +127,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.config-component {
-  margin: 0 auto;
+.search-component {
   max-width: 800px;
 }
 .v-expansion-panels {
@@ -116,9 +136,11 @@ export default defineComponent({
 
 .v-expansion-panel {
   transition: all 0.4s;
+  background-color: #304362;
+  color: white;
   &.selected {
-    background-color: #304362;
-    color: white;
+    background-color: white;
+    color: #304362;
   }
 }
 .v-expansion-panel--active:not(:first-child),
@@ -134,5 +156,9 @@ form {
   opacity: 0.8;
   color: black;
   background-color: #6eb2da;
+
+  &.read-btn {
+    width: 130px;
+  }
 }
 </style>
