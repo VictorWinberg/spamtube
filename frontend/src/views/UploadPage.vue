@@ -22,6 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { TopPost } from "../api/reddit";
 import SearchComponent from "@/components/SearchComponent.vue";
 import SpecifyComponent from "@/components/SpecifyComponent.vue";
 import UploadComponent from "@/components/UploadComponent.vue";
@@ -35,7 +36,7 @@ interface PostProps {
 
 interface DataProps {
   step: number;
-  selectedPost?: PostProps;
+  selectedPost?: TopPost;
   uploadContent?: PostProps;
 }
 
@@ -55,7 +56,7 @@ export default defineComponent({
   },
 
   methods: {
-    step1(post: PostProps) {
+    step1(post: TopPost) {
       this.selectedPost = post;
       this.step += 1;
     },

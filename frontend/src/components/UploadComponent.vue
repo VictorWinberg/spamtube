@@ -65,9 +65,8 @@ export default defineComponent({
   },
   methods: {
     async uploadFlow() {
-      let res;
       try {
-        res = await startUploadFlow(
+        const res = await startUploadFlow(
           this.title,
           this.description,
           this.image,
