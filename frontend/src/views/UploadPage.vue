@@ -7,13 +7,13 @@
     </v-tabs>
 
     <v-window v-model="step">
-      <v-window-item class="pa-4" :value="1">
+      <v-window-item :disabled="step !== 1" class="pa-4" :value="1">
         <SearchComponent @submitStep="step1" />
       </v-window-item>
-      <v-window-item class="pa-4" :value="2">
+      <v-window-item :disabled="step !== 2" class="pa-4" :value="2">
         <SpecifyComponent :data="selectedPost" @submitStep="step2" />
       </v-window-item>
-      <v-window-item class="pa-4" :value="3">
+      <v-window-item :disabled="step !== 3" class="pa-4" :value="3">
         <UploadComponent :data="uploadContent" />
       </v-window-item>
     </v-window>
