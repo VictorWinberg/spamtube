@@ -20,7 +20,7 @@ func main() {
 	}
 	godotenv.Load()
 
-	port := flag.String("port", helpers.GetEnv("PORT", "3001"), "Server port")
+	port := flag.String("port", helpers.GetEnv("PORT", "3000"), "Server port")
 	flag.Parse()
 	c := cache.New(23*time.Hour, 10*time.Minute)
 
