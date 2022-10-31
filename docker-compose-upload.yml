@@ -7,6 +7,7 @@ services:
       - image-volume:/app/out
     environment:
       IMAGE_INPUT: ${IMAGE_INPUT}
+      UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
 
   voice-maker:
     build: voice-maker

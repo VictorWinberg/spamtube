@@ -1,9 +1,11 @@
-import { createApi } from "unsplash-js";
+import { config } from "dotenv";
+import fs from "fs";
 import nodeFetch from "node-fetch";
 import http from "node:https";
-import fs from "fs";
+import path from "path";
+import { createApi } from "unsplash-js";
 
-require('dotenv').config({ path: '.env.locals' })
+config({ path: path.resolve(".env.local") });
 
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
@@ -33,6 +35,11 @@ async function main() {
     // color: "green",
     orientation: "landscape",
   });
+
+  if(response.errors) {
+    console.error(response);
+    return
+  }
 
   const { results } = response.response;
   const links = results.map((res) => res.urls.regular);
