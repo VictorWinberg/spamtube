@@ -158,7 +158,7 @@ form {
   background-color: rgb(var(--v-theme-button));
 
   &.read-btn {
-    width: 130px;
+    width: 8em;
   }
 }
 </style>

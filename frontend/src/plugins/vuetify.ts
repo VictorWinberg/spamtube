@@ -17,9 +17,9 @@ const brandTheme: ThemeDefinition = {
     lightText: "#ffffff",
     button: "#6eb2da",
     buttonText: "#000000",
-    info: "##0074D9",
-    success: "##2ECC40",
-    warning: "##FFDC00",
+    info: "#0074D9",
+    success: "#2ECC40",
+    warning: "#FFDC00",
     error: "#FF4136",
   },
 };
