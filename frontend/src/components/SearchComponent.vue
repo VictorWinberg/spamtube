@@ -136,11 +136,11 @@ export default defineComponent({
 
 .v-expansion-panel {
   transition: all 0.4s;
-  background-color: #304362;
-  color: white;
+  background-color: rgb(var(--v-theme-secondary));
+  color: rgb(var(--v-theme-lightText));
   &.selected {
-    background-color: white;
-    color: #304362;
+    background-color: rgb(var(--v-theme-lightText));
+    color: rgb(var(--v-theme-secondary));
   }
 }
 .v-expansion-panel--active:not(:first-child),
@@ -154,11 +154,11 @@ form {
 
 .v-btn {
   opacity: 0.8;
-  color: black;
-  background-color: #6eb2da;
+  color: rgb(var(--v-theme-darkText));
+  background-color: rgb(var(--v-theme-button));
 
   &.read-btn {
-    width: 130px;
+    width: 8em;
   }
 }
 </style>
