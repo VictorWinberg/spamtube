@@ -8,7 +8,7 @@ import (
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
-const IMAGE_EXT = "png"
+const IMAGE_EXT = "jpg"
 const TEST_IMAGE_EXT = "jpg"
 const AUDIO_EXT = "mp3"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
