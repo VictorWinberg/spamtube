@@ -3,39 +3,34 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/youtube/v3"
+	"github.com/gocolly/colly"
 )
 
 func GetUploadedYoutubeVideos() gin.HandlerFunc {
 	fn := func(con *gin.Context) {
-		client := GetClient(youtube.YoutubeReadonlyScope, youtube.YoutubeUploadScope)
+		var array []*string
+		c := colly.NewCollector(
+			colly.AllowedDomains("books.toscrape.com"),
+		)
+		// https://oxylabs.io/blog/golang-web-scraper
+		c.OnHTML("title", func(e *colly.HTMLElement) {
+			fmt.Println(e.Text)
+			array = append(array, &e.Text)
+		})
 
-		service, err := youtube.New(client)
-		if err != nil {
-			panic(fmt.Sprintf("Error creating YouTube client: %v", err))
-		}
-		var youtubeItems []*youtube.SearchResult
+		c.OnResponse(func(r *colly.Response) {
+			fmt.Println(r.StatusCode)
+		})
 
-		toDateTime := time.Unix(time.Now().Unix(), 0).Format(time.RFC3339)
-		fromDateTime := time.Unix(0, 0).Format(time.RFC3339) //carbon.Parse("1970-01-01").ToRfc3339String()
-		for true {
-			channelResponse, err := service.Search.List([]string{"snippet"}).Type("video").MaxResults(50).PublishedAfter(fromDateTime).PublishedBefore(toDateTime).ForMine(true).Do()
-			if err != nil {
-				con.JSON(http.StatusInternalServerError, err)
-			}
-			youtubeItems = append(youtubeItems, channelResponse.Items...)
+		c.OnRequest(func(r *colly.Request) {
+			fmt.Println("Visiting", r.URL)
+		})
 
-			fromDateTime = *&channelResponse.Items[0].Snippet.PublishedAt
-			if fromDateTime == "" {
-				break
-			}
-			break
-		}
+		c.Visit("https://books.toscrape.com/")
 
-		con.JSON(http.StatusOK, youtubeItems)
+		con.JSON(http.StatusOK, array)
 	}
 
 	return gin.HandlerFunc(fn)
