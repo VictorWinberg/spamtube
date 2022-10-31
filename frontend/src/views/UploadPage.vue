@@ -11,7 +11,11 @@
         <SearchComponent @submitStep="step1" />
       </v-window-item>
       <v-window-item :disabled="step !== 2" class="pa-4" :value="2">
-        <SpecifyComponent :data="selectedPost" @submitStep="step2" />
+        <SpecifyComponent
+          :data="selectedPost"
+          @submitStep="step2"
+          @back="goBack"
+        />
       </v-window-item>
       <v-window-item :disabled="step !== 3" class="pa-4" :value="3">
         <UploadComponent :data="uploadContent" />
@@ -56,6 +60,9 @@ export default defineComponent({
   },
 
   methods: {
+    goBack() {
+      this.step -= 1;
+    },
     step1(post: TopPost) {
       this.selectedPost = post;
       this.step += 1;

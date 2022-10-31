@@ -30,7 +30,10 @@
           persistent-hint
           variant="outlined"
         />
-        <v-btn class="mt-8" type="submit" block size="x-large">Submit</v-btn>
+        <div class="btn-group">
+          <v-btn class="back mt-8" size="x-large" @click="goBack"> Back </v-btn>
+          <v-btn class="mt-8 submit" type="submit" size="x-large">Submit</v-btn>
+        </div>
         <p class="error" v-if="errorMessage">{{ errorMessage }}</p>
       </v-form>
     </div>
@@ -90,6 +93,9 @@ export default defineComponent({
       };
       this.$emit("submitStep", content);
     },
+    goBack: function () {
+      this.$emit("back");
+    },
   },
 });
 </script>
@@ -108,9 +114,23 @@ export default defineComponent({
   transition: none;
 }
 
+.btn-group {
+  display: flex;
+  gap: 1em;
+}
 .v-btn {
+  flex: 1;
   opacity: 0.8;
   color: rgb(var(--v-theme-darkText));
+  color: rgb(var(--v-theme-darkText));
   background-color: rgb(var(--v-theme-button));
+
+  &.submit {
+    background-color: rgb(var(--v-theme-button));
+  }
+
+  &.back {
+    background-color: rgb(var(--v-theme-white));
+  }
 }
 </style>
