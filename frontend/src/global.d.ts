@@ -13,6 +13,11 @@ declare global {
     const value: string;
     export = value;
   }
+
+  declare module "*.json" {
+    const value: any;
+    export default value;
+  }
 }
 
 export {};
