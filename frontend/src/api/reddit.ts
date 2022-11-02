@@ -17,6 +17,7 @@ export type TopPost = {
     author: string;
     permalink: string;
     url: string;
+    keywords: string[];
   };
 };
 
