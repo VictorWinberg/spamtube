@@ -26,7 +26,6 @@
           label="Voice"
           placeholder="Hello spamtubers..."
           :hint="'Voice length: ' + voice.length"
-          :class="{ error: voice.length > 150 }"
           persistent-hint
           variant="outlined"
         />
@@ -66,8 +65,8 @@ export default defineComponent({
     this.errorMessage = "";
     this.title = this.data.title || "";
     this.description = this.data.description || "";
-    this.image = this.data.image || "";
-    this.voice = this.data.selftext.substring(0, 150) || "";
+    this.image = this.data.keywords.join(" ") || "";
+    this.voice = this.data.selftext || "";
   },
   methods: {
     submitForm: async function () {
@@ -75,8 +74,7 @@ export default defineComponent({
         this.title === "" ||
         this.description === "" ||
         this.image === "" ||
-        this.voice === "" ||
-        this.voice.length > 150
+        this.voice === ""
       ) {
         this.errorMessage = "Please fill out all fields correctly";
         return;

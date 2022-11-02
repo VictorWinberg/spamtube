@@ -2,6 +2,7 @@ package keywords
 
 // EnglishKeyWords language stopwords
 var EnglishKeyWords = []string{
+	"",
 	"a",
 	"a's",
 	"able",
