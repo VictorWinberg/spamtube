@@ -28,21 +28,26 @@ function download(url, dest, cb) {
 }
 
 async function main() {
-  const response = await unsplash.search.getPhotos({
-    query: process.env.IMAGE_INPUT,
-    page: 1,
-    perPage: 10,
-    // color: "green",
-    orientation: "landscape",
-  });
+  const keywords = process.env.IMAGE_INPUT.split(" ");
+  const response = await Promise.all(
+    keywords.map((keyword) =>
+      unsplash.search.getPhotos({
+        query: keyword,
+        page: 1,
+        perPage: 3,
+        // color: "green",
+        orientation: "landscape",
+      })
+    )
+  );
 
-  if(response.errors) {
-    console.error(response);
-    return
+  if (response.some((response) => response.errors)) {
+    console.error(response.map((response) => response.errors));
+    return;
   }
 
-  const { results } = response.response;
-  const links = results.map((res) => res.urls.regular);
+  const photos = response.map((response) => response.response.results).flat();
+  const links = photos.map((res) => res.urls.regular);
   links.forEach((link, index) => {
     const filename = String(index).padStart(3, "0");
     download(link, `./out/${filename}.jpg`, () => {
