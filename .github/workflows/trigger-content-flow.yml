@@ -72,3 +72,4 @@ jobs:
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
+          UNSPLASH_ACCESS_TOKEN: ${{ secrets.unsplash_access_token }}
