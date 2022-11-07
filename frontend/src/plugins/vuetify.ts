@@ -11,7 +11,7 @@ const brandTheme: ThemeDefinition = {
     background: "#000000",
     backgroundFade: "#3a668b",
     primary: "#58b3de",
-    secondary: "304362",
+    secondary: "#304362",
     tetriary: "#2b4062",
     darkText: "#000000",
     lightText: "#ffffff",
@@ -21,6 +21,8 @@ const brandTheme: ThemeDefinition = {
     success: "#2ECC40",
     warning: "#FFDC00",
     error: "#FF4136",
+    white: "#ffffff",
+    black: "#000000",
   },
 };
 
