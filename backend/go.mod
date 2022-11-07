@@ -33,6 +33,7 @@ require (
 )
 
 require (
+	github.com/anaskhan96/soup v1.2.5
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
