@@ -5,7 +5,7 @@ import http from "node:https";
 import path from "path";
 import { createApi } from "unsplash-js";
 
-config({ path: path.resolve(".env.local") });
+config({ path: path.resolve(".env.local"), override: true });
 
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
@@ -36,7 +36,7 @@ async function main() {
         page: 1,
         perPage: 3,
         // color: "green",
-        orientation: "landscape",
+        orientation: "portrait",
       })
     )
   );
