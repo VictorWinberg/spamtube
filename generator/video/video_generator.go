@@ -21,7 +21,7 @@ const OUTPUT_VIDEO_FORMAT = "yuvj420p"
 const VIDEO_CODEC = "libx264"
 const OUTPUT_FPS = 30
 const MIN_AUDIO_FILES = 2
-const VOLUME_CHANGE_FACTOR = "0.5"
+const VOLUME_CHANGE_FACTOR = "0.15"
 
 func CreateVideo() {
 	imagePath, imageExt := GetImages()
@@ -118,7 +118,7 @@ func GetAsFfmpegAudioInputs(pathFiles map[string][]os.DirEntry) []*ffmpeg.Stream
 
 func ReduceVolume(path string, audioFile fs.DirEntry) *ffmpeg.Stream {
 	fmt.Println("Trying to reduce volume of file: " + path + audioFile.Name())
-	outPutFile := "out/" + audioFile.Name()
+	outPutFile := "out/reduced_" + audioFile.Name()
 	err := ffmpeg.Input(path+audioFile.Name()).Filter("volume", ffmpeg.Args{VOLUME_CHANGE_FACTOR}).Output(outPutFile).OverWriteOutput().Run()
 	if err != nil {
 		log.Fatal(err)
