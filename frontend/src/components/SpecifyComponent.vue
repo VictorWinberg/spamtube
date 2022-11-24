@@ -86,7 +86,7 @@ export default defineComponent({
     this.errorMessage = "";
     this.title = this.data.title || "";
     this.description = this.data.description || "";
-    this.image = "";
+    this.image = this.data.keywords.join(" ") || "";
     this.voice = this.data.selftext || "";
   },
   methods: {
