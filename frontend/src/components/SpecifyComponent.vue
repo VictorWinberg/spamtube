@@ -57,7 +57,7 @@ interface DataProps {
   description: string;
   image: string;
   voice: string;
-  selectedService: SelectItem;
+  selectedService: string;
   items: SelectItem[];
   errorMessage: string;
   status?: number;
@@ -72,7 +72,7 @@ export default defineComponent({
       description: "",
       image: "",
       voice: "",
-      selectedService: { value: "ai-image", title: "AI Image Generator" },
+      selectedService: "ai-image",
       items: [
         // The value here should batch a docker compose upload script
         { value: "ai-image", title: "AI Image Generator" },
@@ -86,7 +86,7 @@ export default defineComponent({
     this.errorMessage = "";
     this.title = this.data.title || "";
     this.description = this.data.description || "";
-    this.image = this.data.keywords.join(" ") || "";
+    this.image = "";
     this.voice = this.data.selftext || "";
   },
   methods: {
@@ -106,7 +106,7 @@ export default defineComponent({
         description: this.description,
         image: this.image,
         voice: this.voice,
-        service: this.selectedService.value,
+        service: this.selectedService,
       };
       this.$emit("submitStep", content);
     },
