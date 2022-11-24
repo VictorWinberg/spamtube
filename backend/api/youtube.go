@@ -1,56 +1,54 @@
 package api
 
 import (
-	"encoding/json"
+	"encoding/xml"
+	"fmt"
+	"io/ioutil"
 	"net/http"
-	"os"
-	"unicode/utf8"
+	"spamtube/backend/domain"
 
-	"strings"
-
-	"github.com/anaskhan96/soup"
 	"github.com/gin-gonic/gin"
 )
 
+func getXML(url string) ([]byte, error) {
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("Content-Type", "text/xml")
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return nil, fmt.Errorf("get error: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status error: %v", resp.StatusCode)
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read body: %v", err)
+	}
+
+	return data, nil
+}
+
 func GetUploadedYoutubeVideos() gin.HandlerFunc {
 	fn := func(con *gin.Context) {
-		resp, err := soup.Get("https://www.youtube.com/channel/UCTIp7LYLKOA6zq_PT21_NgA/shorts")
+		resp, err := getXML("https://www.youtube.com/feeds/videos.xml?channel_id=UCTIp7LYLKOA6zq_PT21_NgA")
+
 		if err != nil {
-			os.Exit(1)
+			con.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
 		}
-		doc := soup.HTMLParse(resp)
-		links := doc.FindAll("script")
-		for _, link := range links {
 
-			var isFound = strings.Contains(link.HTML(), "GFEEDBACK")
-			if isFound {
-				var s = strings.ReplaceAll(link.HTML(), "<script nonce=", "") // >var ytInitialData =
-				var s1 = strings.ReplaceAll(s, ">var ytInitialData = ", "")   // ;</script>"""
-				var s2 = strings.ReplaceAll(s1, ";</script>", "")
-				var s3 = s2[24:len(s2)]
-				var s4 = trimLastChar(s3)
-				var s5 = trimLastChar(s4)
-				var s6 = trimLastChar(s5)
-				var s7 = strings.Trim(s6, "\"")
-				var jsonMap interface{}
-				err := json.Unmarshal([]byte(s7), &jsonMap)
-				if err != nil {
-					con.JSON(http.StatusOK, err)
-				}
-				//var s4 = s3[1 : len(s3)-2]
-				con.JSON(http.StatusOK, jsonMap)
-			}
+		res := &domain.Feed{}
+		xml.Unmarshal(resp, &res)
 
-		}
-		con.JSON(http.StatusOK, "")
+		con.JSON(http.StatusOK, res.Videos)
 	}
 
 	return gin.HandlerFunc(fn)
-}
-func trimLastChar(s string) string {
-	r, size := utf8.DecodeLastRuneInString(s)
-	if r == utf8.RuneError && (size == 0 || size == 1) {
-		size = 0
-	}
-	return s[:len(s)-size]
 }

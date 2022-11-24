@@ -36,3 +36,30 @@ type RedditResponseTop struct {
 		} `json:"children"`
 	} `json:"data"`
 }
+
+type Feed struct {
+	Videos []struct {
+		Title string `xml:"title"`
+		Link  struct {
+			Href string `xml:"href,attr"`
+		} `xml:"link"`
+		Published string `xml:"published"`
+		Updated   string `xml:"updated"`
+		Group     struct {
+			Thumbnail struct {
+				URL string `xml:"url,attr"`
+			} `xml:"thumbnail"`
+			Description string `xml:"description"`
+			Community   struct {
+				StarRating struct {
+					Count   string `xml:"count,attr"`
+					Average string `xml:"average,attr"`
+				} `xml:"starRating"`
+				Statistics struct {
+					Views string `xml:"views,attr"`
+				} `xml:"statistics"`
+			} `xml:"community"`
+		} `xml:"group"`
+		VideoId string `xml:"videoId"`
+	} `xml:"entry"`
+}
