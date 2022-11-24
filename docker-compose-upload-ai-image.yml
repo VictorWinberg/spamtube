@@ -32,7 +32,7 @@ services:
   generator:
     build: generator
     volumes:
-      - image-volume:/app/data/images
+      - image-xl-volume:/app/data/images
       - voice-volume:/app/data/audio/voice
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
@@ -70,7 +70,8 @@ services:
         condition: service_completed_successfully
 
 volumes:
-  image-volume:
+  image-xs-volume:
+  image-xl-volume:
   voice-volume:
   music-volume:
   video-volume:
