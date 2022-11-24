@@ -44,11 +44,13 @@ jobs:
           echo DESCRIPTION: "${DESCRIPTION}"
           echo IMAGE_INPUT: "${IMAGE_INPUT}"
           echo VOICE_INPUT: "${VOICE_INPUT}"
+          echo SERVICE_INPUT: "${SERVICE_INPUT}"
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          SERVICE_INPUT: ${{ inputs.service }}
 
       - name: Add youtube credentials
         run: |
@@ -66,7 +68,7 @@ jobs:
             --set "*.cache-from=type=gha" \
             --set "*.cache-to=type=gha,mode=max" \
             --load \
-            -f docker-compose-upload.yml
+            -f docker-compose-upload-${{ inputs.service }}.yml
 
       - name: Docker is running upload!
         run: docker compose -f docker-compose-upload-${{ inputs.service }}.yml up
