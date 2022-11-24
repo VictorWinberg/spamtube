@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const CHANNEL_ID = "UCTIp7LYLKOA6zq_PT21_NgA"
+
 func getXML(url string) ([]byte, error) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
@@ -35,7 +37,8 @@ func getXML(url string) ([]byte, error) {
 
 func GetUploadedYoutubeVideos() gin.HandlerFunc {
 	fn := func(con *gin.Context) {
-		resp, err := getXML("https://www.youtube.com/feeds/videos.xml?channel_id=UCTIp7LYLKOA6zq_PT21_NgA")
+		url := fmt.Sprintf("https://www.youtube.com/feeds/videos.xml?channel_id=%s", CHANNEL_ID)
+		resp, err := getXML(url)
 
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, gin.H{
