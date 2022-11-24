@@ -17,6 +17,7 @@ type InputBody struct {
 		Description string `json:"description"`
 		Image       string `json:"image"`
 		Voice       string `json:"voice"`
+		Service     string `json:"service"`
 	} `json:"inputs"`
 }
 
