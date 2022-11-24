@@ -72,7 +72,7 @@ export default defineComponent({
       description: "",
       image: "",
       voice: "",
-      selectedService: { value: "dalleflow", title: "Dalleflow" },
+      selectedService: { value: "ai-image", title: "AI Image Generator" },
       items: [
         // The value here should batch a docker compose upload script
         { value: "ai-image", title: "AI Image Generator" },
@@ -86,7 +86,7 @@ export default defineComponent({
     this.errorMessage = "";
     this.title = this.data.title || "";
     this.description = this.data.description || "";
-    this.image = "";
+    this.image = this.data.keywords.join(" ") || "";
     this.voice = this.data.selftext || "";
   },
   methods: {
