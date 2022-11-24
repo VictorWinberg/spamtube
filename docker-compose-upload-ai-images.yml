@@ -1,0 +1,77 @@
+version: "3.1"
+
+services:
+  image-ai-maker:
+    build: image-ai-maker
+    volumes: 
+      - image-xs-volume:/app/out
+    environment:
+      IMAGE_INPUT: ${IMAGE_INPUT}
+
+  image-upscaler:
+    build: image-upscaler
+    volumes:
+      - image-xs-volume:/app/data
+      - image-xl-volume:/app/out
+    depends_on:
+      image-ai-maker:
+        condition: service_completed_successfully
+
+  voice-maker:
+    build: voice-maker
+    volumes:
+      - voice-volume:/app/out
+    environment:
+      VOICE_INPUT: ${VOICE_INPUT}
+
+  music-maker:
+    build: music-maker
+    volumes:
+      - music-volume:/app/out
+
+  generator:
+    build: generator
+    volumes:
+      - image-volume:/app/data/images
+      - voice-volume:/app/data/audio/voice
+      - music-volume:/app/data/audio/music
+      - video-volume:/app/out
+    depends_on:
+      image-upscaler:
+        condition: service_completed_successfully
+      voice-maker:
+        condition: service_completed_successfully
+      music-maker:
+        condition: service_completed_successfully
+
+  uploader:
+    build: uploader
+    volumes:
+      - video-volume:/app/data
+      - uploader-volume:/app/out
+    environment:
+      FILENAME: ./data/video.mp4
+      TITLE: ${TITLE}
+      DESCRIPTION: ${DESCRIPTION}
+    depends_on:
+      generator:
+        condition: service_completed_successfully
+
+  notifier:
+    build: notifier
+    volumes:
+      - uploader-volume:/app/data
+    environment:
+      SLACK_POST_TITLE: "${TITLE} :tv:"
+      SLACK_POST_BODY: "${DESCRIPTION}\n\n${IMAGE_INPUT}"
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+    depends_on:
+      uploader:
+        condition: service_completed_successfully
+
+volumes:
+  image-volume:
+  voice-volume:
+  music-volume:
+  video-volume:
+  uploader-volume:

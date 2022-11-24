@@ -19,6 +19,9 @@
           </v-chip-group>
         </v-card-text>
       </v-card>
+      <v-btn class="upload-button" size="x-large" @click="callUploadFlow">
+        Upload
+      </v-btn>
     </div>
   </div>
 </template>
@@ -33,6 +36,7 @@ interface DataProps {
   description: string;
   image: string;
   voice: string;
+  service: string;
   status?: number;
   neonCat: string;
 }
@@ -46,6 +50,7 @@ export default defineComponent({
       description: this.data.description || "",
       image: this.data.image || "",
       voice: this.data.voice || "",
+      service: this.data.service || "",
       status: undefined,
       neonCat,
     };
@@ -61,28 +66,24 @@ export default defineComponent({
       this.description = newData.description;
       this.image = newData.image;
       this.voice = newData.voice;
+      this.service = newData.service;
     },
   },
   methods: {
-    async uploadFlow() {
+    async callUploadFlow() {
       try {
         const res = await startUploadFlow(
           this.title,
           this.description,
           this.image,
-          this.voice
+          this.voice,
+          this.service
         );
         this.status = res.status;
       } catch (error) {
         console.error(error);
       }
     },
-  },
-  created() {
-    this.uploadFlow();
-  },
-  updated() {
-    this.uploadFlow();
   },
 });
 </script>
@@ -124,6 +125,7 @@ export default defineComponent({
     #ff0000
   );
   background-size: 400%;
+
   width: 100%;
   height: 100%;
   z-index: -1;
@@ -133,6 +135,10 @@ export default defineComponent({
 
 .color-animation:after {
   filter: blur(50px);
+}
+
+.v-btn.upload-button {
+  color: black;
 }
 
 @keyframes steam {

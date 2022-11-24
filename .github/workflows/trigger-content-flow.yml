@@ -5,22 +5,26 @@ on:
   workflow_dispatch:
     inputs:
       title:
-        description: 'Title of video'
-        required: true 
+        description: "Title of video"
+        required: true
         type: string
       description:
-        description: 'Description of video'
-        required: true 
+        description: "Description of video"
+        required: true
         type: string
       image:
-        description: 'Image of video'
-        required: true 
+        description: "Image of video"
+        required: true
         type: string
       voice:
-        description: 'Voice of video'
-        required: true 
+        description: "Voice of video"
+        required: true
         type: string
-      
+      service:
+        description: "Which image generating service to use"
+        required: true
+        type: string
+
 jobs:
   upload-flow:
     runs-on: ubuntu-latest
@@ -45,7 +49,7 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
-      
+
       - name: Add youtube credentials
         run: |
           mkdir .credentials
@@ -65,7 +69,7 @@ jobs:
             -f docker-compose-upload.yml
 
       - name: Docker is running upload!
-        run: docker compose -f docker-compose-upload.yml up
+        run: docker compose -f docker-compose-upload-${{ inputs.service }}.yml up
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}

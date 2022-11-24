@@ -4,7 +4,8 @@ export async function startUploadFlow(
   title: string,
   description: string,
   image: string,
-  voice: string
+  voice: string,
+  service: string
 ) {
   const body = {
     ref: "master",
@@ -13,6 +14,7 @@ export async function startUploadFlow(
       description,
       image,
       voice,
+      service,
     },
   };
   return post<string>(`generate`, JSON.stringify(body));
