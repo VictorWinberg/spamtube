@@ -36,6 +36,7 @@ func main() {
 		api.GET("/top/:subreddit_name", internalApi.GetTopPosts(c))
 		api.GET("/search/:search_query", internalApi.SearchSubreddits(c))
 		api.POST("/generate", internalApi.TriggerGithubAction())
+		api.GET("/videos", internalApi.GetUploadedYoutubeVideos())
 	}
 
 	router.NoRoute(func(c *gin.Context) {
