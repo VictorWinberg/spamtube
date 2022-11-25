@@ -1,7 +1,7 @@
 <template>
   <div class="upload-component mx-auto">
     <h1>Finalizing your amazing creation</h1>
-    <div class="color-animation my-16">
+    <div class="mt-16" :class="{ 'color-animation': uploaded }">
       <v-card class="mx-auto" max-width="500">
         <v-img :src="neonCat"></v-img>
         <v-card-title>{{ title }}</v-card-title>
@@ -18,10 +18,26 @@
             </v-chip>
           </v-chip-group>
         </v-card-text>
+        <v-btn
+          v-if="!uploaded"
+          class="upload-button"
+          color="tetriary"
+          size="x-large"
+          prepend-icon="mdi-upload"
+          @click="callUploadFlow"
+        >
+          Upload
+        </v-btn>
+        <v-btn
+          v-else
+          class="success-button"
+          color="success"
+          size="x-large"
+          prepend-icon="mdi-check"
+        >
+          Done
+        </v-btn>
       </v-card>
-      <v-btn class="upload-button" size="x-large" @click="callUploadFlow">
-        Upload
-      </v-btn>
     </div>
   </div>
 </template>
@@ -46,11 +62,11 @@ export default defineComponent({
   props: ["data"],
   data(): DataProps {
     return {
-      title: this.data.title || "",
-      description: this.data.description || "",
-      image: this.data.image || "",
-      voice: this.data.voice || "",
-      service: this.data.service || "",
+      title: this.data?.title || "",
+      description: this.data?.description || "",
+      image: this.data?.image || "",
+      voice: this.data?.voice || "",
+      service: this.data?.service || "",
       status: undefined,
       neonCat,
     };
@@ -58,6 +74,9 @@ export default defineComponent({
   computed: {
     imageWords(): string[] {
       return this.image.replace(/\s+$/, "").split(" ");
+    },
+    uploaded(): boolean {
+      return this.status === 200;
     },
   },
   watch: {
@@ -93,14 +112,23 @@ export default defineComponent({
   max-width: 800px;
 }
 
+.v-card {
+  margin-bottom: 12em;
+}
+
 .v-card-title {
   line-height: 1.2;
   white-space: break-spaces;
 }
 
+.v-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .color-animation {
   position: relative;
-  margin: auto auto 150px;
+  margin: auto;
   max-width: 500px;
   z-index: 0;
 }
@@ -137,8 +165,12 @@ export default defineComponent({
   filter: blur(50px);
 }
 
-.v-btn.upload-button {
-  color: black;
+.v-btn {
+  margin-bottom: 1.5em;
+
+  &.success-button {
+    pointer-events: none;
+  }
 }
 
 @keyframes steam {
