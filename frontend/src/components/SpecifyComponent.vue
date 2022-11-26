@@ -21,7 +21,7 @@
           placeholder="Happy cats abstract painting"
           variant="outlined"
         />
-        <v-text-field
+        <v-textarea
           v-model="voice"
           label="Voice"
           placeholder="Hello spamtubers..."
@@ -84,10 +84,10 @@ export default defineComponent({
   },
   updated() {
     this.errorMessage = "";
-    this.title = this.data.title || "";
-    this.description = this.data.description || "";
-    this.image = this.data.keywords.join(" ") || "";
-    this.voice = this.data.selftext || "";
+    this.title = this.data?.title || "";
+    this.description = this.data?.description || "";
+    this.image = this.data?.keywords.join(" ") || "";
+    this.voice = this.data?.selftext || "";
   },
   methods: {
     submitForm: async function () {
