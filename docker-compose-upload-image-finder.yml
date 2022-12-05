@@ -28,6 +28,8 @@ services:
       - voice-volume:/app/data/audio/voice
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
+    environment:
+      IMAGE_EXT: "jpg"
     depends_on:
       image-finder:
         condition: service_completed_successfully

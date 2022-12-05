@@ -11,7 +11,7 @@ import (
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
-const IMAGE_EXT = "jpg"
+const IMAGE_EXT_FALLBACK = "jpg"
 const TEST_IMAGE_EXT = "jpg"
 const AUDIO_EXT = "mp3"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
@@ -70,7 +70,7 @@ func GetImages() (string, string) {
 		}
 		return testPath, TEST_IMAGE_EXT
 	}
-	return path, IMAGE_EXT
+	return path, GetEnv("IMAGE_EXT", IMAGE_EXT_FALLBACK)
 }
 
 func GetAudio() map[string][]os.DirEntry {
@@ -140,7 +140,7 @@ func ExtractFilesWithExt(files []os.DirEntry, searchFileExt string) []os.DirEntr
 }
 
 func ExtractImages(files []os.DirEntry) []os.DirEntry {
-	return ExtractFilesWithExt(files, IMAGE_EXT)
+	return ExtractFilesWithExt(files, GetEnv("IMAGE_EXT", IMAGE_EXT_FALLBACK))
 }
 
 func ExtractTestImages(files []os.DirEntry) []os.DirEntry {
@@ -161,4 +161,12 @@ func Values(m map[string][]os.DirEntry) []os.DirEntry {
 		r = append(r, v...)
 	}
 	return r
+}
+
+func GetEnv(key, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		value = fallback
+	}
+	return value
 }
