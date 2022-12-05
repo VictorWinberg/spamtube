@@ -29,10 +29,18 @@ services:
     volumes:
       - music-volume:/app/out
 
+  subtitle-maker:
+    build: subtitle-maker
+    volumes:
+      - subs-volume:/app/out
+    environment:
+      VOICE_INPUT: ${VOICE_INPUT}
+
   generator:
     build: generator
     volumes:
       - image-xl-volume:/app/data/images
+      - subs-volume:/app/data/subtitles
       - voice-volume:/app/data/audio/voice
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
@@ -44,6 +52,8 @@ services:
       voice-maker:
         condition: service_completed_successfully
       music-maker:
+        condition: service_completed_successfully
+      subtitle-maker:
         condition: service_completed_successfully
 
   uploader:
@@ -77,4 +87,5 @@ volumes:
   voice-volume:
   music-volume:
   video-volume:
+  subs-volume:
   uploader-volume:

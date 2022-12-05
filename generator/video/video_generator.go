@@ -14,6 +14,7 @@ import (
 const IMAGE_EXT_FALLBACK = "jpg"
 const TEST_IMAGE_EXT = "jpg"
 const AUDIO_EXT = "mp3"
+const OUTPUT_VIDEO_TEMP_FILE = "./out/video_temp.mp4"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
 const OUTPUT_AUDIO_FILE = "./out/audio.mp3"
 const VIDEO_LENGTH = 59 // In seconds
@@ -27,12 +28,15 @@ func CreateVideo() {
 	imagePath, imageExt := GetImages()
 	audio := GenerateAudio()
 	GenerateVideo(imagePath, imageExt, audio)
-
 }
 
 func GenerateVideo(imagePath string, imageExt string, audioInput *ffmpeg.Stream) {
 	imageInput := ffmpeg.Input(imagePath+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
-	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
+	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_TEMP_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = ffmpeg.Input(OUTPUT_VIDEO_TEMP_FILE, ffmpeg.KwArgs{}).Output(OUTPUT_VIDEO_FILE, ffmpeg.KwArgs{"vf": "subtitles=./data/subtitles/subs.srt"}).OverWriteOutput().ErrorToStdOut().Run()
 	if err != nil {
 		log.Fatal(err)
 	}

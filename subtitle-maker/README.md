@@ -1,0 +1,2 @@
+# run
+python subs.py
