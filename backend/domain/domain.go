@@ -7,10 +7,6 @@ type AccessToken struct {
 	Scope       string `json:"scope"`
 }
 
-type SearchResult struct {
-	Names []string `json:"names"`
-}
-
 type RedditResponseTop struct {
 	Data struct {
 		Children []struct {
@@ -34,6 +30,16 @@ type RedditResponseTop struct {
 				CreatedUtc        float64  `json:"created_utc"`
 				Keywords          []string `json:"keywords"`
 			} `json:"data"`
+		} `json:"children"`
+	} `json:"data"`
+}
+
+type SearchResult struct {
+	Data struct {
+		Children []struct {
+			Data struct {
+				Title string `json:"title"`
+			} `json:"data,omitempty"`
 		} `json:"children"`
 	} `json:"data"`
 }
