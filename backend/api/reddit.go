@@ -22,13 +22,6 @@ func GetTopPosts(con *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
-		return
-	}
-
 	// Send req using http Client
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -63,13 +56,6 @@ func SearchSubreddit(con *gin.Context) {
 	searchQuery := con.Param("search_query")
 	url := fmt.Sprintf("https://reddit.com/search.json?q=%s&sort=top&t=all&type=sr", searchQuery)
 	req, err := http.NewRequest("GET", url, nil)
-
-	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
-		return
-	}
 
 	if err != nil {
 		con.JSON(http.StatusInternalServerError, gin.H{
