@@ -35,7 +35,6 @@ type RedditResponseTop struct {
 }
 
 type SearchResult struct {
-	Kind string `json:"kind"`
 	Data struct {
 		Children []struct {
 			Data struct {

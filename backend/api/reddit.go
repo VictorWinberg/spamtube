@@ -106,13 +106,13 @@ func SearchSubreddits(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		names := []string{}
+		subreddit_names := []string{}
 
 		for _, n := range res.Data.Children {
-			names = append(names, n.Data.Title)
+			subreddit_names = append(subreddit_names, n.Data.Title)
 		}
 
-		con.JSON(http.StatusOK, names)
+		con.JSON(http.StatusOK, subreddit_names)
 	}
 
 	return gin.HandlerFunc(fn)
