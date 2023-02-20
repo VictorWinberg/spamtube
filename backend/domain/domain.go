@@ -20,8 +20,8 @@ type RedditResponseTop struct {
 		GeoFilter string `json:"geo_filter"`
 		Children  []struct {
 			Kind string `json:"kind"`
-			Keywords []string  `json:""`
 			Data struct {
+				Keywords []string  `json:"keywords"`
 				ApprovedAtUtc              interface{}   `json:"approved_at_utc"`
 				Subreddit                  string        `json:"subreddit"`
 				Selftext                   string        `json:"selftext"`

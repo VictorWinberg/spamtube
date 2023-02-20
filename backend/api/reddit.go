@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"spamtube/backend/domain"
 	"spamtube/backend/helpers"
-
+	"spamtube/backend/keywords"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 )
@@ -46,10 +46,10 @@ func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		// for i, post := range res.Data.Children {
-		// 	k, _ := keywords.Extract(post.Data.Selftext)
-		// 	res.Data.Children[i].Data.Keywords = k
-		// }
+		for i, post := range res.Data.Children {
+			k, _ := keywords.Extract(post.Data.Selftext)
+			res.Data.Children[i].Data.Keywords = k
+		}
 
 		con.JSON(http.StatusOK, res.Data.Children)
 	}
