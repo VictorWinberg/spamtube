@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"spamtube/backend/domain"
 	"spamtube/backend/helpers"
-	"spamtube/backend/keywords"
 
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
@@ -15,7 +14,7 @@ import (
 func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 	fn := func(con *gin.Context) {
 		subredditName := con.Param("subreddit_name")
-		url := fmt.Sprintf("https://oauth.reddit.com/r/%s/top/?t=day.json", subredditName)
+		url := fmt.Sprintf("https://www.reddit.com/r/%s/top.json?t=day", subredditName)
 		req, err := http.NewRequest("GET", url, nil)
 
 		if err != nil {
@@ -24,18 +23,6 @@ func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 			})
 			return
 		}
-
-		token, err := helpers.HandleTokenLogic(c, con)
-
-		if err != nil {
-			con.JSON(http.StatusInternalServerError, gin.H{
-				"message": fmt.Sprintf("Error: %s", err),
-			})
-			return
-		}
-
-		// add authorization header to the req
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
 		// Send req using http Client
 		client := &http.Client{}
@@ -59,10 +46,10 @@ func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		for i, post := range res.Data.Children {
-			k, _ := keywords.Extract(post.Data.Selftext)
-			res.Data.Children[i].Data.Keywords = k
-		}
+		// for i, post := range res.Data.Children {
+		// 	k, _ := keywords.Extract(post.Data.Selftext)
+		// 	res.Data.Children[i].Data.Keywords = k
+		// }
 
 		con.JSON(http.StatusOK, res.Data.Children)
 	}
