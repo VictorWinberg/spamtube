@@ -35,23 +35,19 @@ func getXML(url string) ([]byte, error) {
 	return data, nil
 }
 
-func GetUploadedYoutubeVideos() gin.HandlerFunc {
-	fn := func(con *gin.Context) {
-		url := fmt.Sprintf("https://www.youtube.com/feeds/videos.xml?channel_id=%s", CHANNEL_ID)
-		resp, err := getXML(url)
+func GetUploadedYoutubeVideos(con *gin.Context) {
+	url := fmt.Sprintf("https://www.youtube.com/feeds/videos.xml?channel_id=%s", CHANNEL_ID)
+	resp, err := getXML(url)
 
-		if err != nil {
-			con.JSON(http.StatusInternalServerError, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-
-		res := &domain.Feed{}
-		xml.Unmarshal(resp, &res)
-
-		con.JSON(http.StatusOK, res.Videos)
+	if err != nil {
+		con.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
 	}
 
-	return gin.HandlerFunc(fn)
+	res := &domain.Feed{}
+	xml.Unmarshal(resp, &res)
+
+	con.JSON(http.StatusOK, res.Videos)
 }
