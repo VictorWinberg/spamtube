@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"spamtube/backend/domain"
-	"spamtube/backend/helpers"
 	"spamtube/backend/keywords"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ import (
 func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 	fn := func(con *gin.Context) {
 		subredditName := con.Param("subreddit_name")
-		url := fmt.Sprintf("https://oauth.reddit.com/r/%s/top/?t=day.json", subredditName)
+		url := fmt.Sprintf("https://reddit.com/r/%s/top.json?t=day", subredditName)
 		req, err := http.NewRequest("GET", url, nil)
 
 		if err != nil {
@@ -25,17 +24,12 @@ func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		token, err := helpers.HandleTokenLogic(c, con)
-
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, gin.H{
 				"message": fmt.Sprintf("Error: %s", err),
 			})
 			return
 		}
-
-		// add authorization header to the req
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
 		// Send req using http Client
 		client := &http.Client{}
@@ -73,7 +67,7 @@ func GetTopPosts(c *cache.Cache) gin.HandlerFunc {
 func SearchSubreddits(c *cache.Cache) gin.HandlerFunc {
 	fn := func(con *gin.Context) {
 		searchQuery := con.Param("search_query")
-		url := fmt.Sprintf("https://oauth.reddit.com/api/search_reddit_names?query=%s&include_over_18=true", searchQuery)
+		url := fmt.Sprintf("https://reddit.com/search.json?q=%s&sort=top&t=all&type=sr", searchQuery)
 		req, err := http.NewRequest("GET", url, nil)
 
 		if err != nil {
@@ -83,17 +77,12 @@ func SearchSubreddits(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		token, err := helpers.HandleTokenLogic(c, con)
-
 		if err != nil {
 			con.JSON(http.StatusInternalServerError, gin.H{
 				"message": fmt.Sprintf("Error: %s", err),
 			})
 			return
 		}
-
-		// add authorization header to the req
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
 		// Send req using http Client
 		client := &http.Client{}
@@ -117,7 +106,13 @@ func SearchSubreddits(c *cache.Cache) gin.HandlerFunc {
 			return
 		}
 
-		con.JSON(http.StatusOK, res.Names)
+		names := []string{}
+
+		for _, n := range res.Data.Children {
+			names = append(names, n.Data.Title)
+		}
+
+		con.JSON(http.StatusOK, names)
 	}
 
 	return gin.HandlerFunc(fn)
