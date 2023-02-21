@@ -72,7 +72,7 @@ export default defineComponent({
       description: "",
       image: "",
       voice: "",
-      selectedService: "ai-image",
+      selectedService: "image-finder",
       items: [
         // The value here should batch a docker compose upload script
         { value: "ai-image", title: "AI Image Generator" },
