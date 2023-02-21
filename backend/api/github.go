@@ -6,32 +6,31 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
-	"github.com/gin-gonic/gin"
 )
 
-type InputBody struct {
-	Ref    string `json:"ref"`
-	Inputs struct {
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		Image       string `json:"image"`
-		Voice       string `json:"voice"`
-		Service     string `json:"service"`
-	} `json:"inputs"`
+type WorkflowInputBody struct {
+	Ref    string          `json:"ref"`
+	Inputs *WorkflowInputs `json:"inputs"`
 }
 
-func TriggerGithubAction(con *gin.Context) {
-	jsonBodyIn := &InputBody{}
-	json.NewDecoder(con.Request.Body).Decode(&jsonBodyIn)
+type WorkflowInputs struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+	Voice       string `json:"voice"`
+	Service     string `json:"service"`
+}
+
+func TriggerGithubAction(body *WorkflowInputBody) (interface{}, error) {
 	var buf bytes.Buffer
-	err := json.NewEncoder(&buf).Encode(jsonBodyIn)
+	err := json.NewEncoder(&buf).Encode(body)
+	if err != nil {
+		return nil, err
+	}
+
 	req, err := http.NewRequest("POST", "https://api.github.com/repos/VictorWinberg/spamtube/actions/workflows/trigger-content-flow.yml/dispatches", &buf)
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": err,
-		})
-		return
+		return nil, err
 	}
 	// add authorization header to the req
 	token := os.Getenv("GITHUB_ACCESS_TOKEN")
@@ -41,25 +40,17 @@ func TriggerGithubAction(con *gin.Context) {
 	// Send req using http Client
 	client := &http.Client{}
 	resp, err := client.Do(req)
-
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	var jsonBodyOut interface{}
-	json.NewDecoder(resp.Body).Decode(&jsonBodyOut)
+	var githubResp interface{}
+	json.NewDecoder(resp.Body).Decode(&githubResp)
 	if resp.StatusCode != 204 {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message":    "Could not trigger Github Workflow",
-			"statusCode": resp.StatusCode,
-			"error":      jsonBodyOut,
-		})
-		return
+		return nil, fmt.Errorf("COULD NOT TRIGGER GITHUB WORKFLOW %s", githubResp)
 	}
 
-	con.JSON(http.StatusOK, nil)
+	return githubResp, nil
 }

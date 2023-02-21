@@ -6,20 +6,14 @@ import (
 	"net/http"
 	"spamtube/backend/domain"
 	"spamtube/backend/keywords"
-
-	"github.com/gin-gonic/gin"
 )
 
-func GetTopPosts(con *gin.Context) {
-	subredditName := con.Param("subreddit_name")
+func GetTopPosts(subredditName string) (domain.RedditItems, error) {
 	url := fmt.Sprintf("https://reddit.com/r/%s/top.json?t=day", subredditName)
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
-		return
+		return nil, err
 	}
 
 	// Send req using http Client
@@ -27,9 +21,7 @@ func GetTopPosts(con *gin.Context) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -38,10 +30,7 @@ func GetTopPosts(con *gin.Context) {
 	json.NewDecoder(resp.Body).Decode(&res)
 
 	if resp.StatusCode != 200 {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Could not retrieve top posts",
-		})
-		return
+		return nil, fmt.Errorf("COULD NOT RETRIEVE TOP POSTS")
 	}
 
 	for i, post := range res.Data.Children {
@@ -49,19 +38,14 @@ func GetTopPosts(con *gin.Context) {
 		res.Data.Children[i].Data.Keywords = k
 	}
 
-	con.JSON(http.StatusOK, res.Data.Children)
+	return res.Data.Children, nil
 }
 
-func SearchSubreddit(con *gin.Context) {
-	searchQuery := con.Param("search_query")
+func SearchSubreddit(searchQuery string) ([]string, error) {
 	url := fmt.Sprintf("https://reddit.com/search.json?q=%s&sort=top&t=all&type=sr", searchQuery)
 	req, err := http.NewRequest("GET", url, nil)
-
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
-		return
+		return nil, err
 	}
 
 	// Send req using http Client
@@ -69,9 +53,7 @@ func SearchSubreddit(con *gin.Context) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("Error: %s", err),
-		})
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -80,17 +62,14 @@ func SearchSubreddit(con *gin.Context) {
 	json.NewDecoder(resp.Body).Decode(&res)
 
 	if resp.StatusCode != 200 {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Could not search for subreddits",
-		})
-		return
+		return nil, err
 	}
 
-	subreddit_names := []string{}
+	subreddits := []string{}
 
 	for _, n := range res.Data.Children {
-		subreddit_names = append(subreddit_names, n.Data.Title)
+		subreddits = append(subreddits, n.Data.Title)
 	}
 
-	con.JSON(http.StatusOK, subreddit_names)
+	return subreddits, nil
 }

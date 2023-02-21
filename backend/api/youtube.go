@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"spamtube/backend/domain"
-
-	"github.com/gin-gonic/gin"
 )
 
 const CHANNEL_ID = "UCTIp7LYLKOA6zq_PT21_NgA"
@@ -35,19 +33,15 @@ func getXML(url string) ([]byte, error) {
 	return data, nil
 }
 
-func GetUploadedYoutubeVideos(con *gin.Context) {
+func GetUploadedYoutubeVideos() ([]domain.Video, error) {
 	url := fmt.Sprintf("https://www.youtube.com/feeds/videos.xml?channel_id=%s", CHANNEL_ID)
 	resp, err := getXML(url)
-
 	if err != nil {
-		con.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
 	res := &domain.Feed{}
 	xml.Unmarshal(resp, &res)
 
-	con.JSON(http.StatusOK, res.Videos)
+	return res.Videos, nil
 }
