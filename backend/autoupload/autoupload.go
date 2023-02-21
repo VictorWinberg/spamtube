@@ -1,17 +1,21 @@
 package autoupload
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	api "spamtube/backend/api"
 	"strings"
+	"time"
 )
 
-func AutoUploadVideo(subreddit_name string) {
+func AutoUploadVideo(subreddit_name string) error {
+	fmt.Printf("Autouploading video from %s\n", subreddit_name)
 	posts, err := api.GetTopPosts(subreddit_name)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	rand.Seed(time.Now().UnixNano())
 	post := posts[rand.Intn(len(posts))]
 
 	data := &api.WorkflowInputBody{
@@ -27,7 +31,8 @@ func AutoUploadVideo(subreddit_name string) {
 
 	resp, err := api.TriggerGithubAction(data)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	log.Println(resp)
+	return nil
 }

@@ -33,7 +33,14 @@ func main() {
 	}
 
 	kron := cron.New(cron.WithLocation(loc))
-	kron.AddFunc("0 9 * * *", func() { autoupload.AutoUploadVideo("AmItheAsshole") })
+	kron.AddFunc("0 9 * * *", func() {
+		err := autoupload.AutoUploadVideo("AmItheAsshole")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("Autouploading video successful!")
+	})
 	kron.Start()
 
 	// Set the router as the default one shipped with Gin
