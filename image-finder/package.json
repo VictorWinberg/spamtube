@@ -12,6 +12,7 @@
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
     "node-fetch": "^3.2.10",
+    "sharp": "^0.31.3",
     "unsplash-js": "^7.0.15"
   },
   "type": "module"

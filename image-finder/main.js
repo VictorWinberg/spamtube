@@ -3,6 +3,7 @@ import fs from "fs";
 import nodeFetch from "node-fetch";
 import http from "node:https";
 import path from "path";
+import sharp from "sharp";
 import { createApi } from "unsplash-js";
 
 config({ path: path.resolve(".env.local"), override: true });
@@ -12,19 +13,21 @@ const unsplash = createApi({
   fetch: nodeFetch,
 });
 
-function download(url, dest, cb) {
-  const file = fs.createWriteStream(dest);
-  http
-    .get(url, function (response) {
-      response.pipe(file);
-      file.on("finish", function () {
-        file.close(cb);
+async function download(url, dest) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(dest);
+    http
+      .get(url, function (response) {
+        response.pipe(file);
+        file.on("finish", function () {
+          file.close(() => resolve("done"));
+        });
+      })
+      .on("error", function (err) {
+        fs.unlink(dest);
+        reject(err.message);
       });
-    })
-    .on("error", function (err) {
-      fs.unlink(dest);
-      if (cb) cb(err.message);
-    });
+  });
 }
 
 async function main() {
@@ -48,12 +51,24 @@ async function main() {
 
   const photos = response.map((response) => response.response.results).flat();
   const links = photos.map((res) => res.urls.regular);
-  links.forEach((link, index) => {
-    const filename = String(index).padStart(3, "0");
-    download(link, `./out/${filename}.jpg`, () => {
-      console.log(`image ${index} downloaded`);
-    });
-  });
+  const downloads = await Promise.all(
+    links.map(async (link, index) => {
+      const filename = String(index).padStart(3, "0");
+      const res = await download(link, `./out/${filename}.jpg`);
+      console.log(`image ${index} downloaded`, res);
+      return `./out/${filename}.jpg`;
+    })
+  );
+
+  await Promise.all(
+    downloads.map(async (filename, index) => {
+      const buffer = await sharp(filename).resize(1080, 1620).toBuffer();
+      await sharp(buffer).toFile(filename);
+      console.log(`resize ${index}`);
+    })
+  );
+
+  console.log("Done!");
 }
 
 main();
