@@ -8,6 +8,9 @@ import { createApi } from "unsplash-js";
 
 config({ path: path.resolve(".env.local"), override: true });
 
+const IMAGE_WIDTH = 1080;
+const IMAGE_HEIGHT = 1620;
+
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
   fetch: nodeFetch,
@@ -62,7 +65,7 @@ async function main() {
 
   await Promise.all(
     downloads.map(async (filename, index) => {
-      const buffer = await sharp(filename).resize(1080, 1620).toBuffer();
+      const buffer = await sharp(filename).resize(IMAGE_WIDTH, IMAGE_HEIGHT).toBuffer();
       await sharp(buffer).toFile(filename);
       console.log(`resize ${index}`);
     })
