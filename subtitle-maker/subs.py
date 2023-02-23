@@ -20,7 +20,7 @@ with open('out/subs.srt' , 'w') as f:
         chars = sum([len(w) for w in sentence])
 
         f.write(str(counter) + '\n' + format_time(s))
-        s += chars / 15.0
+        s += chars / 5.0
         f.write(' --> ' + format_time(s) + '\n' + " ".join(sentence) + '\n\n')
 
         counter += 1
