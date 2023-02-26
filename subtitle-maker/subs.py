@@ -7,6 +7,7 @@ words = input.split()
 
 counter = 1
 s = float(0)
+speed = 9.0
 
 def format_time(s: float) -> str:
     return '{:02}:{:02}:{:02.3f}'.format(int(s//3600), int(s % 3600//60), s % 60)
@@ -20,7 +21,7 @@ with open('out/subs.srt' , 'w') as f:
         chars = sum([len(w) for w in sentence])
 
         f.write(str(counter) + '\n' + format_time(s))
-        s += chars / 7.5
+        s += chars / speed
         f.write(' --> ' + format_time(s) + '\n' + " ".join(sentence) + '\n\n')
 
         counter += 1
