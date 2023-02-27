@@ -12,13 +12,17 @@ chatbot = Chatbot(config={
 
 voice_input = os.getenv('VOICE_INPUT')
 
-prompt = "Please summarize the following text into 1 minute, but using the first person point of view: " + voice_input
-response = ""
+prompt_title = "Please provide a clickbait title for the following text with a maximum of 42 characters: " + voice_input
+prompt_summarize = "Please summarize the following text into 1 minute, but using the first person point of view: " + voice_input
 
-for data in chatbot.ask(prompt):
-    response = data["message"]
+for data in chatbot.ask(prompt_title):
+    title = data["message"]
+for data in chatbot.ask(prompt_summarize):
+    summarize = data["message"]
 
+with open('out/title.txt', 'w') as f:
+    f.write(title.strip('\"'))
 with open('out/text.txt', 'w') as f:
-    f.write(response)
+    f.write(summarize)
 
-print(f'Succesfully generated a chatgpt response')
+print(f'Successfully generated a ChatGPT response')

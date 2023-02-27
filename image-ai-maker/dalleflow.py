@@ -12,4 +12,4 @@ for i, d in enumerate(doc.matches):
     with open('out/' + image_id + '.png', 'wb') as f:
         f.write(response.file.read())
 
-print(f'Succesfully generated {len(doc.matches)} images')
+print(f'Successfully generated {len(doc.matches)} images')

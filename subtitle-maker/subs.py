@@ -27,4 +27,4 @@ with open('out/subs.srt' , 'w') as f:
 
         counter += 1
 
-print(f'Succesfully generated subtitles with {counter} lines')
+print(f'Successfully generated subtitles with {counter} lines')
