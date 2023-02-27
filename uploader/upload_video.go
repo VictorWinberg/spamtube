@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -29,7 +28,7 @@ func main() {
 		panic("You must provide a filename of a video file to upload")
 	}
 
-	if _, err := os.Stat(*title_path); !errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(*title_path); err == nil {
 		bytes, err := ioutil.ReadFile(*title_path)
 		if err != nil {
 			log.Fatal(err)
