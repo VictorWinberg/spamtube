@@ -5,15 +5,15 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
-const IMAGE_EXT_FALLBACK = "jpg"
-const TEST_IMAGE_EXT = "jpg"
 const AUDIO_EXT = "mp3"
+const IMAGE_PATH = "./data/images/"
 const OUTPUT_VIDEO_TEMP_FILE = "./out/video_temp.mp4"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
 const OUTPUT_AUDIO_FILE = "./out/audio.mp3"
@@ -25,13 +25,13 @@ const MIN_AUDIO_FILES = 2
 const VOLUME_CHANGE_FACTOR = "0.15"
 
 func CreateVideo() {
-	imagePath, imageExt := GetImages()
+	imageExt := GetImageExt()
 	audio := GenerateAudio()
-	GenerateVideo(imagePath, imageExt, audio)
+	GenerateVideo(imageExt, audio)
 }
 
-func GenerateVideo(imagePath string, imageExt string, audioInput *ffmpeg.Stream) {
-	imageInput := ffmpeg.Input(imagePath+"%03d."+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
+func GenerateVideo(imageExt string, audioInput *ffmpeg.Stream) {
+	imageInput := ffmpeg.Input(IMAGE_PATH+"%03d"+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
 	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_TEMP_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	if err != nil {
 		log.Fatal(err)
@@ -58,23 +58,13 @@ func GenerateAudio() *ffmpeg.Stream {
 	return ffmpeg.Input(OUTPUT_AUDIO_FILE)
 }
 
-func GetImages() (string, string) {
-	path := "./data/images/"
-	files, err := os.ReadDir(path)
+func GetImageExt() string {
+	files, err := os.ReadDir(IMAGE_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
-	imageFiles := ExtractImages(files)
-	if len(imageFiles) == 0 {
-		fmt.Println("No images found, fetching test images")
-		testPath := "./data/test_data/"
-		_, err := os.ReadDir(testPath)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return testPath, TEST_IMAGE_EXT
-	}
-	return path, GetEnv("IMAGE_EXT", IMAGE_EXT_FALLBACK)
+	f := files[1]
+	return filepath.Ext(f.Name())
 }
 
 func GetAudio() map[string][]os.DirEntry {
@@ -141,14 +131,6 @@ func ExtractFilesWithExt(files []os.DirEntry, searchFileExt string) []os.DirEntr
 		}
 	}
 	return foundFiles
-}
-
-func ExtractImages(files []os.DirEntry) []os.DirEntry {
-	return ExtractFilesWithExt(files, GetEnv("IMAGE_EXT", IMAGE_EXT_FALLBACK))
-}
-
-func ExtractTestImages(files []os.DirEntry) []os.DirEntry {
-	return ExtractFilesWithExt(files, TEST_IMAGE_EXT)
 }
 
 func ExtractAudio(files []os.DirEntry) []os.DirEntry {

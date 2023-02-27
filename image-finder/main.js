@@ -35,6 +35,40 @@ async function download(url, dest) {
 
 async function main() {
   const keywords = process.env.IMAGE_INPUT.split(" ");
+
+  try {
+    const response = await nodeFetch("https://api.craiyon.com/draw", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: keywords.join(" "),
+        version: "35s5hfwn9n78gb06",
+        token: null,
+      }),
+    });
+
+    const json = await response.json();
+    const { images } = json;
+
+    const urls = images.map((image) => `https://img.craiyon.com/${image}`);
+    await Promise.all(
+      urls.map(async (link, index) => {
+        const filename = String(index).padStart(3, "0");
+        const res = await download(link, `./out/${filename}.webp`);
+        console.log(`image ${index} downloaded`, res);
+        return `./out/${filename}.webp`;
+      })
+    );
+    console.log("Done - craiyon!");
+    return;
+  } catch (error) {
+    // continue
+    console.error(error);
+  }
+
+  // fallback to unsplash
   const response = await Promise.all(
     keywords.map((keyword) =>
       unsplash.search.getPhotos({
@@ -71,7 +105,7 @@ async function main() {
     })
   );
 
-  console.log("Done!");
+  console.log("Done - unsplash!");
 }
 
 main();
