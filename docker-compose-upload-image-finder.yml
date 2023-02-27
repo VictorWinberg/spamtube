@@ -64,11 +64,13 @@ services:
   uploader:
     build: uploader
     volumes:
-      - video-volume:/app/data
+      - chatgpt-volume:/app/data/chatgpt
+      - video-volume:/app/data/video
       - uploader-volume:/app/out
     environment:
-      FILENAME: ./data/video.mp4
+      FILENAME: ./data/video/video.mp4
       TITLE: ${TITLE}
+      TITLE_PATH: ./data/chatgpt/title.txt
       DESCRIPTION: ${DESCRIPTION}
     depends_on:
       generator:

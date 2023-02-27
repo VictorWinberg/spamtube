@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -13,6 +15,7 @@ import (
 var (
 	filename    = flag.String("filename", getEnv("FILENAME", ""), "Name of video file to upload")
 	title       = flag.String("title", getEnv("TITLE", "SpamTube Default Title"), "Video title")
+	title_path  = flag.String("title_path", getEnv("TITLE_PATH", ""), "Name of title file")
 	description = flag.String("description", getEnv("DESCRIPTION", "SpamTube Default Description"), "Video description")
 	category    = flag.String("category", getEnv("CATEGORY", "22"), "Video category")
 	keywords    = flag.String("keywords", getEnv("KEYWORDS", "spamtube,news,ai"), "Comma separated list of video keywords")
@@ -24,6 +27,14 @@ func main() {
 
 	if *filename == "" {
 		panic("You must provide a filename of a video file to upload")
+	}
+
+	if _, err := os.Stat(*title_path); !errors.Is(err, os.ErrNotExist) {
+		bytes, err := ioutil.ReadFile(*title_path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		*title = string(bytes)
 	}
 
 	client := GetClient(youtube.YoutubeReadonlyScope, youtube.YoutubeUploadScope)
