@@ -17,12 +17,17 @@ func AutoUploadVideo(subreddit_name string) error {
 	}
 	rand.Seed(time.Now().UnixNano())
 	post := posts[rand.Intn(len(posts))]
+	hashTaggedKeywords := ""
+
+	for _, keyword := range post.Data.Keywords {
+		hashTaggedKeywords = hashTaggedKeywords + fmt.Sprintf("#%s ", keyword)
+	}
 
 	data := &api.WorkflowInputBody{
 		Ref: "master",
 		Inputs: &api.WorkflowInputs{
 			Title:       post.Data.Title,
-			Description: "Hello spamtubers",
+			Description: fmt.Sprintf("See the reddit post that generated this video here: %s \n %s", post.Data.URL, hashTaggedKeywords),
 			Image:       strings.Join(post.Data.Keywords, " "),
 			Voice:       post.Data.Selftext,
 			Service:     "image-finder",
