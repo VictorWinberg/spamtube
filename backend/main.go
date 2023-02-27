@@ -100,18 +100,18 @@ func main() {
 			con.JSON(http.StatusOK, videos)
 		})
 
-		
-		api.GET("/MySubRedits:", func(con *gin.Context) {
-			videos, err := internalApi.GetUploadedYoutubeVideos()
+		api.GET("/MySubReddits", func(con *gin.Context) {
+			items, err := internalApi.QueryMySubReddits()
+
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
 					"message": fmt.Sprintf("Error: %s", err),
 				})
 				return
 			}
-			con.JSON(http.StatusOK, videos)
+			con.JSON(http.StatusOK, items)
 		})
-		
+
 	}
 
 	router.NoRoute(func(c *gin.Context) {

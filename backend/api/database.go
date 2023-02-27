@@ -1,26 +1,25 @@
-package main
+package api
 
 import (
 	"database/sql"
-	"embed"
 	"flag"
+	"log"
 	"os"
+	"time"
 
-	_ "github.com/lib/pq"
 	"spamtube/backend/domain"
 )
 
+func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
 
-func QueryMySubRedits(){
-
-	var items []*TableDbSubReddits
+	var items []*domain.TableDbSubReddits
 	var db *sql.DB
 	dsn := flag.String("dsn", os.Getenv("DATABASE_URL"), "Postgres data source name")
 	flag.Parse()
 
 	db, err := openDB(*dsn)
 
-    // dynamic
+	// dynamic
 	rows, err := db.Query(`SELECT * FROM "subreddits"`)
 	if err != nil {
 		panic(err)
@@ -32,39 +31,24 @@ func QueryMySubRedits(){
 		// must be the same with the query column position.
 		var id, name string
 		var createdAt time.Time
-		
+
 		err = rows.Scan(&id, &name, &createdAt)
 		if err != nil {
 			log.Printf("Failed to build item: %v\n", err)
-			return items, err
+			return nil, err
 		}
-	
-		item := &TableDbSubReddits{
-		  Id: id,
-		  Name: name,
-		  Created_at: createdAt
+
+		item := &domain.TableDbSubReddits{
+			Id:         id,
+			Name:       name,
+			Created_at: createdAt,
 		}
-	
+
 		// Add item to the list.
 		items = append(items, item)
-	  }
-
-	  return items
-}
-
-func query(q string) {
-	var db *sql.DB
-	dsn := flag.String("dsn", os.Getenv("DATABASE_URL"), "Postgres data source name")
-	flag.Parse()
-
-	db, err := openDB(*dsn)
-	if err != nil {
-		panic(err)
 	}
-	defer db.Close()
 
-
-	
+	return items, nil
 }
 
 func openDB(dsn string) (*sql.DB, error) {
