@@ -99,6 +99,19 @@ func main() {
 			}
 			con.JSON(http.StatusOK, videos)
 		})
+
+		
+		api.GET("/MySubRedits:", func(con *gin.Context) {
+			videos, err := internalApi.GetUploadedYoutubeVideos()
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK, videos)
+		})
+		
 	}
 
 	router.NoRoute(func(c *gin.Context) {

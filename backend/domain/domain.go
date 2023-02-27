@@ -74,3 +74,9 @@ type Video struct {
 	} `xml:"group"`
 	VideoId string `xml:"videoId"`
 }
+
+type TableDbSubReddits struct {
+	Id string
+	Name string
+	Created_at string
+}
