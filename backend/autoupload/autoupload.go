@@ -20,7 +20,10 @@ func AutoUploadVideo(subreddit_name string) error {
 	hashTaggedKeywords := ""
 
 	for _, keyword := range post.Data.Keywords {
-		hashTaggedKeywords = hashTaggedKeywords + fmt.Sprintf("#%s ", keyword)
+		// ignore keywords containing '
+		if !strings.Contains(keyword, "'") {
+			hashTaggedKeywords = hashTaggedKeywords + fmt.Sprintf("#%s ", keyword)
+		}
 	}
 
 	data := &api.WorkflowInputBody{
