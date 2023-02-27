@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"spamtube/backend/domain"
+
+	_ "github.com/lib/pq"
 )
 
 func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
@@ -18,6 +20,10 @@ func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
 	flag.Parse()
 
 	db, err := openDB(*dsn)
+
+	if err != nil {
+		panic(err)
+	}
 
 	// dynamic
 	rows, err := db.Query(`SELECT * FROM "subreddits"`)
