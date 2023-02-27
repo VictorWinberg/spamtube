@@ -29,13 +29,6 @@
           persistent-hint
           variant="outlined"
         />
-        <v-select
-          class="service-select"
-          v-model="selectedService"
-          label="Image generating service"
-          :items="items"
-          variant="outlined"
-        />
         <div class="btn-group">
           <v-btn class="back mt-8" size="x-large" @click="goBack"> Back </v-btn>
           <v-btn class="mt-8 submit" type="submit" size="x-large">Submit</v-btn>
@@ -48,17 +41,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-type SelectItem = {
-  title: string;
-  value: string;
-};
+
 interface DataProps {
   title: string;
   description: string;
   image: string;
   voice: string;
-  selectedService: string;
-  items: SelectItem[];
   errorMessage: string;
   status?: number;
 }
@@ -72,12 +60,6 @@ export default defineComponent({
       description: "",
       image: "",
       voice: "",
-      selectedService: "image-finder",
-      items: [
-        // The value here should batch a docker compose upload script
-        { value: "ai-image", title: "AI Image Generator" },
-        { value: "image-finder", title: "Image Finder" },
-      ],
       errorMessage: "",
       status: undefined,
     };
@@ -106,7 +88,6 @@ export default defineComponent({
         description: this.description,
         image: this.image,
         voice: this.voice,
-        service: this.selectedService,
       };
       this.$emit("submitStep", content);
     },
@@ -134,9 +115,6 @@ export default defineComponent({
 .btn-group {
   display: flex;
   gap: 1em;
-}
-.service-select {
-  margin-top: 1em;
 }
 .v-btn {
   flex: 1;

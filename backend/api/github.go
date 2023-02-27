@@ -18,7 +18,6 @@ type WorkflowInputs struct {
 	Description string `json:"description"`
 	Image       string `json:"image"`
 	Voice       string `json:"voice"`
-	Service     string `json:"service"`
 }
 
 func TriggerGithubAction(body *WorkflowInputBody) (interface{}, error) {

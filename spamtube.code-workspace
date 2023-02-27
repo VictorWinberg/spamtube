@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "backend"
+		},
+		{
+			"path": "uploader"
+		},
+		{
+			"path": "voice-maker"
+		}
+	],
+	"settings": {}
+}

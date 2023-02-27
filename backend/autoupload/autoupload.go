@@ -33,7 +33,6 @@ func AutoUploadVideo(subreddit_name string) error {
 			Description: fmt.Sprintf("See the reddit post that generated this video here: %s \n %s", post.Data.URL, hashTaggedKeywords),
 			Image:       strings.Join(post.Data.Keywords, " "),
 			Voice:       post.Data.Selftext,
-			Service:     "image-finder",
 		},
 	}
 
