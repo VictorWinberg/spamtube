@@ -52,7 +52,6 @@ interface DataProps {
   description: string;
   image: string;
   voice: string;
-  service: string;
   status?: number;
   neonCat: string;
 }
@@ -66,7 +65,6 @@ export default defineComponent({
       description: this.data?.description || "",
       image: this.data?.image || "",
       voice: this.data?.voice || "",
-      service: this.data?.service || "",
       status: undefined,
       neonCat,
     };
@@ -85,7 +83,6 @@ export default defineComponent({
       this.description = newData.description;
       this.image = newData.image;
       this.voice = newData.voice;
-      this.service = newData.service;
     },
   },
   methods: {
@@ -96,7 +93,6 @@ export default defineComponent({
           this.description,
           this.image,
           this.voice,
-          this.service
         );
         this.status = res.status;
       } catch (error) {
