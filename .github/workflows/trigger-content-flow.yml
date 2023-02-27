@@ -71,5 +71,7 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          GOOGLE_EMAIL: ${{ secrets.google_email }}
+          GOOGLE_PASSWORD: ${{ secrets.google_password }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}
           UNSPLASH_ACCESS_TOKEN: ${{ secrets.unsplash_access_token }}
