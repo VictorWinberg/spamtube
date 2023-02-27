@@ -22,7 +22,7 @@ func AutoUploadVideo(subreddit_name string) error {
 		Ref: "master",
 		Inputs: &api.WorkflowInputs{
 			Title:       post.Data.Title,
-			Description: post.Data.URL,
+			Description: fmt.Sprintf("See the reddit post that generated this video here: %s", post.Data.URL),
 			Image:       strings.Join(post.Data.Keywords, " "),
 			Voice:       post.Data.Selftext,
 			Service:     "image-finder",
