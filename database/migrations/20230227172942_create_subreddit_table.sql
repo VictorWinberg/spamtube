@@ -23,6 +23,7 @@ VALUES
 ('psycho_alpaca'),
 ('relationships'), 
 ('AmItheAsshole') 
+ON CONFLICT DO NOTHING
 -- +goose StatementEnd
 
 -- +goose Down
