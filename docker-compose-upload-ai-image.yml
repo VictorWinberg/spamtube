@@ -1,6 +1,15 @@
 version: "3.1"
 
 services:
+  chatgpt:
+    build: chatgpt
+    environment:
+      GOOGLE_EMAIL: ${GOOGLE_EMAIL}
+      GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
+      VOICE_INPUT: ${VOICE_INPUT}
+    volumes:
+      - chatgpt-volume:/app/out
+
   image-ai-maker:
     build: image-ai-maker
     volumes: 
@@ -20,21 +29,25 @@ services:
   voice-maker:
     build: voice-maker
     volumes:
+      - chatgpt-volume:/app/data
       - voice-volume:/app/out
-    environment:
-      VOICE_INPUT: ${VOICE_INPUT}
+    depends_on:
+      chatgpt:
+        condition: service_completed_successfully
+
+  subtitle-maker:
+    build: subtitle-maker
+    volumes:
+      - chatgpt-volume:/app/data
+      - subs-volume:/app/out
+    depends_on:
+      chatgpt:
+        condition: service_completed_successfully
 
   music-maker:
     build: music-maker
     volumes:
       - music-volume:/app/out
-
-  subtitle-maker:
-    build: subtitle-maker
-    volumes:
-      - subs-volume:/app/out
-    environment:
-      VOICE_INPUT: ${VOICE_INPUT}
 
   generator:
     build: generator
@@ -88,4 +101,5 @@ volumes:
   music-volume:
   video-volume:
   subs-volume:
+  chatgpt-volume:
   uploader-volume:

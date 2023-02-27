@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -26,14 +25,17 @@ type Speech struct {
 }
 
 func main() {
-	text := flag.String("text", getEnv("VOICE_INPUT", strings.Repeat("Hello SpamTube ", 10)), "Text-to-Speech input")
-	flag.Parse()
+	bytes, err := ioutil.ReadFile("data/text.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	text := string(bytes)
 
-	words := strings.Fields(*text)
+	words := strings.Fields(text)
 
 	rand.Seed(time.Now().UnixNano())
 
-	fmt.Printf("Got TTS-input: %s\n", *text)
+	fmt.Printf("Got TTS-input: %s\n", text)
 	in := []string{
 		voices.English,
 		voices.EnglishAU,
@@ -56,7 +58,7 @@ func main() {
 			input += word + " "
 		}
 	}
-	err := speech.download("out/audio.mp3", input)
+	err = speech.download("out/audio.mp3", input)
 	if err != nil {
 		log.Fatal(err)
 	}

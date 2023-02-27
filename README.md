@@ -23,7 +23,7 @@ docker compose up --build [service]
 Run an upload service in a docker container:
 
 ```bash
-docker compose up -f docker-compose-upload --build [service]
+docker compose -f docker-compose-upload-image-finder.yml up --build [service]
 ```
 
 ## Development

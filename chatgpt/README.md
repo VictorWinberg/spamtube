@@ -3,4 +3,4 @@
 
 ## Usage
 
-To run script: `python3 dalleflow.py`
+To run script: `python3 chatgpt.py`
