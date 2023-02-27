@@ -1,7 +1,8 @@
 import os
 from decimal import *
 
-input = os.getenv('VOICE_INPUT', 'Hello spamtubers, ...')
+f = open("data/text.txt", "r")
+input = f.read()
 
 words = input.split()
 
