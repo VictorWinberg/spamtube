@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
   id         UUID DEFAULT  uuid_generate_v4(),
   source_id  VARCHAR(255)  NOT NULL UNIQUE,
   dest_id    VARCHAR(255)  NOT NULL UNIQUE,

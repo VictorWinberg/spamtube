@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE subreddits (
+CREATE TABLE IF NOT EXISTS subreddits (
   id        UUID DEFAULT  uuid_generate_v4(),
   name      VARCHAR(255)  NOT NULL UNIQUE,
 
@@ -21,10 +21,11 @@ VALUES
 ('UnresolvedMysteries'),
 ('shortscarystories'),
 ('psycho_alpaca'),
-('relationships')
+('relationships'), 
+('AmItheAsshole') 
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE subreddits;
+DROP TABLE IF EXISTS subreddits;
 -- +goose StatementEnd
