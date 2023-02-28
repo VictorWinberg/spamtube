@@ -10,6 +10,7 @@ config({ path: path.resolve(".env.local"), override: true });
 
 const IMAGE_WIDTH = 1080;
 const IMAGE_HEIGHT = 1620;
+const OUT_DIR = "./out";
 
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
@@ -36,6 +37,18 @@ async function download(url, dest) {
 async function main() {
   const keywords = process.env.IMAGE_INPUT.split(" ");
 
+  // remove old files
+  fs.readdir(OUT_DIR, (err, files) => {
+    if (err) throw err;
+
+    for (const file of files) {
+      if (file === ".gitkeep") continue;
+      fs.unlink(path.join(OUT_DIR, file), (err) => {
+        if (err) throw err;
+      });
+    }
+  });
+
   try {
     const response = await nodeFetch("https://api.craiyon.com/draw", {
       method: "POST",
@@ -56,9 +69,9 @@ async function main() {
     await Promise.all(
       urls.map(async (link, index) => {
         const filename = String(index).padStart(3, "0");
-        const res = await download(link, `./out/${filename}.webp`);
+        const res = await download(link, `${OUT_DIR}/${filename}.webp`);
         console.log(`image ${index} downloaded`, res);
-        return `./out/${filename}.webp`;
+        return `${OUT_DIR}/${filename}.webp`;
       })
     );
     console.log("Done - craiyon!");
@@ -91,9 +104,9 @@ async function main() {
   const downloads = await Promise.all(
     links.map(async (link, index) => {
       const filename = String(index).padStart(3, "0");
-      const res = await download(link, `./out/${filename}.jpg`);
+      const res = await download(link, `${OUT_DIR}/${filename}.jpg`);
       console.log(`image ${index} downloaded`, res);
-      return `./out/${filename}.jpg`;
+      return `${OUT_DIR}/${filename}.jpg`;
     })
   );
 
