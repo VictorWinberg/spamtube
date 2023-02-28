@@ -21,7 +21,7 @@ for data in chatbot.ask(prompt_summarize):
     summarize = data["message"]
 
 with open('out/title.txt', 'w') as f:
-    f.write(title.strip('\"'))
+    f.write(title.replace('"', ''))
 with open('out/text.txt', 'w') as f:
     f.write(summarize)
 
