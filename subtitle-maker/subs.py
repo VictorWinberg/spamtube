@@ -8,7 +8,7 @@ words = input.split()
 
 counter = 1
 s = float(0)
-speed = 11
+speed = 10.5
 
 def format_time(s: float) -> str:
     return '{:02}:{:02}:{:02.3f}'.format(int(s//3600), int(s % 3600//60), s % 60)
