@@ -13,7 +13,7 @@ chatbot = Chatbot(config={
 voice_input = os.getenv('VOICE_INPUT')
 
 prompt_title = "Please provide a clickbait and dramatic title for the following text with a maximum of 42 characters: " + voice_input
-prompt_summarize = "Please summarize the following text into 40 seconds as exciting as possible to get the reader's attention, using the first person point of view, meaning using the pronouns I, me, we, and us, in order to tell a story from the narrator's perspective: " + voice_input
+prompt_summarize = "Please summarize the following text into 40 seconds as exciting as possible to get the reader's attention, using the first person point of view, meaning using the pronouns I, me, we, and us, in order to tell a story from the narrator's perspective, also censor swear words with symbols: " + voice_input
 
 for data in chatbot.ask(prompt_title):
     title = data["message"]
