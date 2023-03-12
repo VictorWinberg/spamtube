@@ -7,6 +7,7 @@ services:
       GOOGLE_EMAIL: ${GOOGLE_EMAIL}
       GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
       VOICE_INPUT: ${VOICE_INPUT}
+      FALLBACK_TITLE: ${TITLE}
     volumes:
       - chatgpt-volume:/app/out
 

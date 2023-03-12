@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . ./
 
-CMD [ "python3", "subs.py"]
+CMD [ "python", "subs.py"]
