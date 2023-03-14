@@ -37,9 +37,13 @@ func main() {
 
 	fmt.Printf("Got TTS-input: %s\n", text)
 	in := []string{
+		voices.Dutch,
 		voices.English,
 		voices.EnglishAU,
 		voices.EnglishUK,
+		voices.German,
+		voices.Hindi,
+		voices.Norwegian,
 	}
 	language := in[rand.Intn(len(in))]
 	fmt.Printf("Language: %s\n", language)
