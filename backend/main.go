@@ -100,7 +100,7 @@ func main() {
 			con.JSON(http.StatusOK, videos)
 		})
 
-		api.GET("/MySubReddits", func(con *gin.Context) {
+		api.GET("/subreddits", func(con *gin.Context) {
 			items, err := internalApi.QueryMySubReddits()
 
 			if err != nil {

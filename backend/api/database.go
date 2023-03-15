@@ -12,9 +12,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
+func QueryMySubReddits() ([]*domain.Subreddit, error) {
 
-	var items []*domain.TableDbSubReddits
+	var items []*domain.Subreddit
 	var db *sql.DB
 	dsn := flag.String("dsn", os.Getenv("DATABASE_URL"), "Postgres data source name")
 	flag.Parse()
@@ -25,7 +25,6 @@ func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
 		panic(err)
 	}
 
-	// dynamic
 	rows, err := db.Query(`SELECT * FROM "subreddits"`)
 	if err != nil {
 		panic(err)
@@ -33,8 +32,6 @@ func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
 	defer db.Close()
 
 	for rows.Next() {
-		// Build item for each row.
-		// must be the same with the query column position.
 		var id, name string
 		var createdAt time.Time
 
@@ -44,13 +41,12 @@ func QueryMySubReddits() ([]*domain.TableDbSubReddits, error) {
 			return nil, err
 		}
 
-		item := &domain.TableDbSubReddits{
+		item := &domain.Subreddit{
 			Id:         id,
 			Name:       name,
 			Created_at: createdAt,
 		}
 
-		// Add item to the list.
 		items = append(items, item)
 	}
 

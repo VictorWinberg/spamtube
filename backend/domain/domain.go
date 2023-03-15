@@ -77,7 +77,7 @@ type Video struct {
 	VideoId string `xml:"videoId"`
 }
 
-type TableDbSubReddits struct {
+type Subreddit struct {
 	Id         string
 	Name       string
 	Created_at time.Time
