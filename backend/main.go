@@ -35,9 +35,11 @@ func main() {
 	kron := cron.New(cron.WithLocation(loc))
 	kron.Start()
 
-	cronJobId := startCronJob(kron, "AmItheAsshole", "0 9 * * *")
-	// TODO: Stop using kron.Remove(cronJobId) when cron string is updated for subreddit
-	subredditCronjobs["AmITheAsshole"] = cronJobId
+	cronJobId, err := startCronJob(kron, "AmItheAsshole", "0 9 * * *")
+	if err == nil {
+		// TODO: Stop using kron.Remove(cronJobId) when cron string is updated for subreddit
+		subredditCronjobs["AmITheAsshole"] = cronJobId
+	}
 	// Set the router as the default one shipped with Gin
 	router := gin.Default()
 
@@ -117,7 +119,7 @@ func main() {
 	router.Run(fmt.Sprintf(":%s", *port))
 }
 
-func startCronJob(kron *cron.Cron, subreddit string, cron_string string) cron.EntryID {
+func startCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
 	log.Printf("Starting cronjob for subreddit %s, with cron: %s", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
@@ -129,6 +131,7 @@ func startCronJob(kron *cron.Cron, subreddit string, cron_string string) cron.En
 	})
 	if err != nil {
 		log.Println(err)
+		return 0, err
 	}
-	return id
+	return id, nil
 }
