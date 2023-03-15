@@ -27,21 +27,17 @@ func main() {
 	port := flag.String("port", helpers.GetEnv("PORT", "3000"), "Server port")
 	flag.Parse()
 
+	subredditCronjobs := make(map[string]cron.EntryID)
 	loc, err := time.LoadLocation("Europe/Stockholm")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	kron := cron.New(cron.WithLocation(loc))
-	kron.AddFunc("0 9 * * *", func() {
-		err := autoupload.AutoUploadVideo("AmItheAsshole")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Println("Autouploading video successful!")
-	})
 	kron.Start()
+
+	cronJobId := startCronJob(kron, "AmItheAsshole", "0 9 * * *")
+	// TODO: Add/remove from this list when cron stats is updated
+	subredditCronjobs["AmITheAsshole"] = cronJobId
 
 	// Set the router as the default one shipped with Gin
 	router := gin.Default()
@@ -120,4 +116,20 @@ func main() {
 
 	// Start and run the server
 	router.Run(fmt.Sprintf(":%s", *port))
+}
+
+func startCronJob(kron *cron.Cron, subreddit string, cron_string string) cron.EntryID {
+	log.Printf("Starting cronjob for subreddit %s, with cron: %s", subreddit, cron_string)
+	id, err := kron.AddFunc(cron_string, func() {
+		err := autoupload.AutoUploadVideo(subreddit)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("Autouploading video successful!")
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	return id
 }
