@@ -81,4 +81,5 @@ type Subreddit struct {
 	Id         string
 	Name       string
 	Created_at time.Time
+	Cron       *string
 }

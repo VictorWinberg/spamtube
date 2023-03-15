@@ -9,6 +9,7 @@ import (
 	internalApi "spamtube/backend/api"
 	"spamtube/backend/autoupload"
 	"spamtube/backend/database"
+	"spamtube/backend/domain"
 	"spamtube/backend/helpers"
 	"time"
 
@@ -129,6 +130,20 @@ func main() {
 				return
 			}
 			con.JSON(http.StatusOK, fmt.Sprintf("Successfully deleted subreddit with id %s", id))
+		})
+
+		api.PUT("/subreddits", func(con *gin.Context) {
+			subreddit := domain.Subreddit{}
+			json.NewDecoder(con.Request.Body).Decode(&subreddit)
+			item, err := database.UpsertSubreddit(subreddit)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK, item)
 		})
 
 	}
