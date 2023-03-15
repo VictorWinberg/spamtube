@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type AccessToken struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
@@ -73,4 +75,10 @@ type Video struct {
 		} `xml:"community"`
 	} `xml:"group"`
 	VideoId string `xml:"videoId"`
+}
+
+type Subreddit struct {
+	Id         string
+	Name       string
+	Created_at time.Time
 }
