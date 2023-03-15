@@ -53,7 +53,7 @@
       <v-card>
         <v-card-text> Are you sure you want to remove this item? </v-card-text>
         <v-card-actions>
-          <v-btn color="grey" @click="doNotRemove()"> No </v-btn>
+          <v-btn color="grey" @click="cancel()"> No </v-btn>
           <v-btn color="error" @click="remove(selectedItemId)"> Yes </v-btn>
         </v-card-actions>
       </v-card>
@@ -128,7 +128,7 @@ export default defineComponent({
       this.items = this.items.filter((i) => i.id !== item);
       this.removeDialog = false;
     },
-    doNotRemove() {
+    cancel() {
       this.selectedItemId = -1;
       this.removeDialog = false;
     },
