@@ -28,7 +28,8 @@ try:
         f.write(summary)
 
     print(f'Successfully generated a ChatGPT response')
-except:
+except Exception as err: 
+    print(err)
     with open('out/title.txt', 'w') as f:
         f.write(os.getenv('FALLBACK_TITLE'))
     with open('out/text.txt', 'w') as f:
