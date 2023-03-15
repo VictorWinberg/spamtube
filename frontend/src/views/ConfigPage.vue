@@ -1,13 +1,50 @@
 <template>
   <div class="config">
-    <h1>Configuration</h1>
+    <h1>Configurations</h1>
 
-    <v-list lines="three">
+    <v-list>
+      <v-list-item :key="0">
+        <div class="v-list-item__content">
+          <v-btn
+            size="small"
+            class="icon-btn"
+            color="green"
+            icon="mdi-plus"
+            @click="openNewConfiguration()"
+          />
+          <v-list-item-title>
+            <strong>Create new configuration</strong>
+          </v-list-item-title>
+        </div>
+        <div class="v-list-item__configure" v-if="showNewConfiguration()">
+          <v-text-field
+            v-model="subredditTextfield"
+            label="Subreddit"
+            placeholder="Write name of subreddit"
+            variant="outlined"
+          />
+          <v-text-field
+            v-model="periodicityTextfield"
+            label="Periodicity"
+            placeholder="Write your periodicity"
+            variant="outlined"
+          />
+          <v-btn size="large" color="success" block @click="create()">
+            Create
+          </v-btn>
+        </div>
+      </v-list-item>
+
       <v-list-item v-for="item in items" :key="item.id">
         <div class="v-list-item__content">
-          <v-avatar color="surface-variant">
-            <v-icon color="white">mdi-play-circle</v-icon>
-          </v-avatar>
+          <v-btn
+            variant="flat"
+            disabled
+            size="small"
+            class="icon-btn"
+            :color="item.subtitle ? 'primary' : 'secondary'"
+            :icon="item.subtitle ? 'mdi-play-circle' : 'mdi-pause-circle'"
+          />
           <div class="v-list-item__list-text">
             <v-list-item-title>
               <strong>{{ item.title }}</strong>
@@ -19,27 +56,32 @@
           <v-btn
             class="icon-btn"
             color="warning"
+            size="small"
             icon="mdi-cog"
             @click="configure(item)"
           />
           <v-btn
             class="icon-btn"
             color="error"
+            size="small"
             icon="mdi-close-thick"
             @click="openRemoveDialog(item)"
           />
         </div>
-        <div class="v-list-item__configure" v-if="showConfigDetails(item)">
+        <div
+          class="v-list-item__configure"
+          v-if="showConfigurationDetails(item)"
+        >
           <v-text-field
-            v-model="configureTextfield1"
+            v-model="subredditTextfield"
             label="Subreddit"
-            placeholder="Name of subreddit"
+            placeholder="Write name of subreddit"
             variant="outlined"
           />
           <v-text-field
-            v-model="configureTextfield2"
-            label="Title"
-            placeholder="Title of YouTube clip"
+            v-model="periodicityTextfield"
+            label="Periodicity"
+            placeholder="Write your periodicity"
             variant="outlined"
           />
           <v-btn size="large" color="success" block @click="save(item)">
@@ -67,7 +109,7 @@ import { defineComponent } from "vue";
 interface ItemProps {
   id: number;
   title: string;
-  subtitle: string;
+  subtitle: string | null;
 }
 
 export default defineComponent({
@@ -75,8 +117,8 @@ export default defineComponent({
   data() {
     return {
       selectedItemId: -1,
-      configureTextfield1: "",
-      configureTextfield2: "",
+      subredditTextfield: "",
+      periodicityTextfield: "",
       removeDialog: false,
       items: [
         {
@@ -92,7 +134,7 @@ export default defineComponent({
         {
           id: 3,
           title: "Reddit News",
-          subtitle: "Twice a day, at 8am and 6pm",
+          subtitle: null,
         },
         {
           id: 4,
@@ -103,8 +145,18 @@ export default defineComponent({
     };
   },
   methods: {
-    showConfigDetails(item: ItemProps) {
+    showConfigurationDetails(item: ItemProps) {
       return this.selectedItemId === item.id && !this.removeDialog;
+    },
+    showNewConfiguration() {
+      return this.selectedItemId === 0 && !this.removeDialog;
+    },
+    openNewConfiguration() {
+      if (this.selectedItemId === 0) {
+        this.selectedItemId = -1;
+      } else {
+        this.selectedItemId = 0;
+      }
     },
     configure(item: ItemProps) {
       if (this.selectedItemId === item.id) {
@@ -112,12 +164,22 @@ export default defineComponent({
         return;
       }
       this.selectedItemId = item.id;
-      this.configureTextfield1 = item.title;
-      this.configureTextfield2 = item.subtitle;
+      this.subredditTextfield = item.title;
+      this.periodicityTextfield = item.subtitle ? item.subtitle : "";
+    },
+    create() {
+      this.items.push({
+        id: this.items.length + 1,
+        title: this.subredditTextfield,
+        subtitle: this.periodicityTextfield || null,
+      });
+      this.selectedItemId = -1;
+      this.subredditTextfield = "";
+      this.periodicityTextfield = "";
     },
     save(item: ItemProps) {
-      item.title = this.configureTextfield1;
-      item.subtitle = this.configureTextfield2;
+      item.title = this.subredditTextfield;
+      item.subtitle = this.periodicityTextfield || null;
       this.selectedItemId = -1;
     },
     openRemoveDialog(item: ItemProps) {
@@ -146,14 +208,11 @@ export default defineComponent({
 }
 
 .v-list-item {
+  margin: 0 auto;
   background: rgb(var(--v-theme-white));
   text-align: left;
   margin-bottom: 0.5em;
-
-  .v-avatar,
-  .icon-btn {
-    margin: 0.5em;
-  }
+  max-width: 800px;
 
   &__list-text {
     flex: 1;
@@ -169,8 +228,17 @@ export default defineComponent({
   }
 }
 
+.v-avatar,
+.icon-btn {
+  margin: 0.5em;
+}
+
 .v-card-actions {
   display: flex;
   justify-content: space-evenly;
+
+  .v-btn {
+    margin: 0;
+  }
 }
 </style>
