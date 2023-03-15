@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import UploadPage from "../views/UploadPage.vue";
 import HomePage from "../views/HomePage.vue";
-import StatsPage from "../views/StatsPage.vue";
+import ConfigPage from "../views/ConfigPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,9 +21,9 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/stats",
-    name: "StatsPage",
-    component: StatsPage,
+    path: "/config",
+    name: "ConfigPage",
+    component: ConfigPage,
     meta: {
       order: 3,
     },

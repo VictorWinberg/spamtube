@@ -13,9 +13,9 @@
           <v-icon small> mdi-upload </v-icon>
           <p>Upload</p>
         </router-link>
-        <router-link to="/stats" class="item">
-          <v-icon x-large> mdi-chart-areaspline </v-icon>
-          <p>Stats</p>
+        <router-link to="/config" class="item">
+          <v-icon x-large> mdi-cog </v-icon>
+          <p>Config</p>
         </router-link>
       </div>
     </nav>
