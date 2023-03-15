@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-alter TABLE subreddits  ADD column if not exists cron_string VARCHAR(255) DEFAULT NULL;
+alter TABLE subreddits ADD column if not exists cron_string VARCHAR(255) DEFAULT NULL;
 -- +goose StatementEnd
 
 -- +goose Down
