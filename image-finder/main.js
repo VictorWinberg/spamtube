@@ -34,6 +34,23 @@ async function download(url, dest) {
   });
 }
 
+async function getAIImages(keywords) {
+  const response = await nodeFetch("https://api.craiyon.com/draw", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: keywords.join(" "),
+      version: "35s5hfwn9n78gb06",
+      token: null,
+    }),
+  });
+
+  const json = await response.json();
+  return json.images;
+}
+
 async function main() {
   const keywords = process.env.IMAGE_INPUT.split(" ");
 
@@ -50,20 +67,14 @@ async function main() {
   });
 
   try {
-    const response = await nodeFetch("https://api.craiyon.com/draw", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: keywords.join(" "),
-        version: "35s5hfwn9n78gb06",
-        token: null,
-      }),
-    });
+    const images = [];
+    const middle = Math.floor(keywords.length / 2);
 
-    const json = await response.json();
-    const { images } = json;
+    const res = await Promise.all([
+      getAIImages(keywords.slice(0, middle)),
+      getAIImages(keywords.slice(middle)),
+    ]);
+    res.flat().forEach((image) => images.push(image));
 
     const urls = images.map((image) => `https://img.craiyon.com/${image}`);
     await Promise.all(
@@ -80,6 +91,9 @@ async function main() {
     // continue
     console.error(error);
   }
+
+  return;
+  console.log("Falling back to unsplash");
 
   // fallback to unsplash
   const response = await Promise.all(
