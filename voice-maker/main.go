@@ -41,7 +41,6 @@ func main() {
 		voices.English,
 		voices.EnglishAU,
 		voices.EnglishUK,
-		voices.German,
 		voices.Hindi,
 		voices.Norwegian,
 	}
