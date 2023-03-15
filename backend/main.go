@@ -8,6 +8,7 @@ import (
 	"net/http"
 	internalApi "spamtube/backend/api"
 	"spamtube/backend/autoupload"
+	"spamtube/backend/database"
 	"spamtube/backend/helpers"
 	"time"
 
@@ -30,6 +31,11 @@ func main() {
 	loc, err := time.LoadLocation("Europe/Stockholm")
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	err = database.Connect()
+	if err != nil {
+		panic(err)
 	}
 
 	kron := cron.New(cron.WithLocation(loc))
@@ -101,7 +107,7 @@ func main() {
 		})
 
 		api.GET("/subreddits", func(con *gin.Context) {
-			items, err := internalApi.QueryMySubReddits()
+			items, err := database.GetSubreddits()
 
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
@@ -110,6 +116,19 @@ func main() {
 				return
 			}
 			con.JSON(http.StatusOK, items)
+		})
+
+		api.DELETE("/subreddits/:id", func(con *gin.Context) {
+			id := con.Param("id")
+			err := database.DeleteSubreddit(id)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK, fmt.Sprintf("Successfully deleted subreddit with id %s", id))
 		})
 
 	}
