@@ -36,9 +36,8 @@ func main() {
 	kron.Start()
 
 	cronJobId := startCronJob(kron, "AmItheAsshole", "0 9 * * *")
-	// TODO: Add/remove from this list when cron stats is updated
+	// TODO: Stop using kron.Remove(cronJobId) when cron string is updated for subreddit
 	subredditCronjobs["AmITheAsshole"] = cronJobId
-
 	// Set the router as the default one shipped with Gin
 	router := gin.Default()
 
