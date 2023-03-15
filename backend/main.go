@@ -34,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-  err = database.Connect()
+	err = database.Connect()
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +42,7 @@ func main() {
 	kron := cron.New(cron.WithLocation(loc))
 	kron.Start()
 
-	cronJobId, err := startCronJob(kron, "AmItheAsshole", "0 9 * * *")
+	cronJobId, err := addCronJob(kron, "AmItheAsshole", "0 9 * * *")
 	if err == nil {
 		// TODO: Stop using kron.Remove(cronJobId) when cron string is updated for subreddit
 		subredditCronjobs["AmITheAsshole"] = cronJobId
@@ -139,7 +139,7 @@ func main() {
 	router.Run(fmt.Sprintf(":%s", *port))
 }
 
-func startCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
+func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
 	log.Printf("Starting cronjob for subreddit %s, with cron: %s", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
