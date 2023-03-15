@@ -92,7 +92,6 @@ async function main() {
     console.error(error);
   }
 
-  return;
   console.log("Falling back to unsplash");
 
   // fallback to unsplash
