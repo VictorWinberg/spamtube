@@ -83,3 +83,9 @@ type Subreddit struct {
 	Created_at time.Time
 	Cron       *string
 }
+
+type UpsertSubreddit struct {
+	Id   *string
+	Name *string
+	Cron *string
+}

@@ -133,7 +133,7 @@ func main() {
 		})
 
 		api.PUT("/subreddits", func(con *gin.Context) {
-			subreddit := domain.Subreddit{}
+			subreddit := domain.UpsertSubreddit{}
 			json.NewDecoder(con.Request.Body).Decode(&subreddit)
 			item, err := database.UpsertSubreddit(subreddit)
 

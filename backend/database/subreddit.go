@@ -49,7 +49,7 @@ func DeleteSubreddit(id string) error {
 	return nil
 }
 
-func UpsertSubreddit(sub domain.Subreddit) (domain.Subreddit, error) {
+func UpsertSubreddit(sub domain.UpsertSubreddit) (domain.Subreddit, error) {
 	query := `
 	INSERT INTO subreddits (id, name, created_at, cron)
 	VALUES ($1, $2, $3, $4)
