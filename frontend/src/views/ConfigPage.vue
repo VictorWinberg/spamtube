@@ -22,14 +22,29 @@
             label="Subreddit"
             placeholder="Write name of subreddit"
             variant="outlined"
+            :rules="[() => !!subredditTextfield || 'Subreddit is required']"
           />
           <v-text-field
             v-model="periodicityTextfield"
             label="Periodicity"
             placeholder="Write your periodicity"
             variant="outlined"
+            :rules="[
+              () =>
+                isCronValid ||
+                !periodicityTextfield ||
+                'Invalid cron expression',
+            ]"
+            :hint="cronToString()"
+            persistent-hint
           />
-          <v-btn size="large" color="success" block @click="create()">
+          <v-btn
+            size="large"
+            color="success"
+            block
+            @click="create()"
+            :disabled="!subredditTextfield"
+          >
             Create
           </v-btn>
         </div>
@@ -37,34 +52,31 @@
 
       <v-list-item v-for="item in items" :key="item.id">
         <div class="v-list-item__content">
-          <v-btn
-            variant="flat"
-            disabled
-            size="small"
-            class="icon-btn"
-            :color="item.subtitle ? 'primary' : 'secondary'"
-            :icon="item.subtitle ? 'mdi-play-circle' : 'mdi-pause-circle'"
-          />
           <div class="v-list-item__list-text">
             <v-list-item-title>
+              <v-icon
+                :color="item.subtitle ? 'primary' : 'secondary'"
+                :icon="item.subtitle ? 'mdi-play-circle' : 'mdi-pause-circle'"
+                size="small"
+              />
               <strong>{{ item.title }}</strong>
             </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ item.subtitle }}
+            <v-list-item-subtitle v-if="item.subtitle">
+              {{ cronstrue.toString(item.subtitle) }}
             </v-list-item-subtitle>
           </div>
           <v-btn
             class="icon-btn"
             color="warning"
             size="small"
-            icon="mdi-cog"
+            icon="mdi-tools"
             @click="configure(item)"
           />
           <v-btn
             class="icon-btn"
             color="error"
             size="small"
-            icon="mdi-close-thick"
+            icon="mdi-trash-can"
             @click="openRemoveDialog(item)"
           />
         </div>
@@ -77,14 +89,29 @@
             label="Subreddit"
             placeholder="Write name of subreddit"
             variant="outlined"
+            :rules="[() => !!subredditTextfield || 'Subreddit is required']"
           />
           <v-text-field
             v-model="periodicityTextfield"
             label="Periodicity"
             placeholder="Write your periodicity"
             variant="outlined"
+            :rules="[
+              () =>
+                isCronValid ||
+                !periodicityTextfield ||
+                'Invalid cron expression',
+            ]"
+            :hint="cronToString()"
+            persistent-hint
           />
-          <v-btn size="large" color="success" block @click="save(item)">
+          <v-btn
+            size="large"
+            color="success"
+            block
+            @click="save(item)"
+            :disabled="!subredditTextfield"
+          >
             Save
           </v-btn>
         </div>
@@ -105,6 +132,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import cronstrue from "cronstrue";
+import { parseExpression } from "cron-parser";
 
 interface ItemProps {
   id: number;
@@ -116,6 +145,8 @@ export default defineComponent({
   name: "ConfigPage",
   data() {
     return {
+      cronstrue,
+      isCronValid: true,
       selectedItemId: -1,
       subredditTextfield: "",
       periodicityTextfield: "",
@@ -124,12 +155,12 @@ export default defineComponent({
         {
           id: 1,
           title: "Am I the asshole",
-          subtitle: "Mondays at 15pm",
+          subtitle: "0 14 * * *",
         },
         {
           id: 2,
           title: "Sweden",
-          subtitle: "Every day at 2pm",
+          subtitle: "0 20 * * 2,4",
         },
         {
           id: 3,
@@ -139,7 +170,7 @@ export default defineComponent({
         {
           id: 4,
           title: "Ask Reddit...",
-          subtitle: "Tuesday and Thursday at 10pm",
+          subtitle: "0 8,18 * * 1-5",
         },
       ],
     };
@@ -152,6 +183,8 @@ export default defineComponent({
       return this.selectedItemId === 0 && !this.removeDialog;
     },
     openNewConfiguration() {
+      this.subredditTextfield = "";
+      this.periodicityTextfield = "";
       if (this.selectedItemId === 0) {
         this.selectedItemId = -1;
       } else {
@@ -194,6 +227,15 @@ export default defineComponent({
       this.selectedItemId = -1;
       this.removeDialog = false;
     },
+    cronToString() {
+      this.isCronValid = true;
+      try {
+        parseExpression(this.periodicityTextfield);
+        return cronstrue.toString(this.periodicityTextfield);
+      } catch (e) {
+        this.isCronValid = false;
+      }
+    },
   },
 });
 </script>
@@ -221,10 +263,23 @@ export default defineComponent({
   &__content {
     display: flex;
     align-items: center;
+
+    .v-list-item-title {
+      display: flex;
+      align-items: center;
+    }
+
+    i {
+      margin-right: 0.25em;
+    }
   }
 
   &__configure {
     margin-top: 1.5em;
+
+    .v-btn {
+      margin-top: 1em;
+    }
   }
 }
 
