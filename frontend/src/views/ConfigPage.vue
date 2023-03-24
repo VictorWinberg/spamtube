@@ -43,7 +43,7 @@
             color="success"
             block
             @click="create()"
-            :disabled="!subredditTextfield"
+            :disabled="!subredditTextfield || !isCronValid"
           >
             Create
           </v-btn>
@@ -110,7 +110,7 @@
             color="success"
             block
             @click="save(item)"
-            :disabled="!subredditTextfield"
+            :disabled="!subredditTextfield || !isCronValid"
           >
             Save
           </v-btn>
