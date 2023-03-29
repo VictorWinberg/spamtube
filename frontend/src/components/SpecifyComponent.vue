@@ -1,6 +1,7 @@
 <template>
   <div class="specify-component mx-auto">
     <h1>Search video details</h1>
+    Specify the details of the video you want to generate.
     <div>
       <v-form class="mt-4" @submit.prevent="submitForm">
         <v-text-field
@@ -31,7 +32,13 @@
         />
         <div class="btn-group">
           <v-btn class="back mt-8" size="x-large" @click="goBack"> Back </v-btn>
-          <v-btn class="mt-8 submit" type="submit" size="x-large">Submit</v-btn>
+          <v-btn
+            class="mt-8 submit"
+            type="submit"
+            size="x-large"
+            :disabled="!title || !description || !image || !voice"
+            >Submit</v-btn
+          >
         </div>
         <p class="error" v-if="errorMessage">{{ errorMessage }}</p>
       </v-form>

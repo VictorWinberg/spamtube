@@ -1,6 +1,8 @@
 <template>
   <div class="search-component mx-auto">
     <h1>Search for Subreddits</h1>
+    Search for a subreddit and select a post to get started. <br />
+    Or press <strong>CONTINUE</strong> to proceed manually and enter own data.
     <v-form class="mt-4" @submit.prevent="fetchTopPosts">
       <v-combobox
         v-model="autocomplete"
@@ -40,13 +42,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-btn
-      @click="submitStep()"
-      class="mt-4"
-      :disabled="!selectedId"
-      block
-      size="x-large"
-    >
+    <v-btn @click="submitStep()" class="mt-4" block size="x-large">
       Continue
     </v-btn>
   </div>
