@@ -129,7 +129,7 @@ func main() {
 				})
 				return
 			}
-			con.JSON(http.StatusOK, fmt.Sprintf("Successfully deleted subreddit with id %s", id))
+			con.JSON(http.StatusOK, id)
 		})
 
 		api.PUT("/subreddits", func(con *gin.Context) {

@@ -4,6 +4,8 @@ import (
 	"log"
 	"spamtube/backend/domain"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func GetSubreddits() ([]*domain.Subreddit, error) {
@@ -51,20 +53,28 @@ func DeleteSubreddit(id string) error {
 
 func UpsertSubreddit(sub domain.UpsertSubreddit) (domain.Subreddit, error) {
 	query := `
-	INSERT INTO subreddits (id, name, created_at, cron)
+	INSERT INTO subreddits (id, name, created_at, cron_string)
 	VALUES ($1, $2, $3, $4)
 	ON CONFLICT (id)
 	DO
 	UPDATE SET
-		"cron" = $4
+	  "name" = $2,
+		"cron_string" = $4
 	RETURNING
 	id,
 	name,
 	created_at,
-	cron
+	cron_string
 	`
+
+	id := uuid.New().String()
+
+	if sub.Id != nil {
+		id = *sub.Id
+	}
+
 	subreddit := domain.Subreddit{}
-	err := DB.QueryRow(query, sub.Id, sub.Name, time.Now(), sub.Cron).
+	err := DB.QueryRow(query, id, sub.Name, time.Now(), sub.Cron).
 		Scan(
 			&subreddit.Id,
 			&subreddit.Name,
