@@ -32,17 +32,12 @@ func main() {
 	flag.Parse()
 
 	subredditCronjobs := make(map[string]cron.EntryID)
-	loc, err := time.LoadLocation("Europe/Stockholm")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	err = database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	kron := cron.New(cron.WithLocation(loc))
+	kron := cron.New()
 	kron.Start()
 
 	cronJobId, err := addRandomCronJob(kron, "0 9 * * *")
@@ -157,7 +152,7 @@ func main() {
 }
 
 func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
-	log.Printf("Starting cronjob for subreddit %s, with cron: %s", subreddit, cron_string)
+	log.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
@@ -175,7 +170,8 @@ func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.Ent
 
 // TODO: REMOVE THIS
 func addRandomCronJob(kron *cron.Cron, cron_string string) (cron.EntryID, error) {
-	log.Printf("Starting cronjob for a random subreddit with cron: %s", cron_string)
+	log.Printf("CRON: add random subreddit, with cron: %s", cron_string)
+	log.Println("DEBUG: crons running:", kron.Entries())
 	id, err := kron.AddFunc(cron_string, func() {
 		items, err := database.GetSubreddits()
 		if err != nil {
