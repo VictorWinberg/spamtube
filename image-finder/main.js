@@ -12,6 +12,44 @@ const IMAGE_WIDTH = 1080;
 const IMAGE_HEIGHT = 1620;
 const OUT_DIR = "./out";
 
+const styles = [
+  "cartoon",
+  "comic book",
+  "futuristic",
+  "graffiti",
+  "impressionism",
+  "manga",
+  "oil painting",
+  "pencil sketch",
+  "pop art",
+  "surrealism",
+  "watercolor",
+];
+
+const backgrounds = [
+  "abstract",
+  "apocalyptic",
+  "beach",
+  "bright neon lights",
+  "city",
+  "cyberpunk",
+  "desert",
+  "dystopia",
+  "forest",
+  "galaxy",
+  "jungle",
+  "lake",
+  "mountain",
+  "ocean",
+  "ruins",
+  "space",
+  "underwater",
+  "urban",
+  "utopian",
+  "volcano",
+  "waterfall",
+];
+
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
   fetch: nodeFetch,
@@ -35,13 +73,17 @@ async function download(url, dest) {
 }
 
 async function getAIImages(keywords) {
+  const style = styles[Math.floor(Math.random() * styles.length)];
+  const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  const direction = `in ${style} style and ${background} background`
+
   const response = await nodeFetch("https://api.craiyon.com/draw", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt: keywords.join(" "),
+      prompt: [...keywords, direction].join(" "),
       version: "35s5hfwn9n78gb06",
       token: null,
     }),
