@@ -1,8 +1,11 @@
 <template>
   <div class="upload-component mx-auto">
     <h1>Finalizing your amazing creation</h1>
-    <div class="mt-16" :class="{ 'color-animation': uploaded }">
-      <v-card class="mx-auto" max-width="500">
+    You are almost done! <br />
+    Review your video details and press <strong>UPLOAD</strong> to upload your
+    video to YouTube.
+    <div class="mt-8" :class="{ 'color-animation': uploaded }">
+      <v-card class="mx-auto mb-16" max-width="500">
         <v-img :src="neonCat"></v-img>
         <v-card-title>{{ title }}</v-card-title>
         <v-card-subtitle> {{ description }} </v-card-subtitle>
@@ -92,7 +95,7 @@ export default defineComponent({
           this.title,
           this.description,
           this.image,
-          this.voice,
+          this.voice
         );
         this.status = res.status;
       } catch (error) {
@@ -106,10 +109,6 @@ export default defineComponent({
 <style lang="scss">
 .upload-component {
   max-width: 800px;
-}
-
-.v-card {
-  margin-bottom: 12em;
 }
 
 .v-card-title {

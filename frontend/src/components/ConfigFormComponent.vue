@@ -4,6 +4,7 @@
     label="Subreddit"
     placeholder="Write name of subreddit"
     variant="outlined"
+    class="mb-2"
     :rules="[() => !!subredditTextfield || 'Subreddit is required']"
   />
 
@@ -12,6 +13,7 @@
     label="Periodicity"
     placeholder="Write your periodicity"
     variant="outlined"
+    class="mb-2"
     :hint="cronToString()"
     persistent-hint
     :rules="[
@@ -20,7 +22,7 @@
   />
 
   <v-btn
-    size="large"
+    size="x-large"
     color="success"
     block
     @click="submit"
