@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	internalApi "spamtube/backend/api"
 	"spamtube/backend/autoupload"
@@ -25,6 +26,7 @@ func main() {
 		fmt.Printf("[WARN]: %s", err)
 	}
 	godotenv.Load()
+	rand.Seed(time.Now().UnixNano())
 
 	port := flag.String("port", helpers.GetEnv("PORT", "3000"), "Server port")
 	flag.Parse()
@@ -43,10 +45,10 @@ func main() {
 	kron := cron.New(cron.WithLocation(loc))
 	kron.Start()
 
-	cronJobId, err := addCronJob(kron, "AmItheAsshole", "0 9 * * *")
+	cronJobId, err := addRandomCronJob(kron, "0 9 * * *")
 	if err == nil {
-		// TODO: Stop using kron.Remove(cronJobId) when cron string is updated for subreddit
-		subredditCronjobs["AmITheAsshole"] = cronJobId
+		// TODO: Stop job using kron.Remove(cronJobId) when cron string is updated for subreddit
+		subredditCronjobs["super-random-reddit"] = cronJobId
 	}
 	// Set the router as the default one shipped with Gin
 	router := gin.Default()
@@ -158,6 +160,30 @@ func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.Ent
 	log.Printf("Starting cronjob for subreddit %s, with cron: %s", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("Autouploading video successful!")
+	})
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	return id, nil
+}
+
+// TODO: REMOVE THIS
+func addRandomCronJob(kron *cron.Cron, cron_string string) (cron.EntryID, error) {
+	log.Printf("Starting cronjob for a random subreddit with cron: %s", cron_string)
+	id, err := kron.AddFunc(cron_string, func() {
+		items, err := database.GetSubreddits()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		subreddit := items[rand.Intn(len(items))].Name
+		err = autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
 			log.Println(err)
 			return

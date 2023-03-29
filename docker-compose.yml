@@ -34,6 +34,7 @@ services:
     networks:
       - spamtube-devnet
     environment:
+      DATABASE_URL: postgres://postgres:postgres@pg-spamtube/spamtube_db?sslmode=disable
       PORT: 3000
     depends_on:
       migrate:
