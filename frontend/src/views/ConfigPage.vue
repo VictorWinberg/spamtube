@@ -31,7 +31,7 @@
             variant="outlined"
             :rules="[
               () =>
-                isCronValid ||
+                isCronValid() ||
                 !periodicityTextfield ||
                 'Invalid cron expression',
             ]"
@@ -43,7 +43,7 @@
             color="success"
             block
             @click="create()"
-            :disabled="!subredditTextfield || !isCronValid"
+            :disabled="!subredditTextfield || !isCronValid()"
           >
             Create
           </v-btn>
@@ -55,14 +55,16 @@
           <div class="v-list-item__list-text">
             <v-list-item-title>
               <v-icon
-                :color="item.subtitle ? 'primary' : 'secondary'"
-                :icon="item.subtitle ? 'mdi-play-circle' : 'mdi-pause-circle'"
+                :color="item.periodicity ? 'primary' : 'secondary'"
+                :icon="
+                  item.periodicity ? 'mdi-play-circle' : 'mdi-pause-circle'
+                "
                 size="small"
               />
-              <strong>{{ item.title }}</strong>
+              <strong>{{ item.subreddit }}</strong>
             </v-list-item-title>
-            <v-list-item-subtitle v-if="item.subtitle">
-              {{ cronstrue.toString(item.subtitle) }}
+            <v-list-item-subtitle v-if="item.periodicity">
+              {{ cronstrue.toString(item.periodicity) }}
             </v-list-item-subtitle>
           </div>
           <v-btn
@@ -110,7 +112,7 @@
             color="success"
             block
             @click="save(item)"
-            :disabled="!subredditTextfield || !isCronValid"
+            :disabled="!subredditTextfield || !isCronValid()"
           >
             Save
           </v-btn>
@@ -133,12 +135,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import cronstrue from "cronstrue";
-import { parseExpression } from "cron-parser";
+import { isValidCron } from "cron-validator";
 
 interface ItemProps {
   id: number;
-  title: string;
-  subtitle: string | null;
+  subreddit: string;
+  periodicity: string | null;
 }
 
 export default defineComponent({
@@ -146,7 +148,6 @@ export default defineComponent({
   data() {
     return {
       cronstrue,
-      isCronValid: true,
       selectedItemId: -1,
       subredditTextfield: "",
       periodicityTextfield: "",
@@ -154,28 +155,40 @@ export default defineComponent({
       items: [
         {
           id: 1,
-          title: "Am I the asshole",
-          subtitle: "0 14 * * *",
+          subreddit: "Am I the asshole",
+          periodicity: "0 14 * * *",
         },
         {
           id: 2,
-          title: "Sweden",
-          subtitle: "0 20 * * 2,4",
+          subreddit: "Sweden",
+          periodicity: "0 20 * * 2,4",
         },
         {
           id: 3,
-          title: "Reddit News",
-          subtitle: null,
+          subreddit: "Reddit News",
+          periodicity: null,
         },
         {
           id: 4,
-          title: "Ask Reddit...",
-          subtitle: "0 8,18 * * 1-5",
+          subreddit: "Ask Reddit...",
+          periodicity: "0 8,18 * * 1-5",
         },
       ],
     };
   },
   methods: {
+    isCronValid() {
+      return (
+        isValidCron(this.periodicityTextfield) || !this.periodicityTextfield
+      );
+    },
+    cronToString() {
+      try {
+        return cronstrue.toString(this.periodicityTextfield);
+      } catch (e) {
+        return;
+      }
+    },
     showConfigurationDetails(item: ItemProps) {
       return this.selectedItemId === item.id && !this.removeDialog;
     },
@@ -197,22 +210,22 @@ export default defineComponent({
         return;
       }
       this.selectedItemId = item.id;
-      this.subredditTextfield = item.title;
-      this.periodicityTextfield = item.subtitle ? item.subtitle : "";
+      this.subredditTextfield = item.subreddit;
+      this.periodicityTextfield = item.periodicity ? item.periodicity : "";
     },
     create() {
       this.items.push({
         id: this.items.length + 1,
-        title: this.subredditTextfield,
-        subtitle: this.periodicityTextfield || null,
+        subreddit: this.subredditTextfield,
+        periodicity: this.periodicityTextfield || null,
       });
       this.selectedItemId = -1;
       this.subredditTextfield = "";
       this.periodicityTextfield = "";
     },
     save(item: ItemProps) {
-      item.title = this.subredditTextfield;
-      item.subtitle = this.periodicityTextfield || null;
+      item.subreddit = this.subredditTextfield;
+      item.periodicity = this.periodicityTextfield || null;
       this.selectedItemId = -1;
     },
     openRemoveDialog(item: ItemProps) {
@@ -226,15 +239,6 @@ export default defineComponent({
     cancel() {
       this.selectedItemId = -1;
       this.removeDialog = false;
-    },
-    cronToString() {
-      this.isCronValid = true;
-      try {
-        parseExpression(this.periodicityTextfield);
-        return cronstrue.toString(this.periodicityTextfield);
-      } catch (e) {
-        this.isCronValid = false;
-      }
     },
   },
 });
