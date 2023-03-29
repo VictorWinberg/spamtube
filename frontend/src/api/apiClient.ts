@@ -21,6 +21,24 @@ export async function post<T>(
   return client<T>(path, config, baseUrl);
 }
 
+export async function put<T>(
+  path: string,
+  body?: string,
+  config: RequestInit = { method: "put", body },
+  baseUrl?: string
+): Promise<HTTPResponseInterface<T>> {
+  return client<T>(path, config, baseUrl);
+}
+
+export async function remove<T>(
+  path: string,
+  body?: string,
+  config: RequestInit = { method: "delete", body },
+  baseUrl?: string
+): Promise<HTTPResponseInterface<T>> {
+  return await client<T>(path, config, baseUrl);
+}
+
 async function client<T>(
   path: string,
   config: RequestInit = { method: "get" },

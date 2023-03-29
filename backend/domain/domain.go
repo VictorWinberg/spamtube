@@ -78,7 +78,14 @@ type Video struct {
 }
 
 type Subreddit struct {
-	Id         string
-	Name       string
-	Created_at time.Time
+	Id         string    `json:"id"`
+	Name       string    `json:"name"`
+	Created_at time.Time `json:"createdAt"`
+	Cron       *string   `json:"cron"`
+}
+
+type UpsertSubreddit struct {
+	Id   *string `json:"id"`
+	Name *string `json:"name"`
+	Cron *string `json:"cron"`
 }
