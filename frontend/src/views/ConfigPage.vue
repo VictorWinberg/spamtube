@@ -17,36 +17,7 @@
           </v-list-item-title>
         </div>
         <div class="v-list-item__configure" v-if="showNewConfiguration()">
-          <v-text-field
-            v-model="subredditTextfield"
-            label="Subreddit"
-            placeholder="Write name of subreddit"
-            variant="outlined"
-            :rules="[() => !!subredditTextfield || 'Subreddit is required']"
-          />
-          <v-text-field
-            v-model="periodicityTextfield"
-            label="Periodicity"
-            placeholder="Write your periodicity"
-            variant="outlined"
-            :rules="[
-              () =>
-                isCronValid() ||
-                !periodicityTextfield ||
-                'Invalid cron expression',
-            ]"
-            :hint="cronToString()"
-            persistent-hint
-          />
-          <v-btn
-            size="large"
-            color="success"
-            block
-            @click="create()"
-            :disabled="!subredditTextfield || !isCronValid()"
-          >
-            Create
-          </v-btn>
+          <ConfigFormComponent submitText="Create" @submit="create" />
         </div>
       </v-list-item>
 
@@ -86,36 +57,11 @@
           class="v-list-item__configure"
           v-if="showConfigurationDetails(item)"
         >
-          <v-text-field
-            v-model="subredditTextfield"
-            label="Subreddit"
-            placeholder="Write name of subreddit"
-            variant="outlined"
-            :rules="[() => !!subredditTextfield || 'Subreddit is required']"
+          <ConfigFormComponent
+            :item="items.find((i) => i.id === selectedItemId)"
+            submitText="Save"
+            @submit="save"
           />
-          <v-text-field
-            v-model="periodicityTextfield"
-            label="Periodicity"
-            placeholder="Write your periodicity"
-            variant="outlined"
-            :rules="[
-              () =>
-                isCronValid ||
-                !periodicityTextfield ||
-                'Invalid cron expression',
-            ]"
-            :hint="cronToString()"
-            persistent-hint
-          />
-          <v-btn
-            size="large"
-            color="success"
-            block
-            @click="save(item)"
-            :disabled="!subredditTextfield || !isCronValid()"
-          >
-            Save
-          </v-btn>
         </div>
       </v-list-item>
     </v-list>
@@ -135,7 +81,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import cronstrue from "cronstrue";
-import { isValidCron } from "cron-validator";
+import ConfigFormComponent from "../components/ConfigFormComponent.vue";
 
 interface ItemProps {
   id: number;
@@ -145,6 +91,9 @@ interface ItemProps {
 
 export default defineComponent({
   name: "ConfigPage",
+  components: {
+    ConfigFormComponent,
+  },
   data() {
     return {
       cronstrue,
@@ -177,21 +126,6 @@ export default defineComponent({
     };
   },
   methods: {
-    isCronValid() {
-      return (
-        isValidCron(this.periodicityTextfield) || !this.periodicityTextfield
-      );
-    },
-    cronToString() {
-      try {
-        return cronstrue.toString(this.periodicityTextfield);
-      } catch (e) {
-        return;
-      }
-    },
-    showConfigurationDetails(item: ItemProps) {
-      return this.selectedItemId === item.id && !this.removeDialog;
-    },
     showNewConfiguration() {
       return this.selectedItemId === 0 && !this.removeDialog;
     },
@@ -204,6 +138,9 @@ export default defineComponent({
         this.selectedItemId = 0;
       }
     },
+    showConfigurationDetails(item: ItemProps) {
+      return this.selectedItemId === item.id && !this.removeDialog;
+    },
     configure(item: ItemProps) {
       if (this.selectedItemId === item.id) {
         this.selectedItemId = -1;
@@ -213,19 +150,26 @@ export default defineComponent({
       this.subredditTextfield = item.subreddit;
       this.periodicityTextfield = item.periodicity ? item.periodicity : "";
     },
-    create() {
+    create(item: ItemProps) {
       this.items.push({
         id: this.items.length + 1,
-        subreddit: this.subredditTextfield,
-        periodicity: this.periodicityTextfield || null,
+        subreddit: item.subreddit,
+        periodicity: item.periodicity || null,
       });
       this.selectedItemId = -1;
       this.subredditTextfield = "";
       this.periodicityTextfield = "";
     },
     save(item: ItemProps) {
-      item.subreddit = this.subredditTextfield;
-      item.periodicity = this.periodicityTextfield || null;
+      this.items = this.items.map((i) =>
+        i.id === this.selectedItemId
+          ? {
+              ...item,
+              subreddit: item.subreddit,
+              periodicity: item.periodicity || null,
+            }
+          : i
+      );
       this.selectedItemId = -1;
     },
     openRemoveDialog(item: ItemProps) {
