@@ -72,10 +72,16 @@ async function download(url, dest) {
   });
 }
 
+function* chunks(arr, n) {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n);
+  }
+}
+
 async function getAIImages(keywords) {
   const style = styles[Math.floor(Math.random() * styles.length)];
   const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-  const direction = `in ${style} style and ${background} background`
+  const direction = `in ${style} style and ${background} background`;
 
   const response = await nodeFetch("https://api.craiyon.com/draw", {
     method: "POST",
@@ -110,12 +116,8 @@ async function main() {
 
   try {
     const images = [];
-    const middle = Math.floor(keywords.length / 2);
 
-    const res = await Promise.all([
-      getAIImages(keywords.slice(0, middle)),
-      getAIImages(keywords.slice(middle)),
-    ]);
+    const res = await Promise.all([...chunks(keywords, 3)].map((chunk) => getAIImages(chunk)));
     res.flat().forEach((image) => images.push(image));
 
     const urls = images.map((image) => `https://img.craiyon.com/${image}`);

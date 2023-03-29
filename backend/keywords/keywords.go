@@ -48,7 +48,7 @@ func Extract(s string) ([]string, error) {
 		}
 	}
 
-	results = extractMostPopularKeywords(results, 10)
+	results = extractMostPopularKeywords(results, 9)
 
 	return results, nil
 }
