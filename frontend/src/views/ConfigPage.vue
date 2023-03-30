@@ -10,18 +10,18 @@
             class="icon-btn"
             color="green"
             icon="mdi-plus"
-            @click="openNewConfiguration()"
+            @click="toggleNewConfiguration()"
           />
           <v-list-item-title>
             <strong>Create new configuration</strong>
           </v-list-item-title>
         </div>
-        <div class="v-list-item__configure" v-if="showNewConfiguration()">
+        <div class="v-list-item__configure" v-if="newConfigurationOpen">
           <ConfigFormComponent submitText="Create" @submit="create" />
         </div>
       </v-list-item>
 
-      <v-list-item v-for="item in items" :key="item.id">
+      <v-list-item v-for="item in query.data?.value?.parsedBody" :key="item.id">
         <div class="v-list-item__content">
           <div class="v-list-item__list-text">
             <v-list-item-title>
@@ -41,7 +41,7 @@
             color="warning"
             size="small"
             icon="mdi-tools"
-            @click="configure(item)"
+            @click="toggleConfigure(item)"
           />
           <v-btn
             class="icon-btn"
@@ -51,15 +51,8 @@
             @click="openRemoveDialog(item)"
           />
         </div>
-        <div
-          class="v-list-item__configure"
-          v-if="showConfigurationDetails(item)"
-        >
-          <ConfigFormComponent
-            :item="items.find((i) => i.id === selectedItemId)"
-            submitText="Save"
-            @submit="save"
-          />
+        <div class="v-list-item__configure" v-if="selectedItemId === item.id">
+          <ConfigFormComponent :item="item" submitText="Save" @submit="save" />
         </div>
       </v-list-item>
     </v-list>
@@ -79,6 +72,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import cronstrue from "cronstrue";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import ConfigFormComponent from "../components/ConfigFormComponent.vue";
 import {
   getConfigurations,
@@ -101,7 +95,9 @@ export default defineComponent({
   data() {
     return {
       cronstrue,
+      queryClient: useQueryClient(),
       selectedItemId: "",
+      removalItemId: "",
       nameTextfield: "",
       cronTextfield: "",
       removeDialog: false,
@@ -110,10 +106,7 @@ export default defineComponent({
     };
   },
   methods: {
-    showNewConfiguration() {
-      return this.newConfigurationOpen && !this.removeDialog;
-    },
-    openNewConfiguration() {
+    toggleNewConfiguration() {
       this.nameTextfield = "";
       this.cronTextfield = "";
       if (this.newConfigurationOpen) {
@@ -123,10 +116,7 @@ export default defineComponent({
         this.newConfigurationOpen = true;
       }
     },
-    showConfigurationDetails(item: ItemProps) {
-      return this.selectedItemId === item.id && !this.removeDialog;
-    },
-    configure(item: ItemProps) {
+    toggleConfigure(item: ItemProps) {
       if (this.selectedItemId === item.id) {
         this.selectedItemId = "";
         return;
@@ -138,18 +128,23 @@ export default defineComponent({
       this.nameTextfield = item.name;
       this.cronTextfield = item.cron ? item.cron : "";
     },
+    openRemoveDialog(item: ItemProps) {
+      this.removeDialog = true;
+      this.removalItemId = item.id;
+    },
     async create(item: ItemProps) {
       try {
         await upsertConfig({
           name: item.name,
           cron: item.cron || undefined,
         });
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
       } catch (error) {
         console.error(error);
       }
+      this.newConfigurationOpen = false;
       this.nameTextfield = "";
       this.cronTextfield = "";
-      this.newConfigurationOpen = false;
     },
     async save(item: ItemProps) {
       try {
@@ -158,6 +153,7 @@ export default defineComponent({
           name: item.name,
           cron: item.cron || undefined,
         });
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
       } catch (error) {
         console.error(error);
       }
@@ -165,14 +161,10 @@ export default defineComponent({
       this.nameTextfield = "";
       this.cronTextfield = "";
     },
-    openRemoveDialog(item: ItemProps) {
-      this.removeDialog = true;
-      this.selectedItemId = item.id;
-    },
     async remove() {
       try {
-        await deleteConfigEntry(this.selectedItemId);
-        this.removeDialog = false;
+        await deleteConfigEntry(this.removalItemId);
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
       } catch (error) {
         console.error(error);
       }
@@ -180,17 +172,17 @@ export default defineComponent({
       this.removeDialog = false;
     },
     cancel() {
-      this.selectedItemId = "";
       this.removeDialog = false;
     },
   },
-  async created() {
-    try {
-      const response = await getConfigurations();
-      this.items = response.parsedBody || [];
-    } catch (error) {
-      console.error(error);
-    }
+  setup() {
+    const query = useQuery({
+      queryKey: ["items"],
+      queryFn: getConfigurations,
+    });
+    return {
+      query,
+    };
   },
 });
 </script>

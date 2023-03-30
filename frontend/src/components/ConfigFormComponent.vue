@@ -40,6 +40,7 @@ import { isValidCron } from "cron-validator";
 export default defineComponent({
   name: "ConfigFormComponent",
   props: ["submitText", "item"],
+  emits: ["submit"],
   data: () => ({
     nameTextfield: "",
     cronTextfield: "",
