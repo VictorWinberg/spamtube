@@ -57,15 +57,7 @@
       </v-list-item>
     </v-list>
 
-    <v-dialog v-model="removeDialog" width="auto">
-      <v-card>
-        <v-card-text> Are you sure you want to remove this item? </v-card-text>
-        <v-card-actions>
-          <v-btn color="grey" @click="cancel()"> No </v-btn>
-          <v-btn color="error" @click="remove()"> Yes </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <RemoveModal v-model="removeDialog" @cancel="cancel" @remove="remove" />
   </div>
 </template>
 
@@ -79,6 +71,7 @@ import {
   deleteConfigEntry,
   upsertConfig,
 } from "../api/config";
+import RemoveModal from "../modals/RemoveModal.vue";
 
 interface ItemProps {
   id: string;
@@ -91,6 +84,7 @@ export default defineComponent({
   name: "ConfigPage",
   components: {
     ConfigFormComponent,
+    RemoveModal,
   },
   data() {
     return {
@@ -233,14 +227,5 @@ export default defineComponent({
 .v-avatar,
 .icon-btn {
   margin: 0.5em;
-}
-
-.v-card-actions {
-  display: flex;
-  justify-content: space-evenly;
-
-  .v-btn {
-    margin: 0;
-  }
 }
 </style>
