@@ -26,16 +26,14 @@
           <div class="v-list-item__list-text">
             <v-list-item-title>
               <v-icon
-                :color="item.periodicity ? 'primary' : 'secondary'"
-                :icon="
-                  item.periodicity ? 'mdi-play-circle' : 'mdi-pause-circle'
-                "
+                :color="item.cron ? 'primary' : 'secondary'"
+                :icon="item.cron ? 'mdi-play-circle' : 'mdi-pause-circle'"
                 size="small"
               />
-              <strong>{{ item.subreddit }}</strong>
+              <strong>{{ item.name }}</strong>
             </v-list-item-title>
-            <v-list-item-subtitle v-if="item.periodicity">
-              {{ cronstrue.toString(item.periodicity) }}
+            <v-list-item-subtitle v-if="item.cron">
+              {{ cronstrue.toString(item.cron) }}
             </v-list-item-subtitle>
           </div>
           <v-btn
@@ -71,7 +69,7 @@
         <v-card-text> Are you sure you want to remove this item? </v-card-text>
         <v-card-actions>
           <v-btn color="grey" @click="cancel()"> No </v-btn>
-          <v-btn color="error" @click="remove(selectedItemId)"> Yes </v-btn>
+          <v-btn color="error" @click="remove()"> Yes </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -82,11 +80,17 @@
 import { defineComponent } from "vue";
 import cronstrue from "cronstrue";
 import ConfigFormComponent from "../components/ConfigFormComponent.vue";
+import {
+  getConfigurations,
+  deleteConfigEntry,
+  upsertConfig,
+} from "../api/config";
 
 interface ItemProps {
-  id: number;
-  subreddit: string;
-  periodicity: string | null;
+  id: string;
+  name: string;
+  cron: string | undefined;
+  createdAt?: string;
 }
 
 export default defineComponent({
@@ -97,45 +101,26 @@ export default defineComponent({
   data() {
     return {
       cronstrue,
-      selectedItemId: -1,
-      subredditTextfield: "",
-      periodicityTextfield: "",
+      selectedItemId: "",
+      nameTextfield: "",
+      cronTextfield: "",
       removeDialog: false,
-      items: [
-        {
-          id: 1,
-          subreddit: "Am I the asshole",
-          periodicity: "0 14 * * *",
-        },
-        {
-          id: 2,
-          subreddit: "Sweden",
-          periodicity: "0 20 * * 2,4",
-        },
-        {
-          id: 3,
-          subreddit: "Reddit News",
-          periodicity: null,
-        },
-        {
-          id: 4,
-          subreddit: "Ask Reddit...",
-          periodicity: "0 8,18 * * 1-5",
-        },
-      ],
+      newConfigurationOpen: false,
+      items: [] as ItemProps[],
     };
   },
   methods: {
     showNewConfiguration() {
-      return this.selectedItemId === 0 && !this.removeDialog;
+      return this.newConfigurationOpen && !this.removeDialog;
     },
     openNewConfiguration() {
-      this.subredditTextfield = "";
-      this.periodicityTextfield = "";
-      if (this.selectedItemId === 0) {
-        this.selectedItemId = -1;
+      this.nameTextfield = "";
+      this.cronTextfield = "";
+      if (this.newConfigurationOpen) {
+        this.newConfigurationOpen = false;
       } else {
-        this.selectedItemId = 0;
+        this.selectedItemId = "";
+        this.newConfigurationOpen = true;
       }
     },
     showConfigurationDetails(item: ItemProps) {
@@ -143,47 +128,69 @@ export default defineComponent({
     },
     configure(item: ItemProps) {
       if (this.selectedItemId === item.id) {
-        this.selectedItemId = -1;
+        this.selectedItemId = "";
         return;
       }
+      if (this.newConfigurationOpen) {
+        this.newConfigurationOpen = false;
+      }
       this.selectedItemId = item.id;
-      this.subredditTextfield = item.subreddit;
-      this.periodicityTextfield = item.periodicity ? item.periodicity : "";
+      this.nameTextfield = item.name;
+      this.cronTextfield = item.cron ? item.cron : "";
     },
-    create(item: ItemProps) {
-      this.items.push({
-        id: this.items.length + 1,
-        subreddit: item.subreddit,
-        periodicity: item.periodicity || null,
-      });
-      this.selectedItemId = -1;
-      this.subredditTextfield = "";
-      this.periodicityTextfield = "";
+    async create(item: ItemProps) {
+      try {
+        await upsertConfig({
+          name: item.name,
+          cron: item.cron || undefined,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      this.nameTextfield = "";
+      this.cronTextfield = "";
+      this.newConfigurationOpen = false;
     },
-    save(item: ItemProps) {
-      this.items = this.items.map((i) =>
-        i.id === this.selectedItemId
-          ? {
-              ...item,
-              subreddit: item.subreddit,
-              periodicity: item.periodicity || null,
-            }
-          : i
-      );
-      this.selectedItemId = -1;
+    async save(item: ItemProps) {
+      try {
+        await upsertConfig({
+          id: item.id,
+          name: item.name,
+          cron: item.cron || undefined,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      this.selectedItemId = "";
+      this.nameTextfield = "";
+      this.cronTextfield = "";
     },
     openRemoveDialog(item: ItemProps) {
       this.removeDialog = true;
       this.selectedItemId = item.id;
     },
-    remove(item: number) {
-      this.items = this.items.filter((i) => i.id !== item);
+    async remove() {
+      try {
+        await deleteConfigEntry(this.selectedItemId);
+        this.removeDialog = false;
+      } catch (error) {
+        console.error(error);
+      }
+      this.selectedItemId = "";
       this.removeDialog = false;
     },
     cancel() {
-      this.selectedItemId = -1;
+      this.selectedItemId = "";
       this.removeDialog = false;
     },
+  },
+  async created() {
+    try {
+      const response = await getConfigurations();
+      this.items = response.parsedBody || [];
+    } catch (error) {
+      console.error(error);
+    }
   },
 });
 </script>

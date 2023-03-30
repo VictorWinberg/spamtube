@@ -18,7 +18,7 @@ export async function upsertConfig(body: ConfigEntryRequestBody) {
 }
 
 export async function deleteConfigEntry(id: string) {
-  return remove<string>(`delete/${id}`);
+  return remove<string>(`subreddits/${id}`);
 }
 
 export async function getConfigurations() {
