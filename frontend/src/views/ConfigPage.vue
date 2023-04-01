@@ -3,11 +3,11 @@
     <h1>Configurations</h1>
 
     <v-list>
-      <v-list-item :key="0">
+      <v-list-item class="mb-2">
         <div class="v-list-item__content">
           <v-btn
             size="small"
-            class="icon-btn"
+            class="icon-btn ma-2"
             color="green"
             icon="mdi-plus"
             @click="toggleNewConfiguration()"
@@ -16,19 +16,27 @@
             <strong>Create new configuration</strong>
           </v-list-item-title>
         </div>
-        <div class="v-list-item__configure" v-if="newConfigurationOpen">
-          <ConfigFormComponent submitText="Create" @submit="create" />
-        </div>
+
+        <ConfigFormComponent
+          v-if="newConfigurationOpen"
+          submitText="Create"
+          @submit="create"
+        />
       </v-list-item>
 
-      <v-list-item v-for="item in query.data?.value?.parsedBody" :key="item.id">
+      <v-list-item
+        v-for="item in query.data?.value?.parsedBody"
+        :key="item.id"
+        class="mb-2"
+      >
         <div class="v-list-item__content">
           <div class="v-list-item__list-text">
             <v-list-item-title>
               <v-icon
+                class="ma-2"
+                size="small"
                 :color="item.cron ? 'primary' : 'secondary'"
                 :icon="item.cron ? 'mdi-play-circle' : 'mdi-pause-circle'"
-                size="small"
               />
               <strong>{{ item.name }}</strong>
             </v-list-item-title>
@@ -37,23 +45,27 @@
             </v-list-item-subtitle>
           </div>
           <v-btn
-            class="icon-btn"
+            class="icon-btn ma-2"
             color="warning"
             size="small"
             icon="mdi-tools"
             @click="toggleConfigure(item)"
           />
           <v-btn
-            class="icon-btn"
+            class="icon-btn ma-2"
             color="error"
             size="small"
             icon="mdi-trash-can"
             @click="openRemoveDialog(item)"
           />
         </div>
-        <div class="v-list-item__configure" v-if="selectedItemId === item.id">
-          <ConfigFormComponent :item="item" submitText="Save" @submit="save" />
-        </div>
+
+        <ConfigFormComponent
+          v-if="selectedItemId === item.id"
+          :item="item"
+          submitText="Save"
+          @submit="save"
+        />
       </v-list-item>
     </v-list>
 
@@ -194,7 +206,6 @@ export default defineComponent({
   margin: 0 auto;
   background: rgb(var(--v-theme-white));
   text-align: left;
-  margin-bottom: 0.5em;
   max-width: 800px;
 
   &__list-text {
@@ -209,23 +220,6 @@ export default defineComponent({
       display: flex;
       align-items: center;
     }
-
-    i {
-      margin-right: 0.25em;
-    }
   }
-
-  &__configure {
-    margin-top: 1.5em;
-
-    .v-btn {
-      margin-top: 1em;
-    }
-  }
-}
-
-.v-avatar,
-.icon-btn {
-  margin: 0.5em;
 }
 </style>
