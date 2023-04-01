@@ -4,9 +4,7 @@
       <VideoComponent
         v-for="video in videos"
         :key="video.VideoId"
-        :title="video.Title"
-        :subtitle="video.Group.Description"
-        :src="'https://www.youtube.com/embed/' + video.VideoId"
+        :video="video"
       />
     </div>
   </div>

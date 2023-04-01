@@ -1,35 +1,38 @@
 <template>
-  <v-text-field
-    v-model="nameTextfield"
-    label="Subreddit"
-    placeholder="Write name of subreddit"
-    variant="outlined"
-    class="mb-2"
-    :rules="[() => !!nameTextfield || 'Subreddit is required']"
-  />
+  <div class="mt-2">
+    <v-text-field
+      v-model="nameTextfield"
+      label="Subreddit"
+      placeholder="Write name of subreddit"
+      variant="outlined"
+      class="mb-2"
+      :rules="[() => !!nameTextfield || 'Subreddit is required']"
+    />
 
-  <v-text-field
-    v-model="cronTextfield"
-    label="Periodicity"
-    placeholder="Write your periodicity"
-    variant="outlined"
-    class="mb-2"
-    :hint="cronToString()"
-    persistent-hint
-    :rules="[
-      () => isCronValid() || !cronTextfield || 'Invalid cron expression',
-    ]"
-  />
+    <v-text-field
+      v-model="cronTextfield"
+      label="Periodicity"
+      placeholder="Write your periodicity"
+      variant="outlined"
+      class="mb-2"
+      :hint="cronToString()"
+      persistent-hint
+      :rules="[
+        () => isCronValid() || !cronTextfield || 'Invalid cron expression',
+      ]"
+    />
 
-  <v-btn
-    size="x-large"
-    color="success"
-    block
-    @click="submit"
-    :disabled="!nameTextfield || !isCronValid()"
-  >
-    {{ submitText }}
-  </v-btn>
+    <v-btn
+      size="x-large"
+      color="success"
+      class="mb-4"
+      block
+      @click="submit"
+      :disabled="!nameTextfield || !isCronValid()"
+    >
+      {{ submitText }}
+    </v-btn>
+  </div>
 </template>
 
 <script lang="ts">
@@ -71,8 +74,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
-.form-component {
-  max-width: 800px;
-}
-</style>
+<style scoped lang="scss"></style>
