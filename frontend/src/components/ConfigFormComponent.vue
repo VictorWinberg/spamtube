@@ -1,15 +1,15 @@
 <template>
   <v-text-field
-    v-model="subredditTextfield"
+    v-model="nameTextfield"
     label="Subreddit"
     placeholder="Write name of subreddit"
     variant="outlined"
     class="mb-2"
-    :rules="[() => !!subredditTextfield || 'Subreddit is required']"
+    :rules="[() => !!nameTextfield || 'Subreddit is required']"
   />
 
   <v-text-field
-    v-model="periodicityTextfield"
+    v-model="cronTextfield"
     label="Periodicity"
     placeholder="Write your periodicity"
     variant="outlined"
@@ -17,7 +17,7 @@
     :hint="cronToString()"
     persistent-hint
     :rules="[
-      () => isCronValid() || !periodicityTextfield || 'Invalid cron expression',
+      () => isCronValid() || !cronTextfield || 'Invalid cron expression',
     ]"
   />
 
@@ -26,7 +26,7 @@
     color="success"
     block
     @click="submit"
-    :disabled="!subredditTextfield || !isCronValid()"
+    :disabled="!nameTextfield || !isCronValid()"
   >
     {{ submitText }}
   </v-btn>
@@ -40,30 +40,29 @@ import { isValidCron } from "cron-validator";
 export default defineComponent({
   name: "ConfigFormComponent",
   props: ["submitText", "item"],
+  emits: ["submit"],
   data: () => ({
-    subredditTextfield: "",
-    periodicityTextfield: "",
+    nameTextfield: "",
+    cronTextfield: "",
   }),
   created() {
-    this.subredditTextfield = this.item?.subreddit || "";
-    this.periodicityTextfield = this.item?.periodicity || "";
+    this.nameTextfield = this.item?.name || "";
+    this.cronTextfield = this.item?.cron || "";
   },
   methods: {
     submit() {
       this.$emit("submit", {
         ...this.item,
-        subreddit: this.subredditTextfield,
-        periodicity: this.periodicityTextfield,
+        name: this.nameTextfield,
+        cron: this.cronTextfield,
       });
     },
     isCronValid() {
-      return (
-        isValidCron(this.periodicityTextfield) || !this.periodicityTextfield
-      );
+      return isValidCron(this.cronTextfield) || !this.cronTextfield;
     },
     cronToString() {
       try {
-        return cronstrue.toString(this.periodicityTextfield);
+        return cronstrue.toString(this.cronTextfield);
       } catch (e) {
         return;
       }

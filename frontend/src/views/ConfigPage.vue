@@ -10,32 +10,30 @@
             class="icon-btn"
             color="green"
             icon="mdi-plus"
-            @click="openNewConfiguration()"
+            @click="toggleNewConfiguration()"
           />
           <v-list-item-title>
             <strong>Create new configuration</strong>
           </v-list-item-title>
         </div>
-        <div class="v-list-item__configure" v-if="showNewConfiguration()">
+        <div class="v-list-item__configure" v-if="newConfigurationOpen">
           <ConfigFormComponent submitText="Create" @submit="create" />
         </div>
       </v-list-item>
 
-      <v-list-item v-for="item in items" :key="item.id">
+      <v-list-item v-for="item in query.data?.value?.parsedBody" :key="item.id">
         <div class="v-list-item__content">
           <div class="v-list-item__list-text">
             <v-list-item-title>
               <v-icon
-                :color="item.periodicity ? 'primary' : 'secondary'"
-                :icon="
-                  item.periodicity ? 'mdi-play-circle' : 'mdi-pause-circle'
-                "
+                :color="item.cron ? 'primary' : 'secondary'"
+                :icon="item.cron ? 'mdi-play-circle' : 'mdi-pause-circle'"
                 size="small"
               />
-              <strong>{{ item.subreddit }}</strong>
+              <strong>{{ item.name }}</strong>
             </v-list-item-title>
-            <v-list-item-subtitle v-if="item.periodicity">
-              {{ cronstrue.toString(item.periodicity) }}
+            <v-list-item-subtitle v-if="item.cron">
+              {{ cronstrue.toString(item.cron) }}
             </v-list-item-subtitle>
           </div>
           <v-btn
@@ -43,7 +41,7 @@
             color="warning"
             size="small"
             icon="mdi-tools"
-            @click="configure(item)"
+            @click="toggleConfigure(item)"
           />
           <v-btn
             class="icon-btn"
@@ -53,15 +51,8 @@
             @click="openRemoveDialog(item)"
           />
         </div>
-        <div
-          class="v-list-item__configure"
-          v-if="showConfigurationDetails(item)"
-        >
-          <ConfigFormComponent
-            :item="items.find((i) => i.id === selectedItemId)"
-            submitText="Save"
-            @submit="save"
-          />
+        <div class="v-list-item__configure" v-if="selectedItemId === item.id">
+          <ConfigFormComponent :item="item" submitText="Save" @submit="save" />
         </div>
       </v-list-item>
     </v-list>
@@ -71,7 +62,7 @@
         <v-card-text> Are you sure you want to remove this item? </v-card-text>
         <v-card-actions>
           <v-btn color="grey" @click="cancel()"> No </v-btn>
-          <v-btn color="error" @click="remove(selectedItemId)"> Yes </v-btn>
+          <v-btn color="error" @click="remove()"> Yes </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -81,12 +72,19 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import cronstrue from "cronstrue";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import ConfigFormComponent from "../components/ConfigFormComponent.vue";
+import {
+  getConfigurations,
+  deleteConfigEntry,
+  upsertConfig,
+} from "../api/config";
 
 interface ItemProps {
-  id: number;
-  subreddit: string;
-  periodicity: string | null;
+  id: string;
+  name: string;
+  cron: string | undefined;
+  createdAt?: string;
 }
 
 export default defineComponent({
@@ -97,93 +95,94 @@ export default defineComponent({
   data() {
     return {
       cronstrue,
-      selectedItemId: -1,
-      subredditTextfield: "",
-      periodicityTextfield: "",
+      queryClient: useQueryClient(),
+      selectedItemId: "",
+      removalItemId: "",
+      nameTextfield: "",
+      cronTextfield: "",
       removeDialog: false,
-      items: [
-        {
-          id: 1,
-          subreddit: "Am I the asshole",
-          periodicity: "0 14 * * *",
-        },
-        {
-          id: 2,
-          subreddit: "Sweden",
-          periodicity: "0 20 * * 2,4",
-        },
-        {
-          id: 3,
-          subreddit: "Reddit News",
-          periodicity: null,
-        },
-        {
-          id: 4,
-          subreddit: "Ask Reddit...",
-          periodicity: "0 8,18 * * 1-5",
-        },
-      ],
+      newConfigurationOpen: false,
+      items: [] as ItemProps[],
     };
   },
   methods: {
-    showNewConfiguration() {
-      return this.selectedItemId === 0 && !this.removeDialog;
-    },
-    openNewConfiguration() {
-      this.subredditTextfield = "";
-      this.periodicityTextfield = "";
-      if (this.selectedItemId === 0) {
-        this.selectedItemId = -1;
+    toggleNewConfiguration() {
+      this.nameTextfield = "";
+      this.cronTextfield = "";
+      if (this.newConfigurationOpen) {
+        this.newConfigurationOpen = false;
       } else {
-        this.selectedItemId = 0;
+        this.selectedItemId = "";
+        this.newConfigurationOpen = true;
       }
     },
-    showConfigurationDetails(item: ItemProps) {
-      return this.selectedItemId === item.id && !this.removeDialog;
-    },
-    configure(item: ItemProps) {
+    toggleConfigure(item: ItemProps) {
       if (this.selectedItemId === item.id) {
-        this.selectedItemId = -1;
+        this.selectedItemId = "";
         return;
       }
+      if (this.newConfigurationOpen) {
+        this.newConfigurationOpen = false;
+      }
       this.selectedItemId = item.id;
-      this.subredditTextfield = item.subreddit;
-      this.periodicityTextfield = item.periodicity ? item.periodicity : "";
-    },
-    create(item: ItemProps) {
-      this.items.push({
-        id: this.items.length + 1,
-        subreddit: item.subreddit,
-        periodicity: item.periodicity || null,
-      });
-      this.selectedItemId = -1;
-      this.subredditTextfield = "";
-      this.periodicityTextfield = "";
-    },
-    save(item: ItemProps) {
-      this.items = this.items.map((i) =>
-        i.id === this.selectedItemId
-          ? {
-              ...item,
-              subreddit: item.subreddit,
-              periodicity: item.periodicity || null,
-            }
-          : i
-      );
-      this.selectedItemId = -1;
+      this.nameTextfield = item.name;
+      this.cronTextfield = item.cron ? item.cron : "";
     },
     openRemoveDialog(item: ItemProps) {
       this.removeDialog = true;
-      this.selectedItemId = item.id;
+      this.removalItemId = item.id;
     },
-    remove(item: number) {
-      this.items = this.items.filter((i) => i.id !== item);
+    async create(item: ItemProps) {
+      try {
+        await upsertConfig({
+          name: item.name,
+          cron: item.cron || undefined,
+        });
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
+      } catch (error) {
+        console.error(error);
+      }
+      this.newConfigurationOpen = false;
+      this.nameTextfield = "";
+      this.cronTextfield = "";
+    },
+    async save(item: ItemProps) {
+      try {
+        await upsertConfig({
+          id: item.id,
+          name: item.name,
+          cron: item.cron || undefined,
+        });
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
+      } catch (error) {
+        console.error(error);
+      }
+      this.selectedItemId = "";
+      this.nameTextfield = "";
+      this.cronTextfield = "";
+    },
+    async remove() {
+      try {
+        await deleteConfigEntry(this.removalItemId);
+        this.queryClient.invalidateQueries({ queryKey: ["items"] });
+      } catch (error) {
+        console.error(error);
+      }
+      this.selectedItemId = "";
       this.removeDialog = false;
     },
     cancel() {
-      this.selectedItemId = -1;
       this.removeDialog = false;
     },
+  },
+  setup() {
+    const query = useQuery({
+      queryKey: ["items"],
+      queryFn: getConfigurations,
+    });
+    return {
+      query,
+    };
   },
 });
 </script>
