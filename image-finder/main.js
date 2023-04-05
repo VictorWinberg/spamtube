@@ -76,8 +76,8 @@ function* chunks(arr, n) {
 }
 
 async function getAIImages(keywords) {
-  const style = styles[Math.floor(Math.random() * styles.length)];
-  const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  const style = styles[Math.floor(Math.random(new Date().getTime()) * styles.length)];
+  const background = backgrounds[Math.floor(Math.random(new Date().getTime()) * backgrounds.length)];
   const direction = `in ${style} style and ${background} background`;
   const prompt = [...keywords, direction].join(" ")
   console.log('prompt', prompt);
