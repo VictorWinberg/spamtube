@@ -12,6 +12,8 @@ func GetTopPosts(subredditName string) (domain.RedditItems, error) {
 	url := fmt.Sprintf("https://reddit.com/r/%s/top.json?t=day", subredditName)
 	req, err := http.NewRequest("GET", url, nil)
 
+	req.Header.Set("User-agent", "spamtube 0.1")
+
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +32,7 @@ func GetTopPosts(subredditName string) (domain.RedditItems, error) {
 	json.NewDecoder(resp.Body).Decode(&res)
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("COULD NOT RETRIEVE TOP POSTS")
+		return nil, fmt.Errorf("STATUS CODE: %d", resp.StatusCode)
 	}
 
 	for i, post := range res.Data.Children {
