@@ -8,10 +8,19 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetSubreddits() ([]*domain.Subreddit, error) {
+func GetAllSubreddits() ([]*domain.Subreddit, error) {
+	return SelectSubreddits("SELECT * FROM subreddits")
+
+}
+
+func GetSubredditsWithCron() ([]*domain.Subreddit, error) {
+	return SelectSubreddits("SELECT * FROM subreddits WHERE cron_string IS NOT NULL")
+}
+
+func SelectSubreddits(query string) ([]*domain.Subreddit, error) {
 	var items []*domain.Subreddit
 
-	rows, err := DB.Query(`SELECT * FROM "subreddits"`)
+	rows, err := DB.Query(query)
 
 	if err != nil {
 		return nil, err
