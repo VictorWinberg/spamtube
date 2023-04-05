@@ -40,11 +40,8 @@ func main() {
 	kron := cron.New()
 	kron.Start()
 
-	cronJobId, err := addRandomCronJob(kron, "0 9 * * *")
-	if err == nil {
-		// TODO: Stop job using kron.Remove(cronJobId) when cron string is updated for subreddit
-		subredditCronjobs["super-random-reddit"] = cronJobId
-	}
+	startCronJobs(kron, subredditCronjobs)
+
 	// Set the router as the default one shipped with Gin
 	router := gin.Default()
 
@@ -103,7 +100,7 @@ func main() {
 		})
 
 		api.GET("/subreddits", func(con *gin.Context) {
-			items, err := database.GetSubreddits()
+			items, err := database.GetAllSubreddits()
 
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
@@ -171,9 +168,25 @@ func main() {
 	router.Run(fmt.Sprintf(":%s", *port))
 }
 
+func startCronJobs(kron *cron.Cron, subredditCronjobs map[string]cron.EntryID) {
+	log.Println("CRON: Starting cron jobs")
+	subreddits, err := database.GetSubredditsWithCron()
+	if err != nil {
+		log.Printf("CRON: Error when fetching subreddits for cron: %v", err)
+		return
+	}
+	log.Printf("CRON: Found %d subreddits to start cron job for", len(subreddits))
+	for _, subreddit := range subreddits {
+		cronJobId, err := addCronJob(kron, subreddit.Name, *subreddit.Cron)
+		if err == nil {
+			subredditCronjobs[subreddit.Id] = cronJobId
+		}
+	}
+
+}
+
 func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
 	log.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
-	log.Println("DEBUG: crons running:", kron.Entries())
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
@@ -182,31 +195,7 @@ func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.Ent
 		}
 		log.Println("Autouploading video successful!")
 	})
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	}
-	return id, nil
-}
-
-// TODO: REMOVE THIS
-func addRandomCronJob(kron *cron.Cron, cron_string string) (cron.EntryID, error) {
-	log.Printf("CRON: add random subreddit, with cron: %s", cron_string)
-	log.Println("DEBUG: crons running:", kron.Entries())
-	id, err := kron.AddFunc(cron_string, func() {
-		items, err := database.GetSubreddits()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		subreddit := items[rand.Intn(len(items))].Name
-		err = autoupload.AutoUploadVideo(subreddit)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Println("Autouploading video successful!")
-	})
+	log.Printf("DEBUG: %d crons running: %v", len(kron.Entries()), kron.Entries())
 	if err != nil {
 		log.Println(err)
 		return 0, err
