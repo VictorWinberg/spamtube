@@ -82,6 +82,8 @@ async function getAIImages(keywords) {
   const style = styles[Math.floor(Math.random() * styles.length)];
   const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   const direction = `in ${style} style and ${background} background`;
+  const prompt = [...keywords, direction].join(" ")
+  console.log('prompt', prompt);
 
   const response = await nodeFetch("https://api.craiyon.com/draw", {
     method: "POST",
@@ -89,7 +91,7 @@ async function getAIImages(keywords) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt: [...keywords, direction].join(" "),
+      prompt,
       version: "35s5hfwn9n78gb06",
       token: null,
     }),
