@@ -58,13 +58,9 @@ func UpsertSubreddit(sub domain.UpsertSubreddit) (domain.Subreddit, error) {
 	ON CONFLICT (id)
 	DO
 	UPDATE SET
-	  "name" = $2,
+	  	"name" = $2,
 		"cron_string" = $4
-	RETURNING
-	id,
-	name,
-	created_at,
-	cron_string
+	RETURNING id, name, created_at, cron_string
 	`
 
 	id := uuid.New().String()

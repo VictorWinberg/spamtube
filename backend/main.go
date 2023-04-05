@@ -124,6 +124,10 @@ func main() {
 				})
 				return
 			}
+
+			cronJobId := subredditCronjobs[id]
+			log.Printf("CRON: remove subreddit %s", id)
+			kron.Remove(cronJobId)
 			con.JSON(http.StatusOK, id)
 		})
 
@@ -138,6 +142,22 @@ func main() {
 				})
 				return
 			}
+
+			cronJobId := subredditCronjobs[*subreddit.Id]
+			kron.Remove(cronJobId)
+
+			if subreddit.Cron != nil {
+				cronJobId, err = addCronJob(kron, *subreddit.Name, *subreddit.Cron)
+				subredditCronjobs[*subreddit.Id] = cronJobId
+
+				if err != nil {
+					con.JSON(http.StatusInternalServerError, gin.H{
+						"message": fmt.Sprintf("Error: %s", err),
+					})
+					return
+				}
+			}
+
 			con.JSON(http.StatusOK, item)
 		})
 
@@ -153,6 +173,7 @@ func main() {
 
 func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
 	log.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
+	log.Println("DEBUG: crons running:", kron.Entries())
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
