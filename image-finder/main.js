@@ -29,7 +29,6 @@ const styles = [
 const backgrounds = [
   "abstract",
   "apocalyptic",
-  "beach",
   "bright neon lights",
   "city",
   "cyberpunk",
@@ -46,8 +45,6 @@ const backgrounds = [
   "underwater",
   "urban",
   "utopian",
-  "volcano",
-  "waterfall",
 ];
 
 const unsplash = createApi({
