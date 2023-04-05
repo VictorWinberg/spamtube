@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	internalApi "spamtube/backend/api"
@@ -123,7 +122,7 @@ func main() {
 			}
 
 			cronJobId := subredditCronjobs[id]
-			log.Printf("CRON: remove subreddit %s", id)
+			fmt.Printf("CRON: remove subreddit %s", id)
 			kron.Remove(cronJobId)
 			con.JSON(http.StatusOK, id)
 		})
@@ -169,13 +168,13 @@ func main() {
 }
 
 func startCronJobs(kron *cron.Cron, subredditCronjobs map[string]cron.EntryID) {
-	log.Println("CRON: Starting cron jobs")
+	fmt.Println("CRON: Starting cron jobs")
 	subreddits, err := database.GetSubredditsWithCron()
 	if err != nil {
-		log.Printf("CRON: Error when fetching subreddits for cron: %v", err)
+		fmt.Printf("CRON: Error when fetching subreddits for cron: %v", err)
 		return
 	}
-	log.Printf("CRON: Found %d subreddits to start cron job for", len(subreddits))
+	fmt.Printf("CRON: Found %d subreddits to start cron job for", len(subreddits))
 	for _, subreddit := range subreddits {
 		cronJobId, err := addCronJob(kron, subreddit.Name, *subreddit.Cron)
 		if err == nil {
@@ -186,18 +185,18 @@ func startCronJobs(kron *cron.Cron, subredditCronjobs map[string]cron.EntryID) {
 }
 
 func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
-	log.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
+	fmt.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 			return
 		}
-		log.Println("Autouploading video successful!")
+		fmt.Println("Autouploading video successful!")
 	})
-	log.Printf("DEBUG: %d crons running: %v", len(kron.Entries()), kron.Entries())
+	fmt.Printf("DEBUG: %d crons running: %v", len(kron.Entries()), kron.Entries())
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		return 0, err
 	}
 	return id, nil

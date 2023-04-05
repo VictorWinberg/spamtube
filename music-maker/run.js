@@ -6,14 +6,40 @@ import shell from "shelljs";
 const OUTPUT_FOLDER = "out";
 const OUTPUT_FILENAME = "audio";
 
+const IGNORE_SONGS = [
+  "A Day To Remember",
+  "A New Beginning",
+  "Acoustic Breeze",
+  "Better Days",
+  "Cute",
+  "Dubstep",
+  "Little Planet",
+  "Love",
+  "Memories",
+  "New Dawn",
+  "November",
+  "Ofelia's dream",
+  "Once Again",
+  "Photo Album",
+  "Piano Moment",
+  "Romantic",
+  "Sad Day",
+  "Sweet",
+  "Tenderness",
+  "The Elevator Bossa Nova",
+  "The Jazz Piano",
+  "The Lounge",
+  "Tomorrow",
+];
+
 function getSongNames(htmlStr, className) {
   const dom = new jsdom.JSDOM(htmlStr);
 
   const elements = dom.window.document.querySelectorAll(className);
   let array = [];
-  elements.forEach(element => {
+  elements.forEach((element) => {
     array.push(element.textContent);
-  })
+  });
   return array;
 }
 
@@ -45,12 +71,16 @@ function randomIntFromInterval(min, max) {
 
 async function main() {
   const page = randomIntFromInterval(1, 5);
-  
-  console.log(`Getting a popular song from https://www.bensound.com/free-music-for-videos/${page}...`);
-  const htmlstr = await fetchAsync(`https://www.bensound.com/free-music-for-videos/${page}`);
-  const songNames = getSongNames(htmlstr, ".result-container > div:first-child > div > .track-name a span");
 
-  console.log("Pool of songs:", { array: songNames });
+  console.log(`Getting a popular song from https://www.bensound.com/free-music-for-videos/${page}`);
+  const htmlstr = await fetchAsync(`https://www.bensound.com/free-music-for-videos/${page}`);
+  let songNames = getSongNames(
+    htmlstr,
+    ".result-container > div:first-child > div > .track-name a span"
+  );
+  songNames = songNames.filter((songName) => !IGNORE_SONGS.includes(songName));
+
+  console.log("Pool of songs:", songNames);
   const rnd = randomIntFromInterval(0, songNames.length - 1);
   console.log(`Randomly chosen song: ${songNames[rnd]}`);
 
