@@ -14,6 +14,10 @@ func AutoUploadVideo(subreddit_name string) error {
 	if err != nil {
 		return err
 	}
+	if len(posts) == 0 {
+		fmt.Printf("Had no posts for subreddit %s\n", subreddit_name)
+		return nil
+	}
 	rand.Seed(time.Now().UnixNano())
 	post := posts[rand.Intn(len(posts))]
 	hashTaggedKeywords := ""
