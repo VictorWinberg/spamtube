@@ -195,7 +195,7 @@ func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.Ent
 		}
 		log.Println("Autouploading video successful!")
 	})
-	log.Printf("DEBUG: %d crons running: %v", len(kron.Entries()), kron.Entries())
+	log.Printf("DEBUG: %d crons running", len(kron.Entries()))
 	if err != nil {
 		log.Println(err)
 		return 0, err
