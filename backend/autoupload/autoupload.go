@@ -2,7 +2,6 @@ package autoupload
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	api "spamtube/backend/api"
 	"strings"
@@ -40,6 +39,6 @@ func AutoUploadVideo(subreddit_name string) error {
 	if err != nil {
 		return err
 	}
-	log.Println(resp)
+	fmt.Println(resp)
 	return nil
 }
