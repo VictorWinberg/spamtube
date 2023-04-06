@@ -3,7 +3,7 @@
     <h1>Configurations</h1>
 
     <v-list>
-      <v-list-item class="mb-2">
+      <v-list-item>
         <div class="v-list-item__content">
           <v-btn
             size="small"
@@ -24,11 +24,7 @@
         />
       </v-list-item>
 
-      <v-list-item
-        v-for="item in query.data?.value?.parsedBody"
-        :key="item.id"
-        class="mb-2"
-      >
+      <v-list-item v-for="item in query.data?.value?.parsedBody" :key="item.id">
         <div class="v-list-item__content">
           <div class="v-list-item__list-text">
             <v-list-item-title>
@@ -46,6 +42,7 @@
           </div>
           <v-btn
             class="icon-btn ma-2"
+            variant="outlined"
             color="warning"
             size="small"
             icon="mdi-tools"
@@ -53,6 +50,7 @@
           />
           <v-btn
             class="icon-btn ma-2"
+            variant="outlined"
             color="error"
             size="small"
             icon="mdi-trash-can"
@@ -204,9 +202,16 @@ export default defineComponent({
 
 .v-list-item {
   margin: 0 auto;
-  background: rgb(var(--v-theme-white));
+  background: rgba(var(--v-theme-black), 0.5);
+  color: rgb(var(--v-theme-white));
   text-align: left;
   max-width: 800px;
+
+  &:not(:last-child) {
+    .v-list-item__content {
+      border-bottom: solid rgb(var(--v-theme-white), 0.2) 1px;
+    }
+  }
 
   &__list-text {
     flex: 1;

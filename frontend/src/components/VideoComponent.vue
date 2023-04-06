@@ -68,6 +68,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   margin-bottom: 0;
+  background-color: rgba(var(--v-theme-white), 0.2);
+  color: rgb(var(--v-theme-white));
 }
 .view-count {
   display: flex;

@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <img :src="logo" alt="logo" class="logo" />
     <div class="videos mt-8">
       <VideoComponent
         v-for="video in videos"
@@ -14,8 +15,10 @@
 import { defineComponent } from "vue";
 import VideoComponent from "@/components/VideoComponent.vue";
 import { getUploadedYoutubeVideos, YoutubeVideoData } from "../api/youtube";
+import logo from "../assets/images/logo.svg";
 
 interface DataProps {
+  logo: string;
   videos: YoutubeVideoData[];
 }
 
@@ -27,6 +30,7 @@ export default defineComponent({
   data(): DataProps {
     return {
       videos: [],
+      logo,
     };
   },
   async created() {
@@ -43,6 +47,10 @@ export default defineComponent({
 <style scoped>
 .home {
   padding: 2em;
+}
+
+.logo {
+  max-width: 500px;
 }
 
 .videos {
