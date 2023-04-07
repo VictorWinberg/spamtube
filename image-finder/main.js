@@ -5,6 +5,7 @@ import http from "node:https";
 import path from "path";
 import sharp from "sharp";
 import { createApi } from "unsplash-js";
+import { unlink } from 'fs/promises'
 
 config({ path: path.resolve(".env.local"), override: true });
 
@@ -120,7 +121,7 @@ async function main() {
     res.flat().forEach((image) => images.push(image));
 
     const urls = images.map((image) => `https://img.craiyon.com/${image}`);
-    await Promise.all(
+    const downloads = await Promise.all(
       urls.map(async (link, index) => {
         const filename = String(index).padStart(3, "0");
         const res = await download(link, `${OUT_DIR}/${filename}.webp`);
@@ -128,6 +129,17 @@ async function main() {
         return `${OUT_DIR}/${filename}.webp`;
       })
     );
+
+
+  await Promise.all(
+    downloads.map(async (filename, index) => {
+      const buffer = await sharp(filename).png().toBuffer();
+      await sharp(buffer).toFile(filename.replace(/webp$/, "png"));
+      await unlink(filename)
+      console.log(`sharp ${index}`);
+    })
+  );
+
     console.log("Done - craiyon!");
     return;
   } catch (error) {
@@ -168,9 +180,10 @@ async function main() {
 
   await Promise.all(
     downloads.map(async (filename, index) => {
-      const buffer = await sharp(filename).resize(IMAGE_WIDTH, IMAGE_HEIGHT).toBuffer();
-      await sharp(buffer).toFile(filename);
-      console.log(`resize ${index}`);
+      const buffer = await sharp(filename).resize(IMAGE_WIDTH, IMAGE_HEIGHT).png().toBuffer();
+      await sharp(buffer).toFile(filename.replace(/jpg$/, "png"));
+      await unlink(filename)
+      console.log(`sharp ${index}`);
     })
   );
 

@@ -2,11 +2,11 @@ import os
 from revChatGPT.V1 import Chatbot
 from gensim.summarization.summarizer import summarize
 
-if any(v is None for v in [os.getenv('GOOGLE_EMAIL'), os.getenv('GOOGLE_PASSWORD'), os.getenv('VOICE_INPUT')]):
-    print('ChatGPT missing required environment variables')
-    quit()
-
 try:
+    if any(v is None for v in [os.getenv('GOOGLE_EMAIL'), os.getenv('GOOGLE_PASSWORD'), os.getenv('VOICE_INPUT')]):
+        print('ChatGPT missing required environment variables')
+        raise Exception('ChatGPT missing required environment variables')
+
     chatbot = Chatbot(config={
         "email": os.getenv('GOOGLE_EMAIL'),
         "password": os.getenv('GOOGLE_PASSWORD')

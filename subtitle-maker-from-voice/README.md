@@ -4,4 +4,4 @@
 
 ## Usage
 
-To run script: `python3 chatgpt.py`
+To run script: `./make-subs.sh`
