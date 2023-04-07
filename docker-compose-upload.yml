@@ -1,15 +1,25 @@
 version: "3.1"
 
 services:
+  gensim:
+    build: gensim
+    environment:
+      TITLE: ${TITLE}
+      VOICE_INPUT: ${VOICE_INPUT}
+    volumes:
+      - data-volume:/app/out
+
   chatgpt:
     build: chatgpt
     environment:
       GOOGLE_EMAIL: ${GOOGLE_EMAIL}
       GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
       VOICE_INPUT: ${VOICE_INPUT}
-      FALLBACK_TITLE: ${TITLE}
     volumes:
-      - chatgpt-volume:/app/out
+      - data-volume:/app/out
+    depends_on:
+      gensim:
+        condition: service_completed_successfully
 
   image-finder:
     build: image-finder
@@ -31,7 +41,7 @@ services:
   voice-maker:
     build: voice-maker
     volumes:
-      - chatgpt-volume:/app/data
+      - data-volume:/app/data
       - voice-volume:/app/out
     depends_on:
       chatgpt:
@@ -40,7 +50,7 @@ services:
   subtitle-maker:
     build: subtitle-maker-from-text
     volumes:
-      - chatgpt-volume:/app/data
+      - data-volume:/app/data
       # - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
@@ -73,7 +83,7 @@ services:
   uploader:
     build: uploader
     volumes:
-      - chatgpt-volume:/app/data/chatgpt
+      - data-volume:/app/data/chatgpt
       - video-volume:/app/data/video
       - uploader-volume:/app/out
     environment:
@@ -98,11 +108,11 @@ services:
         condition: service_completed_successfully
 
 volumes:
+  data-volume:
   image-volume:
-  subs-volume:
   voice-volume:
+  subs-volume:
   music-volume:
   video-volume:
-  chatgpt-volume:
   uploader-volume:
   image-upscaled-volume:

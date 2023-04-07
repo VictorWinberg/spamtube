@@ -1,6 +1,5 @@
 import os
 from revChatGPT.V1 import Chatbot
-from gensim.summarization.summarizer import summarize
 
 try:
     if any(v is None for v in [os.getenv('GOOGLE_EMAIL'), os.getenv('GOOGLE_PASSWORD'), os.getenv('VOICE_INPUT')]):
@@ -30,10 +29,3 @@ try:
     print(f'Successfully generated a ChatGPT response')
 except Exception as err: 
     print(err)
-    with open('out/title.txt', 'w') as f:
-        f.write(os.getenv('FALLBACK_TITLE'))
-    with open('out/text.txt', 'w') as f:
-        text = os.getenv('VOICE_INPUT')
-        summary = summarize(text, word_count = 150)
-        f.write(summary)
-    print(f'Successfully generated a gensim response')
