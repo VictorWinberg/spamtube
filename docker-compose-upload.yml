@@ -32,7 +32,7 @@ services:
   image-uploader:
     build: image-uplader
     volumes: 
-      - image-volume:/app/out
+      - image-volume:/app/data
     environment:
       IMGBB_API_KEY: ${IMGBB_API_KEY}
     depends_on: 
