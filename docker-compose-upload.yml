@@ -28,6 +28,16 @@ services:
     environment:
       IMAGE_INPUT: ${IMAGE_INPUT}
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
+  
+  image-uploader:
+    build: image-uplader
+    volumes: 
+      - image-volume:/app/out
+    environment:
+      IMGBB_API_KEY: ${IMGBB_API_KEY}
+    depends_on: 
+      image-finder: 
+        condition: service_completed_successfully
 
   voice-maker:
     build: voice-maker
