@@ -117,8 +117,10 @@ async function main() {
   try {
     const images = [];
 
-    const res = await Promise.all([...chunks(keywords, 3)].map((chunk) => getAIImages(chunk)));
-    res.flat().forEach((image) => images.push(image));
+    for (const chunk of [...chunks(keywords, 3)]) {
+      const res = await getAIImages(chunk);
+      res.forEach((image) => images.push(image));
+    }
 
     const urls = images.map((image) => `https://img.craiyon.com/${image}`);
     const downloads = await Promise.all(
