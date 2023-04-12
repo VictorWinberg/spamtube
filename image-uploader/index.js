@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-d
 dotenv.config()
 console.log("Saving images to online image database")
 
-const API_KEY = process.env.IMGBB_API_KET
+const API_KEY = process.env.IMGBB_API_KEY
 var base64ImageArray = []
 var path = './data'
 // Read files
