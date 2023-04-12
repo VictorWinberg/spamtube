@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hajimehoshi/go-mp3"
+
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
@@ -17,7 +19,6 @@ const IMAGE_PATH = "./data/images/"
 const OUTPUT_VIDEO_TEMP_FILE = "./out/video_temp.mp4"
 const OUTPUT_VIDEO_FILE = "./out/video.mp4"
 const OUTPUT_AUDIO_FILE = "./out/audio.mp3"
-const VIDEO_LENGTH = 59 // In seconds
 const OUTPUT_VIDEO_FORMAT = "yuvj420p"
 const VIDEO_CODEC = "libx264"
 const OUTPUT_FPS = 30
@@ -26,13 +27,15 @@ const VOLUME_CHANGE_FACTOR = "0.15"
 
 func CreateVideo() {
 	imageExt := GetImageExt()
-	audio := GenerateAudio()
-	GenerateVideo(imageExt, audio)
+	audioLength := GetAudioLength()
+	audio := GenerateAudio(audioLength)
+
+	GenerateVideo(imageExt, audio, audioLength)
 }
 
-func GenerateVideo(imageExt string, audioInput *ffmpeg.Stream) {
+func GenerateVideo(imageExt string, audioInput *ffmpeg.Stream, audioLength int64) {
 	imageInput := ffmpeg.Input(IMAGE_PATH+"%03d"+imageExt, ffmpeg.KwArgs{"loop": 1, "framerate": "1/2"})
-	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_TEMP_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": VIDEO_LENGTH, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
+	err := ffmpeg.Concat([]*ffmpeg.Stream{imageInput, audioInput}, ffmpeg.KwArgs{"v": 1, "a": 1}).Output(OUTPUT_VIDEO_TEMP_FILE, ffmpeg.KwArgs{"r": OUTPUT_FPS, "pix_fmt": OUTPUT_VIDEO_FORMAT, "t": audioLength, "c:v": VIDEO_CODEC}).OverWriteOutput().ErrorToStdOut().Run()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,14 +46,14 @@ func GenerateVideo(imageExt string, audioInput *ffmpeg.Stream) {
 	fmt.Println("Successfully generated video: " + OUTPUT_VIDEO_FILE)
 }
 
-func GenerateAudio() *ffmpeg.Stream {
+func GenerateAudio(length int64) *ffmpeg.Stream {
 	pathFiles := GetAudio()
 	nFoundFiles := len(Values(pathFiles))
 	if nFoundFiles < MIN_AUDIO_FILES {
 		log.Fatalf("Expected at least %d audiofiles, found %d", MIN_AUDIO_FILES, nFoundFiles)
 	}
 	audioInputs := GetAsFfmpegAudioInputs(pathFiles)
-	err := ffmpeg.Filter(audioInputs, "amix", ffmpeg.Args{fmt.Sprintf("inputs=%d", nFoundFiles), "duration=longest"}).Output(OUTPUT_AUDIO_FILE, ffmpeg.KwArgs{"c:a": "libmp3lame", "t": 60}).OverWriteOutput().ErrorToStdOut().Run()
+	err := ffmpeg.Filter(audioInputs, "amix", ffmpeg.Args{fmt.Sprintf("inputs=%d", nFoundFiles), "duration=longest"}).Output(OUTPUT_AUDIO_FILE, ffmpeg.KwArgs{"c:a": "libmp3lame", "t": length}).OverWriteOutput().ErrorToStdOut().Run()
 	if err != nil {
 		fmt.Println("Failed to generate audio for video")
 		log.Fatal(err)
@@ -155,4 +158,23 @@ func GetEnv(key, fallback string) string {
 		value = fallback
 	}
 	return value
+}
+
+func GetAudioLength() int64 {
+	f, err := os.Open("./data/audio/voice/audio.mp3")
+	if err != nil {
+		return 59
+	}
+	defer f.Close()
+
+	d, err := mp3.NewDecoder(f)
+	if err != nil {
+		return 59
+	}
+
+	sampleSize := int64(4)
+	samples := d.Length() / sampleSize
+	audioLength := samples / int64(d.SampleRate())
+
+	return audioLength
 }

@@ -3,6 +3,7 @@ module spamtube/generator
 go 1.19
 
 require (
+	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/stretchr/testify v1.5.1
 	github.com/u2takey/ffmpeg-go v0.4.1
 )
