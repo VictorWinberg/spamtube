@@ -1,8 +1,9 @@
 import fs from 'fs'
 import request from 'request';
 import isImage from 'is-image';
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config()
+import { config } from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+
+config({ path: path.resolve(".env.local"), override: true });
 console.log("Saving images to online image database")
 
 const API_KEY = process.env.IMGBB_API_KEY
