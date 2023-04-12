@@ -12,6 +12,8 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "is-image": "^3.1.0",
+    "pg": "^8.10.0",
+    "pg-prepared": "^2.5.13",
     "request": "^2.88.2"
   },
   "type": "module"
