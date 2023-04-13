@@ -166,7 +166,7 @@ func getTokenFromPrompt(config *oauth2.Config, authURL string) (*oauth2.Token, e
 func getTokenFromWeb(config *oauth2.Config, authURL string) (*oauth2.Token, error) {
 	codeCh, err := startWebServer()
 	if err != nil {
-		fmt.Printf("Unable to start a web server.")
+		fmt.Printf("Unable to start a web server.\n")
 		return nil, err
 	}
 

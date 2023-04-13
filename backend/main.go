@@ -22,7 +22,7 @@ import (
 func main() {
 	err := godotenv.Load(".env.local")
 	if err != nil {
-		fmt.Printf("[WARN]: %s", err)
+		fmt.Printf("[WARN]: %s\n", err)
 	}
 	godotenv.Load()
 	rand.Seed(time.Now().UnixNano())
@@ -122,7 +122,7 @@ func main() {
 			}
 
 			cronJobId := subredditCronjobs[id]
-			fmt.Printf("CRON: remove subreddit %s", id)
+			fmt.Printf("CRON: remove subreddit %s\n", id)
 			kron.Remove(cronJobId)
 			con.JSON(http.StatusOK, id)
 		})
@@ -171,10 +171,10 @@ func startCronJobs(kron *cron.Cron, subredditCronjobs map[string]cron.EntryID) {
 	fmt.Println("CRON: Starting cron jobs")
 	subreddits, err := database.GetSubredditsWithCron()
 	if err != nil {
-		fmt.Printf("CRON: Error when fetching subreddits for cron: %v", err)
+		fmt.Printf("CRON: Error when fetching subreddits for cron: %v\n", err)
 		return
 	}
-	fmt.Printf("CRON: Found %d subreddits to start cron job for", len(subreddits))
+	fmt.Printf("CRON: Found %d subreddits to start cron job for\n", len(subreddits))
 	for _, subreddit := range subreddits {
 		cronJobId, err := addCronJob(kron, subreddit.Name, *subreddit.Cron)
 		if err == nil {
@@ -185,7 +185,7 @@ func startCronJobs(kron *cron.Cron, subredditCronjobs map[string]cron.EntryID) {
 }
 
 func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.EntryID, error) {
-	fmt.Printf("CRON: add subreddit %s, with cron: %s", subreddit, cron_string)
+	fmt.Printf("CRON: add subreddit %s, with cron: %s\n", subreddit, cron_string)
 	id, err := kron.AddFunc(cron_string, func() {
 		err := autoupload.AutoUploadVideo(subreddit)
 		if err != nil {
@@ -194,7 +194,7 @@ func addCronJob(kron *cron.Cron, subreddit string, cron_string string) (cron.Ent
 		}
 		fmt.Println("Autouploading video successful!")
 	})
-	fmt.Printf("DEBUG: %d crons running", len(kron.Entries()))
+	fmt.Printf("DEBUG: %d crons running\n", len(kron.Entries()))
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
