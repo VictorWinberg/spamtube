@@ -30,7 +30,7 @@ services:
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
   
   image-uploader:
-    build: image-uplader
+    build: image-uploader
     volumes: 
       - image-volume:/app/data
     environment:
