@@ -89,3 +89,7 @@ type UpsertSubreddit struct {
 	Name *string `json:"name"`
 	Cron *string `json:"cron"`
 }
+¨
+type ImgBody struct {
+	Url    string          `json:"ref"`
+}

@@ -158,7 +158,7 @@ func main() {
 		})
 
 		api.POST("/img", func(con *gin.Context) {
-			body := &internalApi.ImgInputBody{}
+			body := &domain.ImgBody{}
 			json.NewDecoder(con.Request.Body).Decode(&body)
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
@@ -176,6 +176,17 @@ func main() {
 				return
 			}
 			con.JSON(http.StatusOK)
+		})
+		api.GET("/img", func(con *gin.Context) {
+			items, err := database.SelectAllImages()
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK,items)
 		})
 	}
 
