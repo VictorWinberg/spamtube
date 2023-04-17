@@ -29,7 +29,6 @@ async function main() {
   }
   // Upload to db 
   for (const item of base64ImageArray) {
-
     let options = {
       'method': 'POST',
       'url': `https://api.imgbb.com/1/upload?name=${item.name}&key=${API_KEY}`,
@@ -41,8 +40,21 @@ async function main() {
       }
     };
     request(options, async function (error, response) {
-
       if (error) throw new Error(error);
+      var viewUrl = response.body.data.display_url
+
+      options = {
+        'method': 'POST',
+        'url': '/api/img',
+        'headers': {
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify({ Url: viewUrl })
+
+      };
+      request(options, function (error, response) {
+        if (error) throw new Error(error);
+      });
     });
   }
 }
