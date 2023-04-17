@@ -50,7 +50,7 @@ async function main() {
         'method': 'POST',
         'url': '/api/img', // Will this work? 
         'headers': {
-          'Content-Type': 'text/plain'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ Url: viewUrl })
 
