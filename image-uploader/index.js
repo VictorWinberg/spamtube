@@ -5,7 +5,7 @@ import isImage from 'is-image';
 import { config } from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
 config({ path: path.resolve(".env.local"), override: true });
-console.log("Saving images to online image database")
+console.log("Saving images to imgbb & spamtube database")
 async function main() {
 
   const API_KEY = process.env.IMGBB_API_KEY
@@ -28,7 +28,10 @@ async function main() {
     base64ImageArray.push({ base64: base64String, name: file });
   }
   // Upload to db 
+  let index = 1;
+  const length = base64ImageArray.length;
   for (const item of base64ImageArray) {
+    console.log(`${index} out of ${length}`)
     let options = {
       'method': 'POST',
       'url': `https://api.imgbb.com/1/upload?name=${item.name}&key=${API_KEY}`,
@@ -56,6 +59,7 @@ async function main() {
         if (error) throw new Error(error);
       });
     });
+    index++;
   }
 }
 
