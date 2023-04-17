@@ -48,7 +48,7 @@ async function main() {
 
       options = {
         'method': 'POST',
-        'url': '/api/img',
+        'url': '/api/img', // Will this work? 
         'headers': {
           'Content-Type': 'text/plain'
         },
