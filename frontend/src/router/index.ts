@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import UploadPage from "../views/UploadPage.vue";
 import HomePage from "../views/HomePage.vue";
 import ConfigPage from "../views/ConfigPage.vue";
+import GalleryPage from "../views/GalleryPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,6 +27,14 @@ const routes: Array<RouteRecordRaw> = [
     component: ConfigPage,
     meta: {
       order: 3,
+    },
+  },
+  {
+    path: "/gallery",
+    name: "GalleryPage",
+    component: GalleryPage,
+    meta: {
+      order: 4,
     },
   },
 ];

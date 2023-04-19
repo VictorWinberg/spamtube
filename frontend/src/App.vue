@@ -17,6 +17,10 @@
           <v-icon x-large> mdi-cog </v-icon>
           <p>Config</p>
         </router-link>
+        <router-link to="/gallery" class="item">
+          <v-icon x-large> mdi-cog </v-icon>
+          <p>Image Gallery</p>
+        </router-link>
       </div>
     </nav>
     <v-main justify="center">
