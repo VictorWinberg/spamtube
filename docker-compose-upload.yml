@@ -29,23 +29,23 @@ services:
       IMAGE_INPUT: ${IMAGE_INPUT}
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
 
-  image-upscaler:
-    build: image-upscaler
-    volumes:
-      - image-volume:/app/data
-      - image-upscaled-volume:/app/out
-    depends_on:
-      image-finder:
-        condition: service_completed_successfully
+#  image-upscaler:
+#    build: image-upscaler
+#    volumes:
+#      - image-volume:/app/data
+#      - image-upscaled-volume:/app/out
+#    depends_on:
+#      image-finder:
+#        condition: service_completed_successfully
 
   image-uploader:
     build: image-uploader
     volumes:
-      - image-upscaled-volume:/app/data
+      - image-volume:/app/data
     environment:
       IMGBB_API_KEY: ${IMGBB_API_KEY}
     depends_on:
-      image-upscaler:
+      image-finder:
         condition: service_completed_successfully
 
   voice-maker:
@@ -80,7 +80,7 @@ services:
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
-      image-upscaler:
+      image-finder:
         condition: service_completed_successfully
       voice-maker:
         condition: service_completed_successfully
@@ -125,3 +125,4 @@ volumes:
   video-volume:
   uploader-volume:
   image-upscaled-volume:
+  
