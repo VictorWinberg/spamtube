@@ -51,7 +51,7 @@ services:
   subtitle-maker:
     build: subtitle-maker-from-voice
     volumes:
-      - voice-volumne:/app/data
+      - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
       voice-maker:
