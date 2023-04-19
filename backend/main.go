@@ -157,6 +157,38 @@ func main() {
 			con.JSON(http.StatusOK, item)
 		})
 
+		api.POST("/img", func(con *gin.Context) {
+			body := &domain.ImgBody{}
+			json.NewDecoder(con.Request.Body).Decode(&body)
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+
+			err = database.InsertImgUrl(*&body.Url)
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK, "ok")
+		})
+
+		api.GET("/img", func(con *gin.Context) {
+			items, err := database.SelectAllImages()
+
+			if err != nil {
+				con.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("Error: %s", err),
+				})
+				return
+			}
+			con.JSON(http.StatusOK, items)
+		})
 	}
 
 	router.NoRoute(func(c *gin.Context) {
