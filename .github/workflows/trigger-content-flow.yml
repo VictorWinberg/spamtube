@@ -89,7 +89,7 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_KEYWORDS: ${{ inputs.image_keywords }}
           TEXT_CONTENT: ${{ inputs.text_content }}
-          CUSTOM_VOICE: ${{ inputs.voice }}
+          CUSTOM_VOICE: ${{ inputs.custom_voice }}
           CUSTOM_STYLE: ${{ inputs.custom_style }}
           CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
           GOOGLE_EMAIL: ${{ secrets.google_email }}

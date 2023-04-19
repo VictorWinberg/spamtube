@@ -20,22 +20,24 @@ func AutoUploadVideo(subreddit_name string) error {
 	}
 	rand.Seed(time.Now().UnixNano())
 	post := posts[rand.Intn(len(posts))]
-	hashTaggedKeywords := ""
 
+	var hashTags strings.Builder
 	for _, keyword := range post.Data.Keywords {
-		// ignore keywords containing '
-		if !strings.Contains(keyword, "'") {
-			hashTaggedKeywords = hashTaggedKeywords + fmt.Sprintf("#%s ", keyword)
-		}
+		hashTags.WriteString(strings.Replace(keyword, "'", "", -1))
+	}
+
+	var keywords []string
+	for _, words := range chunkBy(post.Data.Keywords, 3) {
+		keywords = append(keywords, strings.Join(words, " "))
 	}
 
 	data := &api.WorkflowInputBody{
 		Ref: "master",
 		Inputs: &api.WorkflowInputs{
-			Title:       post.Data.Title,
-			Description: fmt.Sprintf("See the reddit post that generated this video here: %s \n %s", post.Data.URL, hashTaggedKeywords),
-			ImageKeywords: strings.Join(post.Data.Keywords, " "),
-			TextContent: post.Data.Selftext,
+			Title:         post.Data.Title,
+			Description:   fmt.Sprintf("Reddit url: %s \n %s", post.Data.URL, hashTags.String()),
+			ImageKeywords: strings.Join(keywords, ","),
+			TextContent:   post.Data.Selftext,
 		},
 	}
 
@@ -45,4 +47,11 @@ func AutoUploadVideo(subreddit_name string) error {
 	}
 	fmt.Println(resp)
 	return nil
+}
+
+func chunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
+	for chunkSize < len(items) {
+		items, chunks = items[chunkSize:], append(chunks, items[0:chunkSize:chunkSize])
+	}
+	return append(chunks, items)
 }

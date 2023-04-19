@@ -72,12 +72,6 @@ async function download(url, dest) {
   });
 }
 
-function* chunks(arr, n) {
-  for (let i = 0; i < arr.length; i += n) {
-    yield arr.slice(i, i + n);
-  }
-}
-
 async function getAIImages(keywords) {
   const styleIndex = Math.floor(Math.random(new Date().getTime()) * styles.length);
   const style = CUSTOM_STYLE || styles[styleIndex];
@@ -85,7 +79,7 @@ async function getAIImages(keywords) {
   const background = CUSTOM_BACKGROUND || backgrounds[backgroundIndex];
 
   const direction = `in ${style} style and ${background} background`;
-  const prompt = [...keywords, direction].join(" ");
+  const prompt = [keywords, direction].join(" ");
   console.log("prompt", prompt);
 
   const response = await nodeFetch("https://api.craiyon.com/v3", {
@@ -112,7 +106,7 @@ async function getAIImages(keywords) {
 }
 
 async function main() {
-  const keywords = IMAGE_KEYWORDS.split(" ");
+  const keywords = IMAGE_KEYWORDS.split(",");
 
   // remove old files
   fs.readdir(OUT_DIR, (err, files) => {
@@ -129,8 +123,8 @@ async function main() {
   try {
     const images = [];
 
-    for (const chunk of [...chunks(keywords, 3)]) {
-      const res = await getAIImages(chunk);
+    for (const words of keywords) {
+      const res = await getAIImages(words);
       res.forEach((image) => images.push(image));
     }
 
