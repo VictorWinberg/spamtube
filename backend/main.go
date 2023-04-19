@@ -167,7 +167,7 @@ func main() {
 				return
 			}
 
-			err = database.InsertImgUrl(*body.url)
+			err = database.InsertImgUrl(*&body.Url)
 
 			if err != nil {
 				con.JSON(http.StatusInternalServerError, gin.H{
@@ -175,8 +175,9 @@ func main() {
 				})
 				return
 			}
-			con.JSON(http.StatusOK)
+			con.JSON(http.StatusOK, "ok")
 		})
+
 		api.GET("/img", func(con *gin.Context) {
 			items, err := database.SelectAllImages()
 
@@ -186,7 +187,7 @@ func main() {
 				})
 				return
 			}
-			con.JSON(http.StatusOK,items)
+			con.JSON(http.StatusOK, items)
 		})
 	}
 

@@ -1,16 +1,13 @@
- package database
+package database
 
 import (
 	"log"
 	"spamtube/backend/domain"
-	"time"
-
-	"github.com/google/uuid"
 )
 
-func InsertImgUrl(url string) (error) {
+func InsertImgUrl(url string) error {
 
-	err := DB.Exec(`INSERT INTO img (url) VALUES ($1)`, url)
+	_, err := DB.Exec(`INSERT INTO img (url) VALUES ($1)`, url)
 	if err != nil {
 		return err
 	}
@@ -18,7 +15,7 @@ func InsertImgUrl(url string) (error) {
 	return nil
 }
 
-func SelectAllImages() ([]*domain.ImgBody{}, error) {
+func SelectAllImages() ([]*domain.ImgBody, error) {
 	var items []*domain.ImgBody
 
 	rows, err := DB.Query("SELECT * FROM img")
@@ -37,7 +34,7 @@ func SelectAllImages() ([]*domain.ImgBody{}, error) {
 		}
 
 		item := &domain.ImgBody{
-			Url:         url,
+			Url: url,
 		}
 
 		items = append(items, item)
