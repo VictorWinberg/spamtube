@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 
 COPY . ./
 
-CMD [ "python", "main_swinir.py", "--task", "real_sr", "--scale", "4", "--tile", "400", "--model_path", "model_zoo/swinir/003_realSR_BSRGAN_DFO_s64w8_SwinIR-M_x4_GAN.pth", "--folder_lq", "data"]
+CMD [ "python", "main_swinir.py", "--task", "lightweight_sr", "--scale", "4", "--model_path", "model_zoo/swinir/002_lightweightSR_DIV2K_s64w8_SwinIR-S_x4.pth", "--folder_lq", "data", "--folder_gt", "data"]
