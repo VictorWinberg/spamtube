@@ -230,9 +230,13 @@ def get_image_pair(args, path):
 
     # 001 classical image sr/ 002 lightweight image sr (load lq-gt image pairs)
     if args.task in ['classical_sr', 'lightweight_sr']:
-        img_gt = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
-        img_lq = cv2.imread(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}', cv2.IMREAD_COLOR).astype(
-            np.float32) / 255.
+        # img_gt = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
+        # stuff = f'{args.folder_lq}/{imgname}x{args.scale}{imgext}'
+        # print('stuff', stuff, cv2.IMREAD_COLOR)
+        # img_lq = cv2.imread(f'{args.folder_lq}/{imgname}x{args.scale}{imgext}', cv2.IMREAD_COLOR).astype(
+        #     np.float32) / 255.
+        img_gt = None
+        img_lq = cv2.imread(path, cv2.IMREAD_COLOR).astype(np.float32) / 255.
 
     # 003 real-world image sr (load lq image only)
     elif args.task in ['real_sr']:
