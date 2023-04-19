@@ -83,20 +83,27 @@ async function getAIImages(keywords) {
   const prompt = [...keywords, direction].join(" ")
   console.log('prompt', prompt);
 
-  const response = await nodeFetch("https://api.craiyon.com/draw", {
+  const response = await nodeFetch("https://api.craiyon.com/v3", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       prompt,
+      negative_prompt: "",
+      model: "art",
       version: "35s5hfwn9n78gb06",
       token: null,
     }),
   });
 
-  const json = await response.json();
-  return json.images;
+  try {
+    const json = await response.json();
+    return json.images;
+  } catch (error) {
+    const err = await response.text();
+    throw err
+  }
 }
 
 async function main() {
