@@ -42,7 +42,7 @@ async function main() {
     };
     request(options, async function (error, response) {
       if (error) throw new Error(error);
-      var viewUrl = response.body.data.display_url;
+      const viewUrl = response.body.data.display_url;
 
       options = {
         method: "POST",
