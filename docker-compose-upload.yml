@@ -23,20 +23,20 @@ services:
 
   image-finder:
     build: image-finder
-    volumes: 
+    volumes:
       - image-volume:/app/out
     environment:
       IMAGE_INPUT: ${IMAGE_INPUT}
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
-  
+
   image-uploader:
     build: image-uploader
-    volumes: 
+    volumes:
       - image-volume:/app/data
     environment:
       IMGBB_API_KEY: ${IMGBB_API_KEY}
-    depends_on: 
-      image-finder: 
+    depends_on:
+      image-finder:
         condition: service_completed_successfully
 
   voice-maker:
@@ -49,13 +49,12 @@ services:
         condition: service_completed_successfully
 
   subtitle-maker:
-    build: subtitle-maker-from-text
+    build: subtitle-maker-from-voice
     volumes:
-      - data-volume:/app/data
-      # - voice-volume:/app/data
+      - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
-      chatgpt:
+      voice-maker:
         condition: service_completed_successfully
 
   music-maker:
