@@ -1,4 +1,4 @@
-FROM python:3.8.0-buster
+FROM python:3.10.4-buster
 
 WORKDIR /app
 
@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 
 COPY . ./
 
-CMD ["sh", "make-subs.sh"]
+CMD ["python", "magic.py"]

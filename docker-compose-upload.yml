@@ -23,7 +23,7 @@ services:
 
   image-finder:
     build: image-finder
-    volumes: 
+    volumes:
       - image-volume:/app/out
     environment:
       IMAGE_INPUT: ${IMAGE_INPUT}
@@ -49,10 +49,9 @@ services:
         condition: service_completed_successfully
 
   subtitle-maker:
-    build: subtitle-maker-from-text
+    build: subtitle-maker-from-voice
     volumes:
       - data-volume:/app/data
-      # - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
       chatgpt:
