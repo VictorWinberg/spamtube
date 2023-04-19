@@ -6,7 +6,7 @@
     video to YouTube.
     <div class="mt-8" :class="{ 'color-animation': uploaded }">
       <v-card class="mx-auto mb-16" max-width="500">
-        <v-img :src="neonCat"></v-img>
+        <v-img :src="uploaded ? neonCatGif : neonCatPng"></v-img>
         <v-card-title>{{ title }}</v-card-title>
         <v-card-subtitle> {{ description }} </v-card-subtitle>
         <v-card-text>
@@ -48,7 +48,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { startUploadFlow } from "@/api/upload";
-import neonCat from "../assets/images/neon-cat.gif";
+import neonCatGif from "../assets/images/neon-cat.gif";
+import neonCatPng from "../assets/images/neon-cat.png";
 
 interface DataProps {
   title: string;
@@ -56,7 +57,8 @@ interface DataProps {
   image: string;
   voice: string;
   status?: number;
-  neonCat: string;
+  neonCatGif: string;
+  neonCatPng: string;
 }
 
 export default defineComponent({
@@ -69,7 +71,8 @@ export default defineComponent({
       image: this.data?.image || "",
       voice: this.data?.voice || "",
       status: undefined,
-      neonCat,
+      neonCatGif,
+      neonCatPng,
     };
   },
   computed: {
