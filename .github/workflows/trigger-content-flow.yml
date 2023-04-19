@@ -20,6 +20,14 @@ on:
         description: "Voice of video"
         required: true
         type: string
+      custom_style:
+        description: "Custom style"
+        required: false
+        type: string
+      custom_background:
+        description: "Custom background"
+        required: false
+        type: string
 
 jobs:
   upload-flow:
@@ -40,11 +48,15 @@ jobs:
           echo DESCRIPTION: "${DESCRIPTION}"
           echo IMAGE_INPUT: "${IMAGE_INPUT}"
           echo VOICE_INPUT: "${VOICE_INPUT}"
+          echo CUSTOM_STYLE: "${CUSTOM_STYLE}"
+          echo CUSTOM_BACKGROUND: "${CUSTOM_BACKGROUND}"
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          CUSTOM_STYLE: ${{ inputs.custom_style }}
+          CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
 
       - name: Add youtube credentials
         run: |
@@ -71,6 +83,8 @@ jobs:
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
           VOICE_INPUT: ${{ inputs.voice }}
+          CUSTOM_STYLE: ${{ inputs.custom_style }}
+          CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
           GOOGLE_EMAIL: ${{ secrets.google_email }}
           GOOGLE_PASSWORD: ${{ secrets.google_password }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}

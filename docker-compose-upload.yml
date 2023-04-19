@@ -18,6 +18,8 @@ services:
     environment:
       IMAGE_INPUT: ${IMAGE_INPUT}
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
+      CUSTOM_STYLE: ${CUSTOM_STYLE}
+      CUSTOM_BACKGROUND: ${CUSTOM_BACKGROUND}
 
 #  image-upscaler:
 #    build: image-upscaler

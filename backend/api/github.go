@@ -14,10 +14,12 @@ type WorkflowInputBody struct {
 }
 
 type WorkflowInputs struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
-	Voice       string `json:"voice"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	Image            string `json:"image"`
+	Voice            string `json:"voice"`
+	CustomStyle      string `json:"custom_style"`
+	CustomBackground string `json:"custom_background"`
 }
 
 func TriggerGithubAction(body *WorkflowInputBody) (interface{}, error) {
