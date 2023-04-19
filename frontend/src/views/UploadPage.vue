@@ -34,7 +34,7 @@ import UploadComponent from "@/components/UploadComponent.vue";
 interface PostProps {
   title: string;
   description: string;
-  image: string[];
+  imageKeywords: string[];
   voice: string;
   style: string;
   background: string;

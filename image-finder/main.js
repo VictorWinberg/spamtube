@@ -9,7 +9,7 @@ import { unlink } from "fs/promises";
 
 config({ path: path.resolve(".env.local"), override: true });
 
-const { IMAGE_INPUT, UNSPLASH_ACCESS_TOKEN, CUSTOM_STYLE, CUSTOM_BACKGROUND } = process.env;
+const { IMAGE_KEYWORDS, UNSPLASH_ACCESS_TOKEN, CUSTOM_STYLE, CUSTOM_BACKGROUND } = process.env;
 
 const IMAGE_WIDTH = 1080;
 const IMAGE_HEIGHT = 1620;
@@ -112,7 +112,7 @@ async function getAIImages(keywords) {
 }
 
 async function main() {
-  const keywords = IMAGE_INPUT.split(" ");
+  const keywords = IMAGE_KEYWORDS.split(" ");
 
   // remove old files
   fs.readdir(OUT_DIR, (err, files) => {

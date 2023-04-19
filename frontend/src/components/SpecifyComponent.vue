@@ -19,7 +19,7 @@
           variant="outlined"
         />
         <v-combobox
-          v-model="image"
+          v-model="imageKeywords"
           label="Image generating text"
           placeholder="Happy cats abstract painting"
           prepend-inner-icon="mdi-image-area"
@@ -67,7 +67,7 @@
             class="mt-8 submit"
             type="submit"
             size="x-large"
-            :disabled="!title || !description || !image || !textContent"
+            :disabled="!title || !description || !imageKeywords || !textContent"
             >Submit</v-btn
           >
         </div>
@@ -83,7 +83,7 @@ import { defineComponent } from "vue";
 interface DataProps {
   title?: string;
   description?: string;
-  image?: string[];
+  imageKeywords?: string[];
   voice?: string;
   voices: string[];
   style?: string;
@@ -102,7 +102,7 @@ export default defineComponent({
     return {
       title: "",
       description: "",
-      image: [],
+      imageKeywords: [],
       textContent: "",
       voice: undefined,
       voices: ["Matthew"],
@@ -152,7 +152,7 @@ export default defineComponent({
     this.errorMessage = "";
     this.title = this.data?.title;
     this.description = this.data?.description;
-    this.image = this.data?.keywords;
+    this.imageKeywords = this.data?.keywords;
     this.textContent = this.data?.selftext;
   },
   methods: {
@@ -160,7 +160,7 @@ export default defineComponent({
       if (
         this.title === "" ||
         this.description === "" ||
-        !this.image ||
+        !this.imageKeywords ||
         this.textContent === ""
       ) {
         this.errorMessage = "Please fill out all fields correctly";
@@ -170,7 +170,7 @@ export default defineComponent({
       const post = {
         title: this.title,
         description: this.description,
-        image: this.image,
+        imageKeywords: this.imageKeywords,
         voice: this.voice,
         style: this.style,
         background: this.background,

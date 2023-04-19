@@ -3,7 +3,7 @@ import { post } from "./apiClient";
 export async function startUploadFlow(params: {
   title: string;
   description: string;
-  image: string;
+  imageKeywords: string[];
   voice?: string;
   style?: string;
   background?: string;
@@ -14,7 +14,7 @@ export async function startUploadFlow(params: {
     inputs: {
       title: params.title,
       description: params.description,
-      image: params.image,
+      image_keywords: params.imageKeywords,
       text_content: params.textContent,
       custom_voice: params.voice,
       custom_style: params.style,

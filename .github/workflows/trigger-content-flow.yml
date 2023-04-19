@@ -12,8 +12,8 @@ on:
         description: "Description of video"
         required: true
         type: string
-      image:
-        description: "Image of video"
+      image_keywords:
+        description: "Image keywords of video"
         required: true
         type: string
       text_content:
@@ -50,7 +50,7 @@ jobs:
         run: |
           echo TITLE: "${TITLE}"
           echo DESCRIPTION: "${DESCRIPTION}"
-          echo IMAGE_INPUT: "${IMAGE_INPUT}"
+          echo IMAGE_KEYWORDS: "${IMAGE_KEYWORDS}"
           echo TEXT_CONTENT: "${TEXT_CONTENT}"
           echo CUSTOM_VOICE: "${CUSTOM_VOICE}"
           echo CUSTOM_STYLE: "${CUSTOM_STYLE}"
@@ -58,7 +58,7 @@ jobs:
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
-          IMAGE_INPUT: ${{ inputs.image }}
+          IMAGE_KEYWORDS: ${{ inputs.image_keywords }}
           TEXT_CONTENT: ${{ inputs.text_content }}
           CUSTOM_VOICE: ${{ inputs.custom_voice }}
           CUSTOM_STYLE: ${{ inputs.custom_style }}
@@ -87,7 +87,7 @@ jobs:
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
-          IMAGE_INPUT: ${{ inputs.image }}
+          IMAGE_KEYWORDS: ${{ inputs.image_keywords }}
           TEXT_CONTENT: ${{ inputs.text_content }}
           CUSTOM_VOICE: ${{ inputs.voice }}
           CUSTOM_STYLE: ${{ inputs.custom_style }}
