@@ -50,7 +50,7 @@ async function main() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ Url: viewUrl }),
+        body: JSON.stringify({ url: viewUrl }),
       };
       request(options, function (error, response) {
         if (error) throw new Error(error);
