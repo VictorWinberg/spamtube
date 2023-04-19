@@ -1,6 +1,6 @@
 <template>
   <div class="specify-component mx-auto">
-    <h1>Search video details</h1>
+    <h1>Specify video details</h1>
     Specify the details of the video you want to generate.
     <div>
       <v-form class="mt-4" @submit.prevent="submitForm">
@@ -8,35 +8,66 @@
           v-model="title"
           label="Title"
           placeholder="Title of YouTube clip"
+          prepend-inner-icon="mdi-format-text"
           variant="outlined"
         />
         <v-text-field
           v-model="description"
           label="Description"
           placeholder="Don't forget to like and subscribe"
+          prepend-inner-icon="mdi-format-text"
           variant="outlined"
         />
-        <v-text-field
+        <v-combobox
           v-model="image"
           label="Image generating text"
           placeholder="Happy cats abstract painting"
+          prepend-inner-icon="mdi-image-area"
+          variant="outlined"
+          closable-chips
+          multiple
+          chips
+        />
+        <v-select
+          v-model="voice"
+          :items="voices"
+          placeholder="Select voice"
+          prepend-inner-icon="mdi-microphone"
+          label="Voice"
+          variant="outlined"
+        />
+        <v-combobox
+          v-model="style"
+          :items="styles"
+          placeholder="Select style"
+          prepend-inner-icon="mdi-auto-fix"
+          label="Style"
+          variant="outlined"
+        />
+        <v-combobox
+          v-model="background"
+          :items="backgrounds"
+          placeholder="Select background"
+          prepend-inner-icon="mdi-image-filter-hdr"
+          label="Background"
           variant="outlined"
         />
         <v-textarea
-          v-model="voice"
-          label="Voice"
+          v-model="textContent"
+          label="Text content"
           placeholder="Hello spamtubers..."
-          :hint="'Voice length: ' + voice.length"
-          persistent-hint
           variant="outlined"
         />
+        <span class="pl-4 pt-2 d-flex text-medium-emphasis text-caption">
+          Text content length: {{ textContent?.length || 0 }}
+        </span>
         <div class="btn-group">
           <v-btn class="back mt-8" size="x-large" @click="goBack"> Back </v-btn>
           <v-btn
             class="mt-8 submit"
             type="submit"
             size="x-large"
-            :disabled="!title || !description || !image || !voice"
+            :disabled="!title || !description || !image || !textContent"
             >Submit</v-btn
           >
         </div>
@@ -50,11 +81,17 @@
 import { defineComponent } from "vue";
 
 interface DataProps {
-  title: string;
-  description: string;
-  image: string;
-  voice: string;
-  errorMessage: string;
+  title?: string;
+  description?: string;
+  image?: string[];
+  voice?: string;
+  voices: string[];
+  style?: string;
+  styles: string[];
+  background?: string;
+  backgrounds: string[];
+  textContent?: string;
+  errorMessage?: string;
   status?: number;
 }
 
@@ -65,38 +102,81 @@ export default defineComponent({
     return {
       title: "",
       description: "",
-      image: "",
-      voice: "",
+      image: [],
+      textContent: "",
+      voice: undefined,
+      voices: ["Matthew"],
+      style: undefined,
+      styles: [
+        "cartoon",
+        "comic book",
+        "futuristic",
+        "graffiti",
+        "impressionism",
+        "manga",
+        "oil painting",
+        "pencil sketch",
+        "pop art",
+        "surrealism",
+        "watercolor",
+      ],
+      background: undefined,
+      backgrounds: [
+        "abstract",
+        "apocalyptic",
+        "beach",
+        "bright neon lights",
+        "city",
+        "cyberpunk",
+        "desert",
+        "dystopia",
+        "forest",
+        "galaxy",
+        "jungle",
+        "lake",
+        "mountain",
+        "ocean",
+        "ruins",
+        "space",
+        "underwater",
+        "urban",
+        "utopian",
+        "volcano",
+        "waterfall",
+      ],
       errorMessage: "",
       status: undefined,
     };
   },
   updated() {
     this.errorMessage = "";
-    this.title = this.data?.title || "";
-    this.description = this.data?.description || "";
-    this.image = this.data?.keywords.join(" ") || "";
-    this.voice = this.data?.selftext || "";
+    this.title = this.data?.title;
+    this.description = this.data?.description;
+    this.image = this.data?.keywords;
+    this.textContent = this.data?.selftext;
   },
   methods: {
     submitForm: async function () {
       if (
         this.title === "" ||
         this.description === "" ||
-        this.image === "" ||
-        this.voice === ""
+        !this.image ||
+        this.textContent === ""
       ) {
         this.errorMessage = "Please fill out all fields correctly";
         return;
       }
       this.errorMessage = "";
-      const content = {
+      const post = {
         title: this.title,
         description: this.description,
         image: this.image,
         voice: this.voice,
+        style: this.style,
+        background: this.background,
+        textContent: this.textContent,
       };
-      this.$emit("submitStep", content);
+      this.$emit("submitStep", post);
     },
     goBack: function () {
       this.$emit("back");

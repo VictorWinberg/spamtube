@@ -7,7 +7,7 @@ services:
       GOOGLE_EMAIL: ${GOOGLE_EMAIL}
       GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
       TITLE: ${TITLE}
-      VOICE_INPUT: ${VOICE_INPUT}
+      TEXT_CONTENT: ${TEXT_CONTENT}
     volumes:
       - data-volume:/app/out
 
@@ -21,14 +21,14 @@ services:
       CUSTOM_STYLE: ${CUSTOM_STYLE}
       CUSTOM_BACKGROUND: ${CUSTOM_BACKGROUND}
 
-#  image-upscaler:
-#    build: image-upscaler
-#    volumes:
-#      - image-volume:/app/data
-#      - image-upscaled-volume:/app/out
-#    depends_on:
-#      image-finder:
-#        condition: service_completed_successfully
+  #  image-upscaler:
+  #    build: image-upscaler
+  #    volumes:
+  #      - image-volume:/app/data
+  #      - image-upscaled-volume:/app/out
+  #    depends_on:
+  #      image-finder:
+  #        condition: service_completed_successfully
 
   image-uploader:
     build: image-uploader
@@ -118,4 +118,3 @@ volumes:
   video-volume:
   uploader-volume:
   image-upscaled-volume:
-  

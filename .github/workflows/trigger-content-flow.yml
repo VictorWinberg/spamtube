@@ -16,9 +16,13 @@ on:
         description: "Image of video"
         required: true
         type: string
-      voice:
-        description: "Voice of video"
+      text_content:
+        description: "Text content of video"
         required: true
+        type: string
+      custom_voice:
+        description: "Voice of video"
+        required: false
         type: string
       custom_style:
         description: "Custom style"
@@ -47,14 +51,16 @@ jobs:
           echo TITLE: "${TITLE}"
           echo DESCRIPTION: "${DESCRIPTION}"
           echo IMAGE_INPUT: "${IMAGE_INPUT}"
-          echo VOICE_INPUT: "${VOICE_INPUT}"
+          echo TEXT_CONTENT: "${TEXT_CONTENT}"
+          echo CUSTOM_VOICE: "${CUSTOM_VOICE}"
           echo CUSTOM_STYLE: "${CUSTOM_STYLE}"
           echo CUSTOM_BACKGROUND: "${CUSTOM_BACKGROUND}"
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
-          VOICE_INPUT: ${{ inputs.voice }}
+          TEXT_CONTENT: ${{ inputs.text_content }}
+          CUSTOM_VOICE: ${{ inputs.custom_voice }}
           CUSTOM_STYLE: ${{ inputs.custom_style }}
           CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
 
@@ -82,7 +88,8 @@ jobs:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           IMAGE_INPUT: ${{ inputs.image }}
-          VOICE_INPUT: ${{ inputs.voice }}
+          TEXT_CONTENT: ${{ inputs.text_content }}
+          CUSTOM_VOICE: ${{ inputs.voice }}
           CUSTOM_STYLE: ${{ inputs.custom_style }}
           CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
           GOOGLE_EMAIL: ${{ secrets.google_email }}
