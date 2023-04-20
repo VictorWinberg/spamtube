@@ -1,25 +1,15 @@
 version: "3.1"
 
 services:
-  gensim:
-    build: gensim
-    environment:
-      TITLE: ${TITLE}
-      VOICE_INPUT: ${VOICE_INPUT}
-    volumes:
-      - data-volume:/app/out
-
   chatgpt:
     build: chatgpt
     environment:
       GOOGLE_EMAIL: ${GOOGLE_EMAIL}
       GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
+      TITLE: ${TITLE}
       VOICE_INPUT: ${VOICE_INPUT}
     volumes:
       - data-volume:/app/out
-    depends_on:
-      gensim:
-        condition: service_completed_successfully
 
   image-finder:
     build: image-finder

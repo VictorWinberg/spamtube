@@ -29,3 +29,11 @@ try:
     print(f'Successfully generated a ChatGPT response')
 except Exception as err: 
     print(err)
+
+    # ChatGPT fallback
+    with open('out/title.txt', 'w') as f:
+        f.write(os.getenv('TITLE'))
+
+    with open('out/text.txt', 'w') as f:
+        text = os.getenv('VOICE_INPUT')
+        f.write(text)
