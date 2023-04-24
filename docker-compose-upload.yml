@@ -65,7 +65,7 @@ services:
   generator:
     build: generator
     volumes:
-      - image-upscaled-volume:/app/data/images
+      - image-volume:/app/data/images
       - subs-volume:/app/data/subtitles
       - voice-volume:/app/data/audio/voice
       - music-volume:/app/data/audio/music
