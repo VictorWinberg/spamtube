@@ -5,7 +5,7 @@ import http from "node:https";
 import path from "path";
 import sharp from "sharp";
 import { createApi } from "unsplash-js";
-import { unlink } from 'fs/promises'
+import { unlink } from "fs/promises";
 
 config({ path: path.resolve(".env.local"), override: true });
 
@@ -78,10 +78,11 @@ function* chunks(arr, n) {
 
 async function getAIImages(keywords) {
   const style = styles[Math.floor(Math.random(new Date().getTime()) * styles.length)];
-  const background = backgrounds[Math.floor(Math.random(new Date().getTime()) * backgrounds.length)];
+  const background =
+    backgrounds[Math.floor(Math.random(new Date().getTime()) * backgrounds.length)];
   const direction = `in ${style} style and ${background} background`;
-  const prompt = [...keywords, direction].join(" ")
-  console.log('prompt', prompt);
+  const prompt = [...keywords, direction].join(" ");
+  console.log("prompt", prompt);
 
   const response = await nodeFetch("https://api.craiyon.com/v3", {
     method: "POST",
@@ -102,7 +103,7 @@ async function getAIImages(keywords) {
     return json.images;
   } catch (error) {
     const err = await response.text();
-    throw err
+    throw err;
   }
 }
 
@@ -139,15 +140,17 @@ async function main() {
       })
     );
 
-
-  await Promise.all(
-    downloads.map(async (filename, index) => {
-      const buffer = await sharp(filename).png().toBuffer();
-      await sharp(buffer).toFile(filename.replace(/webp$/, "png"));
-      await unlink(filename)
-      console.log(`sharp ${index}`);
-    })
-  );
+    await Promise.all(
+      downloads.map(async (filename, index) => {
+        const buffer = await sharp(filename)
+          .resize(IMAGE_WIDTH, IMAGE_HEIGHT, { fit: "contain" })
+          .png()
+          .toBuffer();
+        await sharp(buffer).toFile(filename.replace(/webp$/, "png"));
+        await unlink(filename);
+        console.log(`sharp ${index}`);
+      })
+    );
 
     console.log("Done - craiyon!");
     return;
@@ -191,7 +194,7 @@ async function main() {
     downloads.map(async (filename, index) => {
       const buffer = await sharp(filename).resize(IMAGE_WIDTH, IMAGE_HEIGHT).png().toBuffer();
       await sharp(buffer).toFile(filename.replace(/jpg$/, "png"));
-      await unlink(filename)
+      await unlink(filename);
       console.log(`sharp ${index}`);
     })
   );
