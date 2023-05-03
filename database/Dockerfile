@@ -8,6 +8,6 @@ RUN go mod download
 COPY *.go ./
 COPY migrations/*.sql ./migrations/
 
-RUN go build -o /migrate
+RUN go build -o ./migrate
 
-CMD [ "/migrate" ]
+CMD [ "./migrate" ]
