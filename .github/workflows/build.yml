@@ -24,4 +24,5 @@ jobs:
         run: |
           docker buildx bake \
             --load \
-            --file docker-compose.yml
+            --file docker-compose.yml \
+            --file docker-compose-upload.yml
