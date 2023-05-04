@@ -30,13 +30,6 @@ jobs:
           CLIENT_SECRETS: '{}'
           YOUTUBE_TOKEN: '{}'
 
-      - name: Docker is baking small cake
-        if: github.ref != 'refs/heads/master'
-        run: |
-          docker buildx bake \
-            --load \
-            --file docker-compose.yml
-
       - name: Docker is baking big cake
         if: github.ref == 'refs/heads/master'
         run: |
@@ -44,3 +37,10 @@ jobs:
             --load \
             --file docker-compose.yml \
             --file docker-compose-upload.yml
+
+      - name: Docker is baking small cake
+        if: github.ref != 'refs/heads/master'
+        run: |
+          docker buildx bake \
+            --load \
+            --file docker-compose.yml
