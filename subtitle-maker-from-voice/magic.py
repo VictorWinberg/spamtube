@@ -17,3 +17,5 @@ for segment in segments:
     srtFilename = os.path.join("out", "subs.srt")
     with open(srtFilename, 'a', encoding='utf-8') as srtFile:
         srtFile.write(segment)
+
+print(f'Successfully generated subtitles with {len(segments)} lines')
