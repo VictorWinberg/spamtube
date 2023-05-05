@@ -26,17 +26,12 @@ func AutoUploadVideo(subreddit_name string) error {
 		hashTags.WriteString(strings.Replace(keyword, "'", "", -1))
 	}
 
-	var keywords []string
-	for _, words := range chunkBy(post.Data.Keywords, 3) {
-		keywords = append(keywords, strings.Join(words, " "))
-	}
-
 	data := &api.WorkflowInputBody{
 		Ref: "master",
 		Inputs: &api.WorkflowInputs{
 			Title:         post.Data.Title,
 			Description:   fmt.Sprintf("Reddit url: %s \n %s", post.Data.URL, hashTags.String()),
-			ImageKeywords: strings.Join(keywords, ","),
+			ImageKeywords: strings.Join(post.Data.Keywords, ","),
 			TextContent:   post.Data.Selftext,
 		},
 	}
