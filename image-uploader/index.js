@@ -55,6 +55,7 @@ async function main() {
       };
       request(options, function (error, response) {
         if (error) throw new Error(error);
+        if (response.statusCode !== 200) throw new Error(response.body);
       });
     });
     index++;
