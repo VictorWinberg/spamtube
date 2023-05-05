@@ -42,6 +42,7 @@ async function main() {
     };
     request(options, async function (error, response) {
       if (error) throw new Error(error);
+      if (response.statusCode !== 200) throw new Error(response.body);
       const viewUrl = response.body.data.display_url;
 
       options = {
