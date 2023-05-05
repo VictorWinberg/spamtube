@@ -35,5 +35,5 @@ except Exception as err:
         f.write(os.getenv('TITLE'))
 
     with open('out/text.txt', 'w') as f:
-        text = os.getenv('VOICE_INPUT')
+        text = os.getenv('TEXT_CONTENT')
         f.write(text)
