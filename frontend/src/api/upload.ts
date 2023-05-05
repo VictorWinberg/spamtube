@@ -14,7 +14,7 @@ export async function startUploadFlow(params: {
     inputs: {
       title: params.title,
       description: params.description,
-      image_keywords: params.imageKeywords,
+      image_keywords: params.imageKeywords.join(","),
       text_content: params.textContent,
       custom_voice: params.voice,
       custom_style: params.style,
