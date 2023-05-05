@@ -48,10 +48,10 @@ services:
         condition: service_completed_successfully
 
   subtitle-maker:
-    build: subtitle-maker-from-voice
+    build: subtitle-maker-from-text
     volumes:
-      # - data-volume:/app/data
-      - voice-volume:/app/data
+      - data-volume:/app/data
+      #  - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
       voice-maker:
