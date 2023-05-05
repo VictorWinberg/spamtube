@@ -1,11 +1,10 @@
-FROM python:3.10.4-alpine
+FROM python:3.10.4-slim
 
 WORKDIR /app
 
 # install dependencies
-RUN apt-get -y update
-RUN apt-get -y upgrade
-RUN apt-get install -y ffmpeg libsm6 libxext6
+RUN apt-get update
+RUN apt-get install -y ffmpeg
 
 COPY requirements.txt ./
 

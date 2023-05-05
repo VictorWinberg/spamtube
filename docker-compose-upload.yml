@@ -21,14 +21,14 @@ services:
       CUSTOM_STYLE: ${CUSTOM_STYLE}
       CUSTOM_BACKGROUND: ${CUSTOM_BACKGROUND}
 
-  #  image-upscaler:
-  #    build: image-upscaler
-  #    volumes:
-  #      - image-volume:/app/data
-  #      - image-upscaled-volume:/app/out
-  #    depends_on:
-  #      image-finder:
-  #        condition: service_completed_successfully
+  # image-upscaler:
+  #   build: image-upscaler
+  #   volumes:
+  #     - image-volume:/app/data
+  #     - image-upscaled-volume:/app/out
+  #   depends_on:
+  #     image-finder:
+  #       condition: service_completed_successfully
 
   image-uploader:
     build: image-uploader
@@ -53,7 +53,7 @@ services:
     build: subtitle-maker-from-text
     volumes:
       - data-volume:/app/data
-      # - voice-volume:/app/data
+      #  - voice-volume:/app/data
       - subs-volume:/app/out
     depends_on:
       voice-maker:
@@ -73,7 +73,7 @@ services:
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
-      image-finder:
+      image-uploader:
         condition: service_completed_successfully
       voice-maker:
         condition: service_completed_successfully

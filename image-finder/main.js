@@ -140,7 +140,10 @@ async function main() {
 
     await Promise.all(
       downloads.map(async (filename, index) => {
-        const buffer = await sharp(filename).png().toBuffer();
+        const buffer = await sharp(filename)
+          .resize(IMAGE_WIDTH, IMAGE_HEIGHT, { fit: "contain" })
+          .png()
+          .toBuffer();
         await sharp(buffer).toFile(filename.replace(/webp$/, "png"));
         await unlink(filename);
         console.log(`sharp ${index}`);

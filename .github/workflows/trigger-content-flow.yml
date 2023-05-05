@@ -77,10 +77,8 @@ jobs:
       - name: Docker is baking a cake
         run: |
           docker buildx bake \
-            --set "*.cache-from=type=gha" \
-            --set "*.cache-to=type=gha,mode=min" \
             --load \
-            -f docker-compose-upload.yml
+            --file docker-compose-upload.yml
 
       - name: Docker is running upload!
         run: docker compose -f docker-compose-upload.yml up
