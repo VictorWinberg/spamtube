@@ -7,7 +7,7 @@ services:
       GOOGLE_EMAIL: ${GOOGLE_EMAIL}
       GOOGLE_PASSWORD: ${GOOGLE_PASSWORD}
       TITLE: ${TITLE}
-      VOICE_INPUT: ${VOICE_INPUT}
+      TEXT_CONTENT: ${TEXT_CONTENT}
     volumes:
       - data-volume:/app/out
 
@@ -16,8 +16,10 @@ services:
     volumes:
       - image-volume:/app/out
     environment:
-      IMAGE_INPUT: ${IMAGE_INPUT}
+      IMAGE_KEYWORDS: ${IMAGE_KEYWORDS}
       UNSPLASH_ACCESS_TOKEN: ${UNSPLASH_ACCESS_TOKEN}
+      CUSTOM_STYLE: ${CUSTOM_STYLE}
+      CUSTOM_BACKGROUND: ${CUSTOM_BACKGROUND}
 
   # image-upscaler:
   #   build: image-upscaler
@@ -101,7 +103,7 @@ services:
       - uploader-volume:/app/data
     environment:
       SLACK_POST_TITLE: "${TITLE} :tv:"
-      SLACK_POST_BODY: "${DESCRIPTION}\n\n${IMAGE_INPUT}"
+      SLACK_POST_BODY: "${DESCRIPTION}\n\n${IMAGE_KEYWORDS}"
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
     depends_on:
       uploader:
@@ -116,4 +118,3 @@ volumes:
   video-volume:
   uploader-volume:
   image-upscaled-volume:
-  

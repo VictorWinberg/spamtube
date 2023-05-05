@@ -13,7 +13,7 @@ type WordCount struct {
 	count int
 }
 
-// Extract Extract keywords from a string.
+// Extract keywords from a string.
 // Inspired by https://github.com/securisec/go-keywords/blob/master/keywords.go
 func Extract(s string) ([]string, error) {
 	var (

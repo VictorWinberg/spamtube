@@ -10,14 +10,32 @@
         <v-card-title>{{ title }}</v-card-title>
         <v-card-subtitle> {{ description }} </v-card-subtitle>
         <v-card-text>
-          <div>{{ voice }}</div>
+          <div>{{ textContent }}</div>
         </v-card-text>
         <v-divider class="mx-4"></v-divider>
         <v-card-title>Image generating words</v-card-title>
         <v-card-text>
           <v-chip-group class="justify-center">
-            <v-chip v-for="(word, index) in imageWords" :key="index">
-              {{ word }}
+            <v-chip v-for="(words, index) in imageKeywords" :key="index">
+              {{ words }}
+            </v-chip>
+          </v-chip-group>
+        </v-card-text>
+        <v-divider class="mx-4"></v-divider>
+        <v-card-title>Configurations</v-card-title>
+        <v-card-text>
+          <v-chip-group class="justify-center">
+            <v-chip v-if="voice" class="pl-4">
+              <v-icon start icon="mdi-microphone" />
+              {{ voice }}
+            </v-chip>
+            <v-chip v-if="style" class="pl-4">
+              <v-icon start icon="mdi-auto-fix" />
+              {{ style }}
+            </v-chip>
+            <v-chip v-if="background" lass="pl-4">
+              <v-icon start icon="mdi-image-filter-hdr" />
+              {{ background }}
             </v-chip>
           </v-chip-group>
         </v-card-text>
@@ -54,8 +72,11 @@ import neonCatPng from "../assets/images/neon-cat.png";
 interface DataProps {
   title: string;
   description: string;
-  image: string;
-  voice: string;
+  imageKeywords: string[];
+  voice?: string;
+  style?: string;
+  background?: string;
+  textContent: string;
   status?: number;
   neonCatGif: string;
   neonCatPng: string;
@@ -66,19 +87,19 @@ export default defineComponent({
   props: ["data"],
   data(): DataProps {
     return {
-      title: this.data?.title || "",
-      description: this.data?.description || "",
-      image: this.data?.image || "",
-      voice: this.data?.voice || "",
+      title: this.data?.title,
+      description: this.data?.description,
+      imageKeywords: this.data?.imageKeywords,
+      voice: this.data?.voice,
+      style: this.data?.style,
+      background: this.data?.background,
+      textContent: this.data?.textContent,
       status: undefined,
       neonCatGif,
       neonCatPng,
     };
   },
   computed: {
-    imageWords(): string[] {
-      return this.image.replace(/\s+$/, "").split(" ");
-    },
     uploaded(): boolean {
       return this.status === 200;
     },
@@ -87,19 +108,25 @@ export default defineComponent({
     data(newData: DataProps) {
       this.title = newData.title;
       this.description = newData.description;
-      this.image = newData.image;
+      this.imageKeywords = newData.imageKeywords;
       this.voice = newData.voice;
+      this.style = newData.style;
+      this.background = newData.background;
+      this.textContent = newData.textContent;
     },
   },
   methods: {
     async callUploadFlow() {
       try {
-        const res = await startUploadFlow(
-          this.title,
-          this.description,
-          this.image,
-          this.voice
-        );
+        const res = await startUploadFlow({
+          title: this.title,
+          description: this.description,
+          imageKeywords: this.imageKeywords,
+          voice: this.voice,
+          style: this.style,
+          background: this.background,
+          textContent: this.textContent,
+        });
         this.status = res.status;
       } catch (error) {
         console.error(error);

@@ -12,13 +12,25 @@ on:
         description: "Description of video"
         required: true
         type: string
-      image:
-        description: "Image of video"
+      image_keywords:
+        description: "Image keywords of video"
         required: true
         type: string
-      voice:
-        description: "Voice of video"
+      text_content:
+        description: "Text content of video"
         required: true
+        type: string
+      custom_voice:
+        description: "Voice of video"
+        required: false
+        type: string
+      custom_style:
+        description: "Custom style"
+        required: false
+        type: string
+      custom_background:
+        description: "Custom background"
+        required: false
         type: string
 
 jobs:
@@ -38,13 +50,19 @@ jobs:
         run: |
           echo TITLE: "${TITLE}"
           echo DESCRIPTION: "${DESCRIPTION}"
-          echo IMAGE_INPUT: "${IMAGE_INPUT}"
-          echo VOICE_INPUT: "${VOICE_INPUT}"
+          echo IMAGE_KEYWORDS: "${IMAGE_KEYWORDS}"
+          echo TEXT_CONTENT: "${TEXT_CONTENT}"
+          echo CUSTOM_VOICE: "${CUSTOM_VOICE}"
+          echo CUSTOM_STYLE: "${CUSTOM_STYLE}"
+          echo CUSTOM_BACKGROUND: "${CUSTOM_BACKGROUND}"
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
-          IMAGE_INPUT: ${{ inputs.image }}
-          VOICE_INPUT: ${{ inputs.voice }}
+          IMAGE_KEYWORDS: ${{ inputs.image_keywords }}
+          TEXT_CONTENT: ${{ inputs.text_content }}
+          CUSTOM_VOICE: ${{ inputs.custom_voice }}
+          CUSTOM_STYLE: ${{ inputs.custom_style }}
+          CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
 
       - name: Add youtube credentials
         run: |
@@ -67,8 +85,11 @@ jobs:
         env:
           TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
-          IMAGE_INPUT: ${{ inputs.image }}
-          VOICE_INPUT: ${{ inputs.voice }}
+          IMAGE_KEYWORDS: ${{ inputs.image_keywords }}
+          TEXT_CONTENT: ${{ inputs.text_content }}
+          CUSTOM_VOICE: ${{ inputs.custom_voice }}
+          CUSTOM_STYLE: ${{ inputs.custom_style }}
+          CUSTOM_BACKGROUND: ${{ inputs.custom_background }}
           GOOGLE_EMAIL: ${{ secrets.google_email }}
           GOOGLE_PASSWORD: ${{ secrets.google_password }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook }}

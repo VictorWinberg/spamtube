@@ -34,8 +34,11 @@ import UploadComponent from "@/components/UploadComponent.vue";
 interface PostProps {
   title: string;
   description: string;
-  image: string;
+  imageKeywords: string[];
   voice: string;
+  style: string;
+  background: string;
+  textContent: string;
 }
 
 interface DataProps {
@@ -67,8 +70,8 @@ export default defineComponent({
       this.selectedPost = post;
       this.step += 1;
     },
-    step2(content: PostProps) {
-      this.uploadContent = content;
+    step2(post: PostProps) {
+      this.uploadContent = post;
       this.step += 1;
     },
   },

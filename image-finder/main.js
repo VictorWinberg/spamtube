@@ -9,6 +9,8 @@ import { unlink } from "fs/promises";
 
 config({ path: path.resolve(".env.local"), override: true });
 
+const { IMAGE_KEYWORDS, UNSPLASH_ACCESS_TOKEN, CUSTOM_STYLE, CUSTOM_BACKGROUND } = process.env;
+
 const IMAGE_WIDTH = 1080;
 const IMAGE_HEIGHT = 1620;
 const OUT_DIR = "./out";
@@ -49,7 +51,7 @@ const backgrounds = [
 ];
 
 const unsplash = createApi({
-  accessKey: process.env.UNSPLASH_ACCESS_TOKEN,
+  accessKey: UNSPLASH_ACCESS_TOKEN,
   fetch: nodeFetch,
 });
 
@@ -70,18 +72,14 @@ async function download(url, dest) {
   });
 }
 
-function* chunks(arr, n) {
-  for (let i = 0; i < arr.length; i += n) {
-    yield arr.slice(i, i + n);
-  }
-}
-
 async function getAIImages(keywords) {
-  const style = styles[Math.floor(Math.random(new Date().getTime()) * styles.length)];
-  const background =
-    backgrounds[Math.floor(Math.random(new Date().getTime()) * backgrounds.length)];
+  const styleIndex = Math.floor(Math.random(new Date().getTime()) * styles.length);
+  const style = CUSTOM_STYLE || styles[styleIndex];
+  const backgroundIndex = Math.floor(Math.random(new Date().getTime()) * backgrounds.length);
+  const background = CUSTOM_BACKGROUND || backgrounds[backgroundIndex];
+
   const direction = `in ${style} style and ${background} background`;
-  const prompt = [...keywords, direction].join(" ");
+  const prompt = [keywords, direction].join(" ");
   console.log("prompt", prompt);
 
   const response = await nodeFetch("https://api.craiyon.com/v3", {
@@ -108,7 +106,7 @@ async function getAIImages(keywords) {
 }
 
 async function main() {
-  const keywords = process.env.IMAGE_INPUT.split(" ");
+  const keywords = IMAGE_KEYWORDS.split(",");
 
   // remove old files
   fs.readdir(OUT_DIR, (err, files) => {
@@ -125,8 +123,8 @@ async function main() {
   try {
     const images = [];
 
-    for (const chunk of [...chunks(keywords, 3)]) {
-      const res = await getAIImages(chunk);
+    for (const words of keywords) {
+      const res = await getAIImages(words);
       res.forEach((image) => images.push(image));
     }
 
