@@ -50,7 +50,19 @@ func Extract(s string) ([]string, error) {
 
 	results = extractMostPopularKeywords(results, 9)
 
-	return results, nil
+	var keywords []string
+	for _, words := range chunkBy(results, 3) {
+		keywords = append(keywords, strings.Join(words, " "))
+	}
+
+	return keywords, nil
+}
+
+func chunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
+	for chunkSize < len(items) {
+		items, chunks = items[chunkSize:], append(chunks, items[0:chunkSize:chunkSize])
+	}
+	return append(chunks, items)
 }
 
 func catchErr(err error) ([]string, error) {

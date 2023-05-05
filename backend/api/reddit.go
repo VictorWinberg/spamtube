@@ -36,8 +36,8 @@ func GetTopPosts(subredditName string) (domain.RedditItems, error) {
 	}
 
 	for i, post := range res.Data.Children {
-		k, _ := keywords.Extract(post.Data.Selftext)
-		res.Data.Children[i].Data.Keywords = k
+		postKeywords, _ := keywords.Extract(post.Data.Selftext)
+		res.Data.Children[i].Data.Keywords = postKeywords
 	}
 
 	return res.Data.Children, nil
