@@ -176,5 +176,5 @@ func GetAudioLength() int64 {
 	samples := d.Length() / sampleSize
 	audioLength := samples / int64(d.SampleRate())
 
-	return audioLength
+	return audioLength + 10
 }
