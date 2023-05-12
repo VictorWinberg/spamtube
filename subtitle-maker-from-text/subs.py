@@ -4,7 +4,8 @@ from decimal import *
 f = open("data/text.txt", "r")
 input = f.read()
 
-words = input.split()
+# words = input.split()
+words = ["Welcome to Spamtube!"]
 
 counter = 1
 s = float(0)
@@ -15,20 +16,16 @@ def format_time(s: float) -> str:
 
 
 with open('out/subs.srt' , 'w') as f:
-    f.write("")
+    while (len(words) > 0):
+        sentence = words[:8]
+        words = words[8:]
 
-print(f'Subtitles disabled')
+        chars = sum([len(w) for w in sentence])
 
-#    while (len(words) > 0):
-#        sentence = words[:8]
-#        words = words[8:]
-#
-#        chars = sum([len(w) for w in sentence])
-#
-#        f.write(str(counter) + '\n' + format_time(s))
-#        s += chars / speed
-#        f.write(' --> ' + format_time(s) + '\n' + " ".join(sentence) + '\n\n')
-#
-#        counter += 1
-#
-#print(f'Successfully generated subtitles with {counter} lines')
+        f.write(str(counter) + '\n' + format_time(s))
+        s += chars / speed
+        f.write(' --> ' + format_time(s) + '\n' + " ".join(sentence) + '\n\n')
+
+        counter += 1
+
+print(f'Successfully generated subtitles with {counter} lines')
