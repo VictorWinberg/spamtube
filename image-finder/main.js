@@ -11,8 +11,12 @@ config({ path: path.resolve(".env.local"), override: true });
 
 const { IMAGE_KEYWORDS, UNSPLASH_ACCESS_TOKEN, CUSTOM_STYLE, CUSTOM_BACKGROUND } = process.env;
 
-const IMAGE_WIDTH = 1080;
-const IMAGE_HEIGHT = 1620;
+// Run portrait if it is a short?
+// const IMAGE_WIDTH = 1080;
+// const IMAGE_HEIGHT = 1620;
+const IMAGE_WIDTH = 1920;
+const IMAGE_HEIGHT = 1080;
+
 const OUT_DIR = "./out";
 
 const styles = [
