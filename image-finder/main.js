@@ -94,7 +94,7 @@ async function getAIImages(keywords) {
     body: JSON.stringify({
       prompt,
       negative_prompt: "",
-      model: "art",
+      model: "none",
       version: "35s5hfwn9n78gb06",
       token: null,
     }),
