@@ -47,7 +47,7 @@ async function main() {
 
       options = {
         method: "POST",
-        url: "https://spamtube.zolly.ml/api/img",
+        url: "https://spamtube.codies.se/api/img",
         headers: {
           "Content-Type": "application/json",
         },
