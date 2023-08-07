@@ -23,7 +23,7 @@ const OUTPUT_VIDEO_FORMAT = "yuvj420p"
 const VIDEO_CODEC = "libx264"
 const OUTPUT_FPS = 30
 const MIN_AUDIO_FILES = 2
-const VOLUME_CHANGE_FACTOR = "0.05"
+const VOLUME_CHANGE_FACTOR = "0.10"
 
 func CreateVideo() {
 	imageExt := GetImageExt()
