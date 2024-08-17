@@ -30,15 +30,15 @@ services:
   #     image-finder:
   #       condition: service_completed_successfully
 
-  image-uploader:
-    build: image-uploader
-    volumes:
-      - image-volume:/app/data
-    environment:
-      IMGBB_API_KEY: ${IMGBB_API_KEY}
-    depends_on:
-      image-finder:
-        condition: service_completed_successfully
+  # image-uploader:
+  #   build: image-uploader
+  #   volumes:
+  #     - image-volume:/app/data
+  #   environment:
+  #     IMGBB_API_KEY: ${IMGBB_API_KEY}
+  #   depends_on:
+  #     image-finder:
+  #       condition: service_completed_successfully
 
   voice-maker:
     build: voice-maker
@@ -73,8 +73,6 @@ services:
       - music-volume:/app/data/audio/music
       - video-volume:/app/out
     depends_on:
-      image-uploader:
-        condition: service_completed_successfully
       voice-maker:
         condition: service_completed_successfully
       music-maker:
